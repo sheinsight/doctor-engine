@@ -1,0 +1,47 @@
+[workspace]
+members = ["crates/package_json"]
+
+
+[workspace.package]
+authors      = ["ityuany <519495771@qq.com>"]
+edition      = "2024"
+homepage     = "https://github.com/sheinsight/doctor-engine"
+license      = "MIT"
+repository   = "https://github.com/sheinsight/doctor-engine"
+rust-version = "1.85.0"
+
+[workspace.dependencies]
+serde      = "1.0.218"
+serde_json = "1.0.140"
+
+[profile.release]
+# 发布构建优化
+codegen-units = 1       # 单一代码生成单元，提高优化效果
+debug         = false   # 禁用调试信息
+lto           = true    # 启用链接时优化
+opt-level     = 3       # 最高级别的优化
+panic         = "abort" # panic 时直接终止，减少二进制大小
+strip         = true    # 移除调试符号
+
+[profile.dev]
+# 开发构建优化
+debug            = true # 保留调试信息
+debug-assertions = true # 启用调试断言
+incremental      = true # 启用增量编译
+opt-level        = 1    # 轻度优化，在编译速度和运行速度之间平衡
+
+[profile.test]
+# 测试构建优化
+codegen-units    = 16   # 更多的代码生成单元，加快编译
+debug            = true # 保留调试信息
+debug-assertions = true # 启用调试断言
+incremental      = true # 启用增量编译
+opt-level        = 1    # 轻度优化
+
+[profile.bench]
+# 基准测试构建优化
+codegen-units    = 1     # 单一代码生成单元
+debug            = false # 禁用调试信息
+debug-assertions = false # 禁用调试断言
+lto              = true  # 启用链接时优化
+opt-level        = 3     # 最高级别优化
