@@ -1,6 +1,8 @@
-use std::{collections::HashMap, fs::File, io::BufReader, path::PathBuf};
+use std::{collections::HashMap, fs::File, hash::Hash, io::BufReader, iter::Map, path::PathBuf};
 
 use serde::{Deserialize, Serialize};
+
+use crate::{error::Error, version::Version};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PackageJson {
@@ -34,6 +36,28 @@ impl PackageJson {
             return Err("name is required".to_string());
         }
         Ok(())
+    }
+
+    fn get_deps(deps: &Option<HashMap<String, String>>) -> Result<HashMap<String, Version>, Error> {
+        match deps {
+            Some(deps) => {
+                let mut dependencies = HashMap::with_capacity(deps.len());
+                for (k, v) in deps.iter() {
+                    let version = Version::try_from(v.clone())?;
+                    dependencies.insert(k.clone(), version);
+                }
+                Ok(dependencies)
+            }
+            None => Ok(HashMap::new()),
+        }
+    }
+
+    pub fn get_dependencies(&self) -> Result<HashMap<String, Version>, Error> {
+        Self::get_deps(&self.dependencies)
+    }
+
+    pub fn get_dev_dependencies(&self) -> Result<HashMap<String, Version>, Error> {
+        Self::get_deps(&self.dev_dependencies)
     }
 }
 
