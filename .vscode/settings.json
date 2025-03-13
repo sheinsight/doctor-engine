@@ -1,5 +1,9 @@
 {
   "cSpell.words": [
+    "docsrs",
+    "miette",
+    "rsplit",
+    "serde",
     "thiserror"
   ]
 }
