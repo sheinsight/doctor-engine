@@ -31,11 +31,25 @@ pub struct PackageJson {
 }
 
 impl PackageJson {
-  pub fn validate(&self) -> Result<(), String> {
+  pub fn validate_name(self) -> Result<Self, Error> {
     if self.name.is_none() {
-      return Err("name is required".to_string());
+      return Err(Error::NoNameError);
     }
-    Ok(())
+    Ok(self)
+  }
+
+  pub fn validate_private(self) -> Result<Self, Error> {
+    if self.private.is_none() {
+      return Err(Error::NoPrivateError);
+    }
+    Ok(self)
+  }
+
+  pub fn validate_package_manager(self) -> Result<Self, Error> {
+    if self.package_manager.is_none() {
+      return Err(Error::NoPackageManagerError);
+    }
+    Ok(self)
   }
 
   fn get_deps(deps: &Option<HashMap<String, String>>) -> Result<HashMap<String, Version>, Error> {
@@ -76,5 +90,54 @@ impl TryFrom<PathBuf> for PackageJson {
     let package_json: PackageJson =
       serde_json::from_reader(reader).map_err(ConversionError::ParseError)?;
     Ok(package_json)
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn test_validate_name() {
+    let src = r#"{
+      "private": true,
+      "packageManager": "npm@10.0.0",
+      "dependencies": {
+        "react": "npm:react@18.0.0"
+      }
+    }"#;
+
+    let json: PackageJson = serde_json::from_str(src).unwrap();
+
+    let result = json.validate_name();
+
+    assert_eq!(result.is_err(), true);
+  }
+
+  #[test]
+  fn test_validate_private() {
+    let src = r#"{
+      "name": "test"
+    }"#;
+
+    let json: PackageJson = serde_json::from_str(src).unwrap();
+
+    let result = json.validate_private();
+
+    assert_eq!(result.is_err(), true);
+  }
+
+  #[test]
+  fn test_validate_package_manager() {
+    let src = r#"{
+      "name": "test",
+      "private": true
+    }"#;
+
+    let json: PackageJson = serde_json::from_str(src).unwrap();
+
+    let result = json.validate_package_manager();
+
+    assert_eq!(result.is_err(), true);
   }
 }

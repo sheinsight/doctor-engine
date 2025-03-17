@@ -106,3 +106,34 @@ impl TryFrom<String> for Version {
     Ok(Self::new(value, operator, protocol, version))
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn test_parse_operator() {
+    let operator = Version::parse_operator("^1.2.3").unwrap();
+    assert_eq!(operator, SemverOperator::Compatible);
+  }
+
+  #[test]
+  fn test_parse_protocol() {
+    let protocol = Version::parse_protocol("npm:react@18.0.0").unwrap();
+    assert_eq!(protocol, Protocol::Npm);
+  }
+
+  #[test]
+  fn test_parse_version() {
+    let version = Version::parse_version("npm:react@18.0.0").unwrap();
+    assert_eq!(version, "18.0.0");
+  }
+
+  #[test]
+  fn test_try_from() {
+    let version = Version::try_from("npm:react@18.0.0".to_string()).unwrap();
+    assert_eq!(version.operator, SemverOperator::Exact);
+    assert_eq!(version.protocol, Protocol::Npm);
+    assert_eq!(version.version, "18.0.0");
+  }
+}

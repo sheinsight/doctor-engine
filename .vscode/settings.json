@@ -1,8 +1,12 @@
 {
   "cSpell.words": [
     "docsrs",
+    "isnan",
     "miette",
+    "nonconstructor",
+    "Oxlintrc",
     "rsplit",
+    "rustc",
     "serde",
     "thiserror"
   ]
