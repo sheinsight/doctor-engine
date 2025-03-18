@@ -2,11 +2,11 @@ use oxc_linter::LintPlugins;
 use serde_json::{Map, Value, json};
 
 use crate::{
-  category_getter::CategoryGetter,
+  common::{
+    category_getter::CategoryGetter, react_config::ReactConfig, rule_getter::RuleGetter,
+    typescript_config::TypescriptConfig,
+  },
   inner::v2025_06_01::{react::ReactRuleGetter, typescript::TypescriptRuleGetter},
-  react_config::ReactConfig,
-  rule_getter::RuleGetter,
-  typescript_config::TypescriptConfig,
 };
 
 use super::{
@@ -63,11 +63,13 @@ impl CategoryGetter for Category20250601Inner {
       let typescript = TypescriptRuleGetter::default().with_config(typescript.clone());
       json!({
           "files": ["*.{ts,tsx,cts,mts}"],
+          "plugins": LintPlugins::TYPESCRIPT,
           "rules": typescript.get_def()
       })
     } else {
       json!({
         "files": ["*.{ts,tsx,cts,mts}"],
+        "plugins": LintPlugins::TYPESCRIPT,
       })
     }
   }
@@ -77,11 +79,13 @@ impl CategoryGetter for Category20250601Inner {
       let react = ReactRuleGetter::default().with_runtime(react.runtime.clone());
       json!({
           "files": ["*.{jsx,tsx}"],
+          "plugins": LintPlugins::REACT,
           "rules": react.get_def()
       })
     } else {
       json!({
         "files": ["*.{jsx,tsx}"],
+        "plugins": LintPlugins::REACT,
       })
     }
   }

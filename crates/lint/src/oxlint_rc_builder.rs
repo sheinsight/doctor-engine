@@ -3,12 +3,14 @@ use serde_json::{Map, Value, json};
 use std::path::PathBuf;
 
 use crate::{
-  category_getter::{Category, CategoryGetter},
-  error::LintError,
+  common::{
+    category_getter::{Category, CategoryGetter},
+    error::LintError,
+    react_config::ReactConfig,
+    typescript_config::TypescriptConfig,
+  },
   inner::v2025_06_01::category::Category20250601Inner,
   lint_mode::LintMode,
-  react_config::ReactConfig,
-  typescript_config::TypescriptConfig,
 };
 
 /**
@@ -35,7 +37,7 @@ use crate::{
  */
 
 #[derive(Debug, Clone)]
-pub struct ConfigBuilder {
+pub struct OxlintrcBuilder {
   mode: LintMode,
   //   envs: EnvironmentFlags,
   define: Map<String, Value>,
@@ -45,7 +47,7 @@ pub struct ConfigBuilder {
   category: Category,
 }
 
-impl Default for ConfigBuilder {
+impl Default for OxlintrcBuilder {
   fn default() -> Self {
     Self {
       //   envs: EnvironmentFlags::default(),
@@ -59,7 +61,7 @@ impl Default for ConfigBuilder {
   }
 }
 
-impl ConfigBuilder {
+impl OxlintrcBuilder {
   pub fn with_mode(mut self, mode: LintMode) -> Self {
     self.mode = mode;
     self
@@ -120,7 +122,7 @@ impl ConfigBuilder {
           // category.get_jest_override(),
         ]
     }))
-    .map_err(|e| LintError::FailedToBuildConfig(e.to_string()))
+    .map_err(|e| LintError::FailedToBuildOxlintrc(e.to_string()))
 
     // res.with_context(|| "Failed to build config")
   }

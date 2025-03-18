@@ -1,6 +1,6 @@
 use serde_json::{Map, Value, json};
 
-use crate::{
+use crate::common::{
   react_config::{ReactConfig, ReactRuntime},
   rule_getter::RuleGetter,
 };
@@ -43,30 +43,30 @@ impl RuleGetter for ReactRuleGetter {
   fn get_def(&self) -> Map<String, Value> {
     json!({
       // react
-        "react/jsx-key":2,
-      //   "react/jsx-no-duplicate-props":2,
-      //   "react/jsx-no-target-blank":[2,{
-      //     "enforceDynamicLinks": "always",
-      //     "warnOnSpreadAttributes":true,
-      //     "allow_referrer":true,
-      //     "links":true,
-      //     "forms":false
-      //   }],
-      //   "react/jsx-no-undef":2,
+        // "react/jsx-key":2,
+        "react/jsx-no-duplicate-props":2,
+        "react/jsx-no-target-blank":[2,{
+          "enforceDynamicLinks": "always",
+          "warnOnSpreadAttributes":true,
+          "allow_referrer":true,
+          "links":true,
+          "forms":false
+        }],
+        "react/jsx-no-undef":2,
       //   "react/jsx-props-no-spread-multi":2,
-      //   "react/no-children-prop":2,
-      //   "react/no-danger-with-children":2,
-      //   "react/no-direct-mutation-state":2,
-      //   "react/no-is-mounted":2,
-      //   "react/no-string-refs":2,
+        "react/no-children-prop":2,
+        "react/no-danger-with-children":2,
+        "react/no-direct-mutation-state":2,
+        "react/no-is-mounted":2,
+        "react/no-string-refs":2,
       //   "react/void-dom-elements-no-children":2,
       //   "react/button-has-type":2,
       //   "react/iframe-missing-sandbox":2,
-      //   "react/jsx-no-comment-textnodes":2,
+        "react/jsx-no-comment-textnodes":2,
       //   "react/no-array-index-key":1,
-      //   "react/no-render-return-value":2,
+        "react/no-render-return-value":2,
       //   "react/jsx-boolean-value":0,
-      //   "react/no-find-dom-node":1,
+        "react/no-find-dom-node":2,
       //   "react/no-unknown-property":1,
       //   "react/self-closing-comp":1,
       //   "react/no-danger":0,
@@ -74,9 +74,9 @@ impl RuleGetter for ReactRuleGetter {
       //   "react/jsx-no-useless-fragment":0,
       //   "react/prefer-es6-class":0,
       //   "react/style-prop-object":2,
-      //   "react/require-render-return": 2,
+        "react/require-render-return": 2,
       //   "react/checked-requires-onchange-or-readonly":2,
-      //   "react/no-unescaped-entities":2,
+        "react/no-unescaped-entities":2,
       //   "react/rules-of-hooks":2,
       //   "react/jsx-curly-brace-presence": [2, {
       //     "props": "ignore",
@@ -84,7 +84,7 @@ impl RuleGetter for ReactRuleGetter {
       //     "propElementValues": "always"
       //   }],
       //   "react/no-set-state":0,
-      //   "react/react-in-jsx-scope": if self.config.runtime == ReactRuntime::Automatic { 0 } else { 2 },
+        "react/react-in-jsx-scope": if self.config.runtime == ReactRuntime::Automatic { 0 } else { 2 },
       //   // react_perf
       //   "react_perf/jsx-no-jsx-as-prop":0,
       //   "react_perf/jsx-no-new-array-as-prop":0,

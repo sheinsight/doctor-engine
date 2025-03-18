@@ -1,6 +1,6 @@
 use serde_json::{Map, Value, json};
 
-use crate::rule_getter::RuleGetter;
+use crate::common::rule_getter::RuleGetter;
 
 pub struct OxcRuleGetter;
 

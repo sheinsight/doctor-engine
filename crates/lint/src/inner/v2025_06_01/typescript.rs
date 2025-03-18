@@ -1,7 +1,7 @@
 use serde_json::{Map, Value, json};
 
-use crate::rule_getter::RuleGetter;
-use crate::typescript_config::TypescriptConfig;
+use crate::common::rule_getter::RuleGetter;
+use crate::common::typescript_config::TypescriptConfig;
 pub struct TypescriptRuleGetter {
   config: TypescriptConfig,
 }

@@ -1,9 +1,14 @@
 {
+  "[toml]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
+  },
   "cSpell.words": [
     "docsrs",
     "isnan",
     "miette",
     "nonconstructor",
+    "oxlint",
     "Oxlintrc",
     "rsplit",
     "rustc",
