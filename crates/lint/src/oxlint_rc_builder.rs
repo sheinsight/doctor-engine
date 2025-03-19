@@ -6,11 +6,11 @@ use crate::{
   common::{
     category_getter::{Category, CategoryGetter},
     error::LintError,
+    lint_mode::LintMode,
     react_config::ReactConfig,
     typescript_config::TypescriptConfig,
   },
   inner::v2025_06_01::category::Category20250601Inner,
-  lint_mode::LintMode,
 };
 
 /**

@@ -3,7 +3,9 @@ use serde_json::{Map, Value, json};
 
 use crate::{
   common::{
-    category_getter::CategoryGetter, react_config::ReactConfig, rule_getter::RuleGetter,
+    category_getter::CategoryGetter,
+    react_config::{ReactConfig, ReactRuntime},
+    rule_getter::RuleGetter,
     typescript_config::TypescriptConfig,
   },
   inner::v2025_06_01::{react::ReactRuleGetter, typescript::TypescriptRuleGetter},
@@ -23,8 +25,8 @@ pub struct Category20250601Inner {
 impl Default for Category20250601Inner {
   fn default() -> Self {
     Self {
-      react: None,
-      typescript: None,
+      react: Some(ReactConfig::default().with_runtime(ReactRuntime::Automatic)),
+      typescript: Some(TypescriptConfig::default()),
     }
   }
 }

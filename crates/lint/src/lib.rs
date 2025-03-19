@@ -9,7 +9,6 @@ use oxc_parser::Parser;
 use oxc_semantic::SemanticBuilder;
 pub mod common;
 pub mod inner;
-pub mod lint_mode;
 pub mod oxlint_rc_builder;
 
 pub struct Linter {
@@ -201,9 +200,7 @@ mod tests {
   use walk_parallel::{WalkParallel, walk_patterns::WalkPatterns};
 
   use crate::{
-    common::{
-      category_getter::Category, react_config::ReactConfig, typescript_config::TypescriptConfig,
-    },
+    common::{category_getter::Category, lint_mode::LintMode},
     inner::v2025_06_01::category::Category20250601Inner,
     oxlint_rc_builder::OxlintrcBuilder,
   };
@@ -212,14 +209,11 @@ mod tests {
 
   #[test]
   fn test_lint() {
-    let category = Category::V20250601Inner(
-      Category20250601Inner::default()
-        .with_react(ReactConfig::default())
-        .with_typescript(TypescriptConfig::default()),
-    );
+    let category = Category::V20250601Inner(Category20250601Inner::default());
 
     let rc = OxlintrcBuilder::default()
       .with_category(category)
+      .with_mode(LintMode::Production)
       .build()
       .unwrap();
 
