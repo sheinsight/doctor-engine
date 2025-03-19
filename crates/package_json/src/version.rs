@@ -109,7 +109,8 @@ impl TryFrom<String> for Version {
           })?
           .to_string(),
       ),
-      Protocol::Git | Protocol::File | Protocol::Http | Protocol::Https | Protocol::None => None,
+      Protocol::Git | Protocol::File | Protocol::Http | Protocol::Https => None,
+      Protocol::None => Some(value.clone()),
     };
 
     Ok(Self::new(value, operator, protocol, version))
