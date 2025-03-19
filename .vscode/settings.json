@@ -4,15 +4,25 @@
     "editor.defaultFormatter": "tamasfe.even-better-toml"
   },
   "cSpell.words": [
+    "applescript",
+    "atomtest",
+    "bitflags",
     "docsrs",
+    "embertest",
     "isnan",
+    "jquery",
     "miette",
+    "nashorn",
     "nonconstructor",
     "oxlint",
     "Oxlintrc",
+    "phantomjs",
+    "prototypejs",
     "rsplit",
     "rustc",
     "serde",
+    "serviceworker",
+    "shelljs",
     "thiserror"
   ]
 }
