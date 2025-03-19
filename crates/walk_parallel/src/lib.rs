@@ -1,10 +1,13 @@
+use error::WalkError;
 use rayon::prelude::*;
 use std::{
   error::Error,
   path::{Path, PathBuf},
+  sync::{Arc, Mutex},
 };
 use walk_patterns::WalkPatterns;
 use wax::Glob;
+pub mod error;
 pub mod walk_patterns;
 
 pub const JS_FILE_EXTENSIONS: &[&str] = &["js", "jsx", "cjs", "mjs"];
@@ -31,21 +34,22 @@ impl<'a> WalkParallel<'a> {
     self
   }
 
-  pub fn walk<F, R>(&self, f: F) -> Result<Vec<R>, Box<dyn Error>>
+  pub fn walk<F, R>(&self, f: F) -> Result<Vec<Result<R, WalkError>>, WalkError>
   where
-    F: Fn(PathBuf) -> Option<R> + Send + Sync,
+    F: Fn(PathBuf) -> Result<R, WalkError> + Send + Sync,
     R: Send + Sync,
   {
     let glob = Glob::new(self.patterns.walk)?;
     let x = self.patterns.ignore.into_iter().copied();
     let entries = glob.walk(self.cwd).not(x)?;
+
     let res = entries
       .par_bridge()
       .filter_map(Result::ok)
       .map(|entry| entry.path().to_owned())
       .filter(|path| path.is_file())
-      .filter_map(f)
-      .collect::<Vec<R>>();
+      .map(f)
+      .collect::<Vec<Result<R, WalkError>>>();
 
     Ok(res)
   }

@@ -9,6 +9,7 @@ rust-version.workspace = true
 version                = "0.1.0"
 
 [dependencies]
-rayon = { workspace = true }
-serde = { workspace = true }
-wax   = { workspace = true }
+rayon     = { workspace = true }
+serde     = { workspace = true }
+thiserror = { workspace = true }
+wax       = { workspace = true }
