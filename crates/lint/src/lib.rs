@@ -200,7 +200,7 @@ mod tests {
   use walk_parallel::{WalkParallel, walk_patterns::WalkPatterns};
 
   use crate::{
-    common::{category_getter::Category, lint_mode::LintMode},
+    common::{category_getter::Category, environments::EnvironmentFlags, lint_mode::LintMode},
     inner::v2025_06_01::category::Category20250601Inner,
     oxlint_rc_builder::OxlintrcBuilder,
   };
@@ -214,6 +214,7 @@ mod tests {
     let rc = OxlintrcBuilder::default()
       .with_category(category)
       .with_mode(LintMode::Production)
+      .with_envs(EnvironmentFlags::default())
       .build()
       .unwrap();
 
@@ -224,6 +225,8 @@ mod tests {
     let linter = Linter::from(rc).with_show_report(true);
 
     let cwd = current_dir().unwrap().join("examples");
+
+    let cwd = "/Users/10015448/Git/csp-new";
 
     let file_diagnostics = WalkParallel::new(&cwd)
       .with_patterns(WalkPatterns::default())

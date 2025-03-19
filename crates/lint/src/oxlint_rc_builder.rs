@@ -5,6 +5,7 @@ use std::path::PathBuf;
 use crate::{
   common::{
     category_getter::{Category, CategoryGetter},
+    environments::EnvironmentFlags,
     error::LintError,
     lint_mode::LintMode,
     react_config::ReactConfig,
@@ -39,7 +40,7 @@ use crate::{
 #[derive(Debug, Clone)]
 pub struct OxlintrcBuilder {
   mode: LintMode,
-  //   envs: EnvironmentFlags,
+  envs: EnvironmentFlags,
   define: Map<String, Value>,
   react: Option<ReactConfig>,
   ts: Option<TypescriptConfig>,
@@ -50,7 +51,7 @@ pub struct OxlintrcBuilder {
 impl Default for OxlintrcBuilder {
   fn default() -> Self {
     Self {
-      //   envs: EnvironmentFlags::default(),
+      envs: EnvironmentFlags::default(),
       mode: LintMode::Development,
       define: Map::new(),
       category: Category::V20250601Inner(Category20250601Inner::default()),
@@ -82,10 +83,10 @@ impl OxlintrcBuilder {
     self
   }
 
-  //   pub fn with_envs(mut self, envs: EnvironmentFlags) -> Self {
-  //     self.envs = envs;
-  //     self
-  //   }
+  pub fn with_envs(mut self, envs: EnvironmentFlags) -> Self {
+    self.envs = envs;
+    self
+  }
 
   pub fn with_package_json(mut self, package_json: PathBuf) -> Self {
     self.package_json = Some(package_json);
@@ -112,7 +113,7 @@ impl OxlintrcBuilder {
 
     serde_json::from_value::<Oxlintrc>(json!({
         "plugins": category.get_def_plugins(),
-        // "env": self.envs,
+        "env": self.envs,
         "globals": self.define,
         "settings": {},
         "rules": category.get_def(),
@@ -123,7 +124,5 @@ impl OxlintrcBuilder {
         ]
     }))
     .map_err(|e| LintError::FailedToBuildOxlintrc(e.to_string()))
-
-    // res.with_context(|| "Failed to build config")
   }
 }
