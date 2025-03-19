@@ -1,5 +1,5 @@
 [workspace]
-members  = ["crates/lint", "crates/package_json", "crates/walk_parallel"]
+members  = ["crates/lint", "crates/npmrc", "crates/package_json", "crates/walk_parallel"]
 resolver = "3"
 
 
@@ -13,6 +13,7 @@ rust-version = "1.85.0"
 
 [workspace.dependencies]
 bitflags     = "2.8.0"
+config       = "0.14.0"
 jsonpath_lib = "0.3.0"
 miette       = { version = "7.5.0", features = ["derive", "fancy"] }
 rayon        = "1.10.0"
