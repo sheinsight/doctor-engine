@@ -49,11 +49,16 @@ pub struct Version {
   pub value: String,
   pub operator: SemverOperator,
   pub protocol: Protocol,
-  pub version: String,
+  pub version: Option<String>,
 }
 
 impl Version {
-  pub fn new(value: String, operator: SemverOperator, protocol: Protocol, version: String) -> Self {
+  pub fn new(
+    value: String,
+    operator: SemverOperator,
+    protocol: Protocol,
+    version: Option<String>,
+  ) -> Self {
     Self {
       value,
       operator,
@@ -93,17 +98,20 @@ impl TryFrom<String> for Version {
   fn try_from(value: String) -> Result<Self, Self::Error> {
     let protocol = Self::parse_protocol(&value)?;
     let operator = Self::parse_operator(&value)?;
-    let version = if protocol == Protocol::Npm {
-      value
-        .rsplit("@")
-        .next()
-        .ok_or(Error::NpmAliasParserError {
-          version: value.clone(),
-        })?
-        .to_string()
-    } else {
-      value.clone()
+
+    let version = match protocol {
+      Protocol::Npm => Some(
+        value
+          .rsplit("@")
+          .next()
+          .ok_or(Error::NpmAliasParserError {
+            version: value.clone(),
+          })?
+          .to_string(),
+      ),
+      Protocol::Git | Protocol::File | Protocol::Http | Protocol::Https | Protocol::None => None,
     };
+
     Ok(Self::new(value, operator, protocol, version))
   }
 }
@@ -129,6 +137,6 @@ mod tests {
     let version = Version::try_from("npm:react@18.0.0".to_string()).unwrap();
     assert_eq!(version.operator, SemverOperator::Exact);
     assert_eq!(version.protocol, Protocol::Npm);
-    assert_eq!(version.version, "18.0.0");
+    assert_eq!(version.version, Some("18.0.0".to_string()));
   }
 }
