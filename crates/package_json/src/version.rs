@@ -86,11 +86,6 @@ impl Version {
       _ => Ok(Protocol::None),
     }
   }
-
-  fn parse_version(version: &str) -> Result<String, Error> {
-    let version = version.rsplit("@").next().unwrap_or(version);
-    Ok(version.to_string())
-  }
 }
 
 impl TryFrom<String> for Version {
@@ -99,7 +94,13 @@ impl TryFrom<String> for Version {
     let protocol = Self::parse_protocol(&value)?;
     let operator = Self::parse_operator(&value)?;
     let version = if protocol == Protocol::Npm {
-      Self::parse_version(&value)?
+      value
+        .rsplit("@")
+        .next()
+        .ok_or(Error::NpmAliasParserError {
+          version: value.clone(),
+        })?
+        .to_string()
     } else {
       value.clone()
     };
@@ -121,12 +122,6 @@ mod tests {
   fn test_parse_protocol() {
     let protocol = Version::parse_protocol("npm:react@18.0.0").unwrap();
     assert_eq!(protocol, Protocol::Npm);
-  }
-
-  #[test]
-  fn test_parse_version() {
-    let version = Version::parse_version("npm:react@18.0.0").unwrap();
-    assert_eq!(version, "18.0.0");
   }
 
   #[test]
