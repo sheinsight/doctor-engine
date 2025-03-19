@@ -1,10 +1,6 @@
 use error::WalkError;
 use rayon::prelude::*;
-use std::{
-  error::Error,
-  path::{Path, PathBuf},
-  sync::{Arc, Mutex},
-};
+use std::path::{Path, PathBuf};
 use walk_patterns::WalkPatterns;
 use wax::Glob;
 pub mod error;
