@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fs::File, io::BufReader, path::PathBuf};
+use std::{collections::HashMap, fs, path::Path};
 
 use serde::{Deserialize, Serialize};
 
@@ -84,11 +84,10 @@ impl PackageJson {
     Self::get_deps(&self.dev_dependencies)
   }
 
-  pub fn new(cwd: &str) -> Result<Self, Error> {
-    let path = PathBuf::from(cwd).join("package.json");
-    let file = File::open(path)?;
-    let reader = BufReader::new(file);
-    let package_json: PackageJson = serde_json::from_reader(reader)?;
+  pub fn new<P: AsRef<Path>>(path: P) -> Result<Self, Error> {
+    let path = path.as_ref();
+    let content = fs::read_to_string(path)?;
+    let package_json: PackageJson = serde_json::from_str(&content)?;
     Ok(package_json)
   }
 }
