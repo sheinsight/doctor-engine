@@ -1,7 +1,6 @@
 use std::{collections::HashMap, fs::File, io::BufReader, path::PathBuf};
 
 use serde::{Deserialize, Serialize};
-use thiserror::Error;
 
 use crate::{error::Error, version::Version};
 
@@ -39,11 +38,21 @@ impl PackageJson {
     Ok(self)
   }
 
-  pub fn validate_private(self) -> Result<Self, Error> {
+  pub fn validate_private(self, expect_value: bool) -> Result<Self, Error> {
     if self.private.is_none() {
       return Err(Error::NoPrivateError);
     }
-    Ok(self)
+    if let Some(private) = self.private {
+      if private != expect_value {
+        return Err(Error::NoMatchedPrivateError {
+          expect_value,
+          actual_value: private,
+        });
+      }
+      Ok(self)
+    } else {
+      return Err(Error::NoPrivateError);
+    }
   }
 
   pub fn validate_package_manager(self) -> Result<Self, Error> {
@@ -75,22 +84,13 @@ impl PackageJson {
     Self::get_deps(&self.dev_dependencies)
   }
 
-  pub fn new(cwd: &str) -> Result<Self, ConversionError> {
+  pub fn new(cwd: &str) -> Result<Self, Error> {
     let path = PathBuf::from(cwd).join("package.json");
     let file = File::open(path)?;
     let reader = BufReader::new(file);
     let package_json: PackageJson = serde_json::from_reader(reader)?;
     Ok(package_json)
   }
-}
-
-#[derive(Debug, Error)]
-pub enum ConversionError {
-  #[error("IO error: {0}")]
-  IoError(#[from] std::io::Error),
-
-  #[error("Parse error: {0}")]
-  ParseError(#[from] serde_json::Error),
 }
 
 #[cfg(test)]
@@ -111,7 +111,7 @@ mod tests {
 
     let result = json.validate_name();
 
-    assert_eq!(result.is_err(), true);
+    assert!(result.is_err());
   }
 
   #[test]
@@ -122,9 +122,23 @@ mod tests {
 
     let json: PackageJson = serde_json::from_str(src).unwrap();
 
-    let result = json.validate_private();
+    let result = json.validate_private(true);
 
-    assert_eq!(result.is_err(), true);
+    assert!(result.is_err());
+  }
+
+  #[test]
+  fn test_validate_private_with_expect_value() {
+    let src = r#"{
+      "name": "test",
+      "private": true
+    }"#;
+
+    let json: PackageJson = serde_json::from_str(src).unwrap();
+
+    let result = json.validate_private(true);
+
+    assert!(result.is_ok());
   }
 
   #[test]
@@ -138,6 +152,6 @@ mod tests {
 
     let result = json.validate_package_manager();
 
-    assert_eq!(result.is_err(), true);
+    assert!(result.is_err());
   }
 }
