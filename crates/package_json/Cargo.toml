@@ -9,15 +9,15 @@ authors.workspace      = true
 edition.workspace      = true
 homepage.workspace     = true
 license.workspace      = true
-name                   = "package_json"
+name                   = "doctor_engine_package_json"
 repository.workspace   = true
 rust-version.workspace = true
 version                = "0.1.0"
 
 [dependencies]
-serde      = { workspace = true, features = ["derive"] }
-serde_json = { workspace = true }
 jsonpath_lib = { workspace = true }
-thiserror  = { workspace = true }
-tokio = { workspace = true }
-miette = { workspace = true }
+miette       = { workspace = true }
+serde        = { workspace = true, features = ["derive"] }
+serde_json   = { workspace = true }
+thiserror    = { workspace = true }
+tokio        = { workspace = true }

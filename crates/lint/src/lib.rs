@@ -195,7 +195,7 @@ impl Linter {
 
 #[cfg(test)]
 mod tests {
-  use std::{collections::HashMap, env::current_dir, error::Error, time::Instant};
+  use std::{collections::HashMap, error::Error, time::Instant};
 
   use walk_parallel::{WalkParallel, error::WalkError, walk_patterns::WalkPatterns};
 
@@ -233,13 +233,13 @@ mod tests {
 
     // 3. 文件遍历和 lint 执行
     let walk_start = Instant::now();
-    let cwd = "/Users/10015448/Git/csp-new";
+    let cwd = "/Users/10015448/Git/gtms";
 
     let file_diagnostics = WalkParallel::new(&cwd)
       .with_patterns(WalkPatterns::default())
       .walk(|path| {
         linter.lint(&path).map_err(|e| WalkError::HandlerError {
-          path: path.to_string_lossy().to_string(),
+          path: path.clone(),
           error: e.to_string(),
         })
       })?;
@@ -253,12 +253,11 @@ mod tests {
     for file_diagnostic in file_diagnostics {
       file_diagnostic?.diagnostics.iter().for_each(|diag| {
         let name = match (diag.code.scope.as_ref(), diag.code.number.as_ref()) {
-          (None, None) => "".to_string(),
+          (None, None) => String::new(),
           (None, Some(number)) => number.to_string(),
           (Some(scope), None) => scope.to_string(),
-          (Some(scope), Some(number)) => format!("{}/{}", scope, number).to_string(),
+          (Some(scope), Some(number)) => format!("{scope}/{number}"),
         };
-
         map.entry(name).and_modify(|count| *count += 1).or_insert(1);
       });
     }
