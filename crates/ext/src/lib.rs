@@ -15,3 +15,8 @@ pub trait MultiFrom: Sized {
   fn from_file<P: AsRef<Path>>(path: P) -> Result<Self, Self::Error>;
   fn from_cwd<P: AsRef<Path>>(cwd: P) -> Result<Self, Self::Error>;
 }
+
+pub trait Validator {
+  type Error;
+  fn validate(&self) -> Result<(), Self::Error>;
+}

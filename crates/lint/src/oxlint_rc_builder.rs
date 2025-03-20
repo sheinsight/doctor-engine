@@ -120,7 +120,7 @@ impl OxlintrcBuilder {
         "overrides":[
           category.get_ts_override(),
           category.get_react_override(),
-          // category.get_jest_override(),
+          category.get_jest_override(),
         ]
     }))
     .map_err(|e| LintError::FailedToBuildOxlintrc(e.to_string()))

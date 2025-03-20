@@ -4,11 +4,14 @@ use serde_json::{Map, Value, json};
 use crate::{
   common::{
     category_getter::CategoryGetter,
+    environments::EnvironmentFlags,
     react_config::{ReactConfig, ReactRuntime},
     rule_getter::RuleGetter,
     typescript_config::TypescriptConfig,
   },
-  inner::v2025_06_01::{react::ReactRuleGetter, typescript::TypescriptRuleGetter},
+  inner::v2025_06_01::{
+    jest::JestRuleGetter, react::ReactRuleGetter, typescript::TypescriptRuleGetter,
+  },
 };
 
 use super::{
@@ -93,16 +96,15 @@ impl CategoryGetter for Category20250601Inner {
   }
 
   fn get_jest_override(&self) -> Value {
-    // json!({
-    //     "files": [
-    //         "*.{test,spec}.{js,jsx,ts,tsx}",
-    //         "**/{test,tests,spec,specs}/**",
-    //     ],
-    //     "plugins": LintPlugins::JEST,
-    //     "env": EnvironmentFlags::Jest | EnvironmentFlags::Es2024,
-    //     "rules": JestRuleGetter::default().get_def()
-    // })
-    json!({})
+    json!({
+        "files": [
+            "*.{test,spec}.{js,jsx,ts,tsx}",
+            "**/{test,tests,spec,specs}/**",
+        ],
+        "plugins": LintPlugins::JEST,
+        "env": EnvironmentFlags::Jest | EnvironmentFlags::Es2024,
+        "rules": JestRuleGetter::default().get_def()
+    })
   }
 
   fn get_def_plugins(&self) -> oxc_linter::LintPlugins {

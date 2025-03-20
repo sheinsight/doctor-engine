@@ -51,37 +51,6 @@ impl MultiFrom for PackageJson {
 }
 
 impl PackageJson {
-  pub fn validate_name(self) -> Result<Self, Error> {
-    if self.name.is_none() {
-      return Err(Error::NoNameError);
-    }
-    Ok(self)
-  }
-
-  pub fn validate_private(self, expect_value: bool) -> Result<Self, Error> {
-    if self.private.is_none() {
-      return Err(Error::NoPrivateError);
-    }
-    if let Some(private) = self.private {
-      if private != expect_value {
-        return Err(Error::NoMatchedPrivateError {
-          expect_value,
-          actual_value: private,
-        });
-      }
-      Ok(self)
-    } else {
-      return Err(Error::NoPrivateError);
-    }
-  }
-
-  pub fn validate_package_manager(self) -> Result<Self, Error> {
-    if self.package_manager.is_none() {
-      return Err(Error::NoPackageManagerError);
-    }
-    Ok(self)
-  }
-
   fn get_deps(deps: &Option<HashMap<String, String>>) -> Result<HashMap<String, Version>, Error> {
     match deps {
       Some(deps) => {
@@ -102,68 +71,5 @@ impl PackageJson {
 
   pub fn get_dev_dependencies(&self) -> Result<HashMap<String, Version>, Error> {
     Self::get_deps(&self.dev_dependencies)
-  }
-}
-
-#[cfg(test)]
-mod tests {
-  use super::*;
-
-  #[test]
-  fn test_validate_name() {
-    let src = r#"{
-      "private": true,
-      "packageManager": "npm@10.0.0",
-      "dependencies": {
-        "react": "npm:react@18.0.0"
-      }
-    }"#;
-
-    let json: PackageJson = serde_json::from_str(src).unwrap();
-
-    let result = json.validate_name();
-
-    assert!(result.is_err());
-  }
-
-  #[test]
-  fn test_validate_private() {
-    let src = r#"{
-      "name": "test"
-    }"#;
-
-    let json: PackageJson = serde_json::from_str(src).unwrap();
-
-    let result = json.validate_private(true);
-
-    assert!(result.is_err());
-  }
-
-  #[test]
-  fn test_validate_private_with_expect_value() {
-    let src = r#"{
-      "name": "test",
-      "private": true
-    }"#;
-
-    let json: PackageJson = serde_json::from_str(src).unwrap();
-
-    let result = json.validate_private(true);
-
-    assert!(result.is_ok());
-  }
-
-  #[test]
-  fn test_validate_package_manager() {
-    let src = r#"{
-      "name": "test",
-      "private": true
-    }"#;
-
-    let json: PackageJson = serde_json::from_str(src).unwrap();
-
-    let result = json.validate_package_manager();
-
-    assert!(result.is_err());
   }
 }

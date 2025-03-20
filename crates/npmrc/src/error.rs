@@ -15,5 +15,5 @@ pub enum NpmrcError {
   RegistryValueIsEmpty,
 
   #[error("Registry value is not expected {0} , actual {1}")]
-  RegistryValueIsNotExpected(String, String),
+  RegistryValueMatchedFailed(String, String),
 }
