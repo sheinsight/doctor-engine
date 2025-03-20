@@ -54,4 +54,24 @@ mod tests {
       assert!(matches!(err, err::NodeError::NodeVersionFileNotFound(_)));
     }
   }
+
+  #[test]
+  fn test_validate_node_version_file_empty() {
+    let node = Node::new("./examples/empty_file");
+    let result = node.validate_node_version();
+
+    assert!(result.is_err());
+
+    if let Err(err) = result {
+      assert!(matches!(err, err::NodeError::NodeVersionFileIsEmpty(_)));
+    }
+  }
+
+  #[test]
+  fn test_validate_node_version_file_success() {
+    let node = Node::new("./examples/success");
+    let result = node.validate_node_version();
+
+    assert!(result.is_ok());
+  }
 }
