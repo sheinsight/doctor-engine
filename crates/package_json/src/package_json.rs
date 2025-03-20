@@ -1,6 +1,7 @@
 use std::{collections::HashMap, fs::File, io::BufReader, path::PathBuf};
 
 use serde::{Deserialize, Serialize};
+use thiserror::Error;
 
 use crate::{error::Error, version::Version};
 
@@ -73,24 +74,23 @@ impl PackageJson {
   pub fn get_dev_dependencies(&self) -> Result<HashMap<String, Version>, Error> {
     Self::get_deps(&self.dev_dependencies)
   }
-}
 
-#[derive(Debug)]
-pub enum ConversionError {
-  IoError(std::io::Error),
-  ParseError(serde_json::Error),
-}
-
-impl TryFrom<PathBuf> for PackageJson {
-  type Error = ConversionError;
-
-  fn try_from(path: PathBuf) -> Result<Self, Self::Error> {
-    let file = File::open(path).map_err(ConversionError::IoError)?;
+  pub fn new(cwd: &str) -> Result<Self, ConversionError> {
+    let path = PathBuf::from(cwd).join("package.json");
+    let file = File::open(path)?;
     let reader = BufReader::new(file);
-    let package_json: PackageJson =
-      serde_json::from_reader(reader).map_err(ConversionError::ParseError)?;
+    let package_json: PackageJson = serde_json::from_reader(reader)?;
     Ok(package_json)
   }
+}
+
+#[derive(Debug, Error)]
+pub enum ConversionError {
+  #[error("IO error: {0}")]
+  IoError(#[from] std::io::Error),
+
+  #[error("Parse error: {0}")]
+  ParseError(#[from] serde_json::Error),
 }
 
 #[cfg(test)]
