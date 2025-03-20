@@ -1,10 +1,11 @@
-use std::{collections::HashMap, path::PathBuf};
+use std::collections::HashMap;
 
+use doctor_ext::MultiFrom;
 use doctor_package_json::package_json::PackageJson;
 
 #[test]
 fn test_package_json() {
-  let package_json = PackageJson::new(PathBuf::from("./tests/fixtures/package_1.json")).unwrap();
+  let package_json = PackageJson::from_file("./tests/fixtures/package_1.json").unwrap();
   assert_eq!(package_json.name, Some("test".to_string()));
   assert_eq!(package_json.version, Some("1.0.0".to_string()));
   assert_eq!(package_json.private, Some(true));

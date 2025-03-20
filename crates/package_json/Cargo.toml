@@ -15,6 +15,7 @@ rust-version.workspace = true
 version                = "0.1.0"
 
 [dependencies]
+doctor_ext   = { path = "../ext" }
 jsonpath_lib = { workspace = true }
 miette       = { workspace = true }
 serde        = { workspace = true, features = ["derive"] }

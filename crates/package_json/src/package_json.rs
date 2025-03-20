@@ -1,8 +1,11 @@
 use std::{collections::HashMap, fs, path::Path};
 
+use doctor_ext::MultiFrom;
 use serde::{Deserialize, Serialize};
 
 use crate::{error::Error, version::Version};
+
+const FILE_NAME: &str = "package.json";
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PackageJson {
@@ -28,6 +31,23 @@ pub struct PackageJson {
   pub peer_dependencies: Option<HashMap<String, String>>,
   #[serde(rename = "optionalDependencies")]
   pub optional_dependencies: Option<HashMap<String, String>>,
+}
+
+impl MultiFrom for PackageJson {
+  type Error = Error;
+
+  fn from_file<P: AsRef<Path>>(path: P) -> Result<Self, Self::Error> {
+    let content = fs::read_to_string(path)?;
+    let package_json: PackageJson = serde_json::from_str(&content)?;
+    Ok(package_json)
+  }
+
+  fn from_cwd<P: AsRef<Path>>(cwd: P) -> Result<Self, Self::Error> {
+    let path = cwd.as_ref().join(FILE_NAME);
+    let content = fs::read_to_string(path)?;
+    let package_json: PackageJson = serde_json::from_str(&content)?;
+    Ok(package_json)
+  }
 }
 
 impl PackageJson {
@@ -82,13 +102,6 @@ impl PackageJson {
 
   pub fn get_dev_dependencies(&self) -> Result<HashMap<String, Version>, Error> {
     Self::get_deps(&self.dev_dependencies)
-  }
-
-  pub fn new<P: AsRef<Path>>(path: P) -> Result<Self, Error> {
-    let path = path.as_ref();
-    let content = fs::read_to_string(path)?;
-    let package_json: PackageJson = serde_json::from_str(&content)?;
-    Ok(package_json)
   }
 }
 

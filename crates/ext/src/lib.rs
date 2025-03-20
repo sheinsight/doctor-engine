@@ -9,3 +9,9 @@ impl PathExt for Path {
     self.to_string_lossy().to_string()
   }
 }
+
+pub trait MultiFrom: Sized {
+  type Error;
+  fn from_file<P: AsRef<Path>>(path: P) -> Result<Self, Self::Error>;
+  fn from_cwd<P: AsRef<Path>>(cwd: P) -> Result<Self, Self::Error>;
+}
