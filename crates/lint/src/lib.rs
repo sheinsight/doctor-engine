@@ -197,7 +197,7 @@ impl Linter {
 mod tests {
   use std::{collections::HashMap, error::Error, time::Instant};
 
-  use walk_parallel::{WalkParallel, error::WalkError, walk_patterns::WalkPatterns};
+  use doctor_walk_parallel::{WalkParallel, error::WalkError, walk_patterns::WalkPatterns};
 
   use crate::{
     common::{category_getter::Category, environments::EnvironmentFlags, lint_mode::LintMode},
