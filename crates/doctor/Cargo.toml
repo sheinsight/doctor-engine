@@ -9,8 +9,9 @@ rust-version.workspace = true
 version                = "0.1.0"
 
 [dependencies]
-doctor-ext          = { path = "../ext" }
-doctor-lint         = { path = "../lint" }
-doctor-node         = { path = "../node" }
-doctor-npmrc        = { path = "../npmrc" }
-doctor-package_json = { path = "../package_json" }
+doctor_ext           = { path = "../ext" }
+doctor_lint          = { path = "../lint" }
+doctor_node          = { path = "../node" }
+doctor_npmrc         = { path = "../npmrc" }
+doctor_package_json  = { path = "../package_json" }
+doctor_walk_parallel = { path = "../walk_parallel" }
