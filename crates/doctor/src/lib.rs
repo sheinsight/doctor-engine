@@ -6,16 +6,10 @@ pub mod lint {
   pub use doctor_lint::*;
 }
 
-pub mod node {
-  pub use doctor_node::*;
-}
-
-pub mod npmrc {
-  pub use doctor_npmrc::*;
-}
-
-pub mod package_json {
-  pub use doctor_package_json::*;
+pub mod validator {
+  pub use doctor_node::validator::NodeVersionValidator;
+  pub use doctor_npmrc::validator::NpmrcValidator;
+  pub use doctor_package_json::validator::PackageJsonValidator;
 }
 
 pub mod walk_parallel {
