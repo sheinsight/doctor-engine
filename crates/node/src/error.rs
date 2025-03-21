@@ -1,7 +1,7 @@
 use thiserror::Error;
 
 #[derive(Error, Debug)]
-pub enum NodeVersionError {
+pub enum NodeVersionValidatorError {
   #[error("IO error: {0}")]
   IoError(#[from] std::io::Error),
 

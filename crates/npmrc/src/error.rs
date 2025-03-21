@@ -1,7 +1,7 @@
 use thiserror::Error;
 
 #[derive(Error, Debug)]
-pub enum NpmrcError {
+pub enum NpmrcValidatorError {
   #[error("Npmrc file not found {0}")]
   NpmrcFileNotFound(String),
 

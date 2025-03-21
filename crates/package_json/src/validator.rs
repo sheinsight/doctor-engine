@@ -2,7 +2,7 @@ use std::path::{Path, PathBuf};
 
 use doctor_ext::{MultiFrom, PathExt, Validator};
 
-use crate::{error::Error, package_json::PackageJson};
+use crate::{error::PackageJsonValidatorError, package_json::PackageJson};
 
 const FILE_NAME: &str = "package.json";
 
@@ -99,7 +99,7 @@ impl PackageJsonValidator {
 }
 
 impl Validator for PackageJsonValidator {
-  type Error = Error;
+  type Error = PackageJsonValidatorError;
 
   /// Validate package.json
   ///
@@ -117,13 +117,15 @@ impl Validator for PackageJsonValidator {
   fn validate(&self) -> Result<(), Self::Error> {
     if self.with_validate_name {
       if self.package_json.name.is_none() {
-        return Err(Error::NoNameError(self.file_path.to_string_owned()));
+        return Err(PackageJsonValidatorError::NoNameError(
+          self.file_path.to_string_owned(),
+        ));
       }
     }
 
     if self.with_validate_package_manager {
       if self.package_json.package_manager.is_none() {
-        return Err(Error::NoPackageManagerError(
+        return Err(PackageJsonValidatorError::NoPackageManagerError(
           self.file_path.to_string_owned(),
         ));
       }
@@ -132,14 +134,16 @@ impl Validator for PackageJsonValidator {
     if let Some(expect_value) = self.with_validate_private_value {
       if let Some(actual_value) = self.package_json.private {
         if actual_value != expect_value {
-          return Err(Error::NoMatchedPrivateError {
+          return Err(PackageJsonValidatorError::NoMatchedPrivateError {
             file_path: self.file_path.to_string_owned(),
             expect_value,
             actual_value,
           });
         }
       } else {
-        return Err(Error::NoPrivateError(self.file_path.to_string_owned()));
+        return Err(PackageJsonValidatorError::NoPrivateError(
+          self.file_path.to_string_owned(),
+        ));
       }
     }
 
@@ -148,7 +152,7 @@ impl Validator for PackageJsonValidator {
 }
 
 impl MultiFrom for PackageJsonValidator {
-  type Error = Error;
+  type Error = PackageJsonValidatorError;
 
   /// Create PackageJsonValidator from file
   ///

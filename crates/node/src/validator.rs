@@ -5,7 +5,7 @@ use std::{
 
 use doctor_ext::{MultiFrom, PathExt, Validator};
 
-use crate::error::NodeVersionError;
+use crate::error::NodeVersionValidatorError;
 
 const FILE_NAME: &str = ".node-version";
 
@@ -29,7 +29,7 @@ pub struct NodeVersionValidator {
 impl NodeVersionValidator {}
 
 impl Validator for NodeVersionValidator {
-  type Error = NodeVersionError;
+  type Error = NodeVersionValidatorError;
 
   /// Validate node version
   ///
@@ -45,7 +45,7 @@ impl Validator for NodeVersionValidator {
   /// ```
   fn validate(&self) -> Result<(), Self::Error> {
     if !self.file_path.exists() {
-      return Err(NodeVersionError::NodeVersionFileNotFound(
+      return Err(NodeVersionValidatorError::NodeVersionFileNotFound(
         self.file_path.to_string_owned(),
       ));
     }
@@ -55,7 +55,7 @@ impl Validator for NodeVersionValidator {
     let version = version.trim();
 
     if version.is_empty() {
-      return Err(NodeVersionError::NodeVersionFileIsEmpty(
+      return Err(NodeVersionValidatorError::NodeVersionFileIsEmpty(
         version.to_string(),
       ));
     }
@@ -65,7 +65,7 @@ impl Validator for NodeVersionValidator {
 }
 
 impl MultiFrom for NodeVersionValidator {
-  type Error = NodeVersionError;
+  type Error = NodeVersionValidatorError;
 
   /// Create NodeVersionValidator from current working directory
   ///
@@ -119,7 +119,10 @@ mod tests {
     assert!(result.is_err());
 
     if let Err(err) = result {
-      assert!(matches!(err, NodeVersionError::NodeVersionFileNotFound(_)));
+      assert!(matches!(
+        err,
+        NodeVersionValidatorError::NodeVersionFileNotFound(_)
+      ));
     }
   }
 
@@ -131,7 +134,10 @@ mod tests {
     assert!(result.is_err());
 
     if let Err(err) = result {
-      assert!(matches!(err, NodeVersionError::NodeVersionFileIsEmpty(_)));
+      assert!(matches!(
+        err,
+        NodeVersionValidatorError::NodeVersionFileIsEmpty(_)
+      ));
     }
   }
 

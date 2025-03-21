@@ -1,4 +1,4 @@
-use crate::error::Error;
+use crate::error::PackageJsonValidatorError;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SemverOperator {
@@ -67,7 +67,7 @@ impl Version {
     }
   }
 
-  fn parse_operator(version: &str) -> Result<SemverOperator, Error> {
+  fn parse_operator(version: &str) -> Result<SemverOperator, PackageJsonValidatorError> {
     match version {
       s if s.starts_with('^') => Ok(SemverOperator::Compatible),
       s if s.starts_with('~') => Ok(SemverOperator::Patch),
@@ -81,7 +81,7 @@ impl Version {
     }
   }
 
-  fn parse_protocol(version: &str) -> Result<Protocol, Error> {
+  fn parse_protocol(version: &str) -> Result<Protocol, PackageJsonValidatorError> {
     match version {
       s if s.starts_with("git") => Ok(Protocol::Git),
       s if s.starts_with("file") => Ok(Protocol::File),
@@ -94,7 +94,7 @@ impl Version {
 }
 
 impl TryFrom<String> for Version {
-  type Error = Error;
+  type Error = PackageJsonValidatorError;
   fn try_from(value: String) -> Result<Self, Self::Error> {
     let protocol = Self::parse_protocol(&value)?;
     let operator = Self::parse_operator(&value)?;
@@ -104,7 +104,7 @@ impl TryFrom<String> for Version {
         value
           .rsplit("@")
           .next()
-          .ok_or(Error::NpmAliasParserError {
+          .ok_or(PackageJsonValidatorError::NpmAliasParserError {
             version: value.clone(),
           })?
           .to_string(),

@@ -2,7 +2,7 @@ use miette::Diagnostic;
 use thiserror::Error;
 
 #[derive(Error, Debug, Diagnostic)]
-pub enum Error {
+pub enum PackageJsonValidatorError {
   #[error("npm alias parser error: {version}")]
   NpmAliasParserError { version: String },
 

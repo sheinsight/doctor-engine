@@ -3,7 +3,7 @@ use std::path::{Path, PathBuf};
 use config::{Config, File, FileFormat};
 use doctor_ext::{MultiFrom, PathExt, Validator};
 
-use crate::error::NpmrcError;
+use crate::error::NpmrcValidatorError;
 
 const FILE_NAME: &str = ".npmrc";
 
@@ -49,7 +49,7 @@ impl NpmrcValidator {
 }
 
 impl MultiFrom for NpmrcValidator {
-  type Error = NpmrcError;
+  type Error = NpmrcValidatorError;
 
   /// Create NpmrcValidator from file
   ///
@@ -96,7 +96,7 @@ impl MultiFrom for NpmrcValidator {
 }
 
 impl Validator for NpmrcValidator {
-  type Error = NpmrcError;
+  type Error = NpmrcValidatorError;
 
   /// Validate npmrc
   ///
@@ -114,7 +114,7 @@ impl Validator for NpmrcValidator {
   /// ```
   fn validate(&self) -> Result<(), Self::Error> {
     if !self.file_path.exists() {
-      return Err(NpmrcError::NpmrcFileNotFound(
+      return Err(NpmrcValidatorError::NpmrcFileNotFound(
         self.file_path.to_string_owned(),
       ));
     }
@@ -124,19 +124,19 @@ impl Validator for NpmrcValidator {
     let config = Config::builder()
       .add_source(source)
       .build()
-      .map_err(|e| NpmrcError::BuildConfigError(e))?;
+      .map_err(|e| NpmrcValidatorError::BuildConfigError(e))?;
 
     let registry = config
       .get::<String>("registry")
-      .map_err(|_| NpmrcError::RegistryNotFound)?;
+      .map_err(|_| NpmrcValidatorError::RegistryNotFound)?;
 
     if let Some(expected) = &self.expected_registry {
       if registry.is_empty() {
-        return Err(NpmrcError::RegistryValueIsEmpty);
+        return Err(NpmrcValidatorError::RegistryValueIsEmpty);
       }
 
       if registry != *expected {
-        return Err(NpmrcError::RegistryValueMatchedFailed(
+        return Err(NpmrcValidatorError::RegistryValueMatchedFailed(
           expected.to_owned(),
           registry,
         ));

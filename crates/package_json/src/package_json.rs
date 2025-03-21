@@ -3,7 +3,7 @@ use std::{collections::HashMap, fs, path::Path};
 use doctor_ext::MultiFrom;
 use serde::{Deserialize, Serialize};
 
-use crate::{error::Error, version::Version};
+use crate::{error::PackageJsonValidatorError, version::Version};
 
 const FILE_NAME: &str = "package.json";
 
@@ -34,7 +34,7 @@ pub struct PackageJson {
 }
 
 impl MultiFrom for PackageJson {
-  type Error = Error;
+  type Error = PackageJsonValidatorError;
 
   fn from_file<P: AsRef<Path>>(path: P) -> Result<Self, Self::Error> {
     let content = fs::read_to_string(path)?;
@@ -51,7 +51,9 @@ impl MultiFrom for PackageJson {
 }
 
 impl PackageJson {
-  fn get_deps(deps: &Option<HashMap<String, String>>) -> Result<HashMap<String, Version>, Error> {
+  fn get_deps(
+    deps: &Option<HashMap<String, String>>,
+  ) -> Result<HashMap<String, Version>, PackageJsonValidatorError> {
     match deps {
       Some(deps) => {
         let mut dependencies = HashMap::with_capacity(deps.len());
@@ -65,11 +67,13 @@ impl PackageJson {
     }
   }
 
-  pub fn get_dependencies(&self) -> Result<HashMap<String, Version>, Error> {
+  pub fn get_dependencies(&self) -> Result<HashMap<String, Version>, PackageJsonValidatorError> {
     Self::get_deps(&self.dependencies)
   }
 
-  pub fn get_dev_dependencies(&self) -> Result<HashMap<String, Version>, Error> {
+  pub fn get_dev_dependencies(
+    &self,
+  ) -> Result<HashMap<String, Version>, PackageJsonValidatorError> {
     Self::get_deps(&self.dev_dependencies)
   }
 }
