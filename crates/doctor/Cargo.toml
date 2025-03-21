@@ -1,0 +1,16 @@
+[package]
+authors.workspace      = true
+edition.workspace      = true
+homepage.workspace     = true
+license.workspace      = true
+name                   = "doctor"
+repository.workspace   = true
+rust-version.workspace = true
+version                = "0.1.0"
+
+[dependencies]
+doctor-ext          = { path = "../ext" }
+doctor-lint         = { path = "../lint" }
+doctor-node         = { path = "../node" }
+doctor-npmrc        = { path = "../npmrc" }
+doctor-package_json = { path = "../package_json" }
