@@ -11,7 +11,6 @@ pub mod common;
 pub mod config;
 pub mod ext;
 pub mod inner;
-pub mod oxlintrc_builder;
 
 pub struct Linter {
   oxlintrc: Oxlintrc,
@@ -202,9 +201,10 @@ mod tests {
   use doctor_walk_parallel::{WalkParallel, error::WalkError, walk_patterns::WalkPatterns};
 
   use crate::{
-    common::{category_getter::Category, environments::EnvironmentFlags, lint_mode::LintMode},
+    category::Category,
+    common::{environments::EnvironmentFlags, lint_mode::LintMode},
+    config::OxlintrcBuilder,
     inner::v2025_06_01::category::Category20250601Inner,
-    oxlintrc_builder::OxlintrcBuilder,
   };
 
   use super::*;
