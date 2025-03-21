@@ -7,7 +7,7 @@ use crate::{
   common::{environments::EnvironmentFlags, error::LintError, lint_mode::LintMode},
   config::{ReactConfig, TypescriptConfig},
   ext::CategoryGetter,
-  inner::v2025_06_01::category::Category20250601Inner,
+  inner::Category20250601Inner,
 };
 
 /**
