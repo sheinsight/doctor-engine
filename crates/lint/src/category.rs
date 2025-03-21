@@ -1,4 +1,4 @@
-use crate::inner::v2025_06_01::category::Category20250601Inner;
+use crate::inner::Category20250601Inner;
 
 #[derive(Debug, Clone)]
 pub enum Category {
