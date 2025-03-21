@@ -3,13 +3,12 @@ use std::{path::Path, rc::Rc, sync::Arc};
 
 use common::{error::LintError, file_diagnostic::FileDiagnostic, named_source};
 use oxc_allocator::Allocator;
-// use oxc_diagnostics::OxcDiagnostic;
 use oxc_linter::{ConfigStoreBuilder, FixKind, FrameworkFlags, LintOptions, Oxlintrc};
 use oxc_parser::Parser;
 use oxc_semantic::SemanticBuilder;
 pub mod common;
 pub mod inner;
-pub mod oxlint_rc_builder;
+pub mod oxlintrc_builder;
 
 pub struct Linter {
   oxlintrc: Oxlintrc,
@@ -202,7 +201,7 @@ mod tests {
   use crate::{
     common::{category_getter::Category, environments::EnvironmentFlags, lint_mode::LintMode},
     inner::v2025_06_01::category::Category20250601Inner,
-    oxlint_rc_builder::OxlintrcBuilder,
+    oxlintrc_builder::OxlintrcBuilder,
   };
 
   use super::*;
