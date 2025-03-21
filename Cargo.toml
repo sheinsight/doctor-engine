@@ -1,5 +1,13 @@
 [workspace]
-members  = [ "crates/doctor","crates/ext", "crates/lint", "crates/node", "crates/npmrc", "crates/package_json", "crates/walk_parallel"]
+members = [ "crates/binding",
+  "crates/doctor",
+  "crates/ext",
+  "crates/lint",
+  "crates/node",
+  "crates/npmrc",
+  "crates/package_json",
+  "crates/walk_parallel",
+]
 resolver = "3"
 
 

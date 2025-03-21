@@ -10,6 +10,10 @@ use oxc_semantic::SemanticBuilder;
 mod category;
 mod common;
 pub use category::Category;
+pub use common::{
+  environments::{Environment, EnvironmentFlags},
+  lint_mode::LintMode,
+};
 
 pub mod config;
 pub mod ext;

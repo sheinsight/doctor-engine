@@ -1,0 +1,21 @@
+
+
+[package]
+authors.workspace      = true
+edition.workspace      = true
+homepage.workspace     = true
+license.workspace      = true
+name                   = "doctor-binding"
+repository.workspace   = true
+rust-version.workspace = true
+version                = "0.1.0"
+
+[lib]
+crate-type = ["cdylib"]
+
+[build-dependencies]
+napi-build = { workspace = true }
+
+[dependencies]
+napi        = { workspace = true }
+napi-derive = { workspace = true }
