@@ -2,13 +2,9 @@ use oxc_linter::LintPlugins;
 use serde_json::{Map, Value, json};
 
 use crate::{
-  common::{
-    category_getter::CategoryGetter,
-    environments::EnvironmentFlags,
-    react_config::{ReactConfig, ReactRuntime},
-    rule_getter::RuleGetter,
-    typescript_config::TypescriptConfig,
-  },
+  common::environments::EnvironmentFlags,
+  config::{ReactConfig, ReactRuntime, TypescriptConfig},
+  ext::{CategoryGetter, RuleGetter},
   inner::v2025_06_01::{
     jest::JestRuleGetter, react::ReactRuleGetter, typescript::TypescriptRuleGetter,
   },

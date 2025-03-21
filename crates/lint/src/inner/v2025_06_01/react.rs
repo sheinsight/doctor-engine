@@ -1,8 +1,8 @@
 use serde_json::{Map, Value, json};
 
-use crate::common::{
-  react_config::{ReactConfig, ReactRuntime},
-  rule_getter::RuleGetter,
+use crate::{
+  config::{ReactConfig, ReactRuntime},
+  ext::RuleGetter,
 };
 
 impl ReactConfig {

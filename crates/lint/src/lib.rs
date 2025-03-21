@@ -6,7 +6,10 @@ use oxc_allocator::Allocator;
 use oxc_linter::{ConfigStoreBuilder, FixKind, FrameworkFlags, LintOptions, Oxlintrc};
 use oxc_parser::Parser;
 use oxc_semantic::SemanticBuilder;
+pub mod category;
 pub mod common;
+pub mod config;
+pub mod ext;
 pub mod inner;
 pub mod oxlintrc_builder;
 
