@@ -6,20 +6,23 @@ pub enum Error {
   #[error("npm alias parser error: {version}")]
   NpmAliasParserError { version: String },
 
-  #[error("no name field")]
-  NoNameError,
+  #[error("{0} : no name field")]
+  NoNameError(String),
 
-  #[error("no private field")]
-  NoPrivateError,
+  #[error("{0} : not found private field")]
+  NoPrivateError(String),
 
-  #[error("no matched private field , expect {expect_value} but actual {actual_value}")]
+  #[error(
+    "{file_path} : no matched private field , expect {expect_value} but actual {actual_value}"
+  )]
   NoMatchedPrivateError {
+    file_path: String,
     expect_value: bool,
     actual_value: bool,
   },
 
-  #[error("no package manager field")]
-  NoPackageManagerError,
+  #[error("{0} : no package manager field")]
+  NoPackageManagerError(String),
 
   #[error("IO error: {0}")]
   IoError(#[from] std::io::Error),

@@ -1,6 +1,6 @@
 use std::path::{Path, PathBuf};
 
-use doctor_ext::{MultiFrom, Validator};
+use doctor_ext::{MultiFrom, PathExt, Validator};
 
 use crate::{error::Error, package_json::PackageJson};
 
@@ -117,13 +117,15 @@ impl Validator for PackageJsonValidator {
   fn validate(&self) -> Result<(), Self::Error> {
     if self.with_validate_name {
       if self.package_json.name.is_none() {
-        return Err(Error::NoNameError);
+        return Err(Error::NoNameError(self.file_path.to_string_owned()));
       }
     }
 
     if self.with_validate_package_manager {
       if self.package_json.package_manager.is_none() {
-        return Err(Error::NoPackageManagerError);
+        return Err(Error::NoPackageManagerError(
+          self.file_path.to_string_owned(),
+        ));
       }
     }
 
@@ -131,12 +133,13 @@ impl Validator for PackageJsonValidator {
       if let Some(actual_value) = self.package_json.private {
         if actual_value != expect_value {
           return Err(Error::NoMatchedPrivateError {
+            file_path: self.file_path.to_string_owned(),
             expect_value,
             actual_value,
           });
         }
       } else {
-        return Err(Error::NoPrivateError);
+        return Err(Error::NoPrivateError(self.file_path.to_string_owned()));
       }
     }
 
