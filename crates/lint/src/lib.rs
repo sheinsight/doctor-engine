@@ -211,7 +211,7 @@ mod tests {
     category::Category,
     common::{environments::EnvironmentFlags, lint_mode::LintMode},
     config::OxlintrcBuilder,
-    inner::v2025_06_01::category::Category20250601Inner,
+    inner::Category20250601Inner,
   };
 
   use super::*;
@@ -242,7 +242,7 @@ mod tests {
 
     // 3. 文件遍历和 lint 执行
     let walk_start = Instant::now();
-    let cwd = "/Users/10015448/Git/gtms";
+    let cwd = "/Users/ityuany/GitRepository/csp-new";
 
     let file_diagnostics = WalkParallel::new(&cwd)
       .with_patterns(WalkPatterns::default())

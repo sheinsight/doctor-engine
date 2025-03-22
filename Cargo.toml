@@ -1,5 +1,5 @@
 [workspace]
-members = [ "crates/binding",
+members = [
   "crates/doctor",
   "crates/ext",
   "crates/lint",
@@ -7,6 +7,7 @@ members = [ "crates/binding",
   "crates/npmrc",
   "crates/package_json",
   "crates/walk_parallel",
+  "napi/doctor-engine",
 ]
 resolver = "3"
 

@@ -1,0 +1,24 @@
+{
+  "name": "@shined/doctor-engine-linux-x64-gnu",
+  "version": "0.0.1",
+  "cpu": [
+    "x64"
+  ],
+  "main": "doctor-engine.linux-x64-gnu.node",
+  "files": [
+    "doctor-engine.linux-x64-gnu.node"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "url": "https://github.com/sheinsight/doctor-engine"
+  },
+  "os": [
+    "linux"
+  ],
+  "libc": [
+    "glibc"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "@shined/doctor-engine-darwin-x64",
+  "version": "0.0.1",
+  "cpu": [
+    "x64"
+  ],
+  "main": "doctor-engine.darwin-x64.node",
+  "files": [
+    "doctor-engine.darwin-x64.node"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "url": "https://github.com/sheinsight/doctor-engine"
+  },
+  "os": [
+    "darwin"
+  ]
+}
