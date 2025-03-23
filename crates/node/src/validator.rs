@@ -50,7 +50,8 @@ impl Validator for NodeVersionValidator {
       ));
     }
 
-    let version = fs::read_to_string(&self.file_path)?;
+    let version = fs::read_to_string(&self.file_path)
+      .map_err(|e| NodeVersionValidatorError::IoError(self.file_path.to_string_owned(), e))?;
 
     let version = version.trim();
 

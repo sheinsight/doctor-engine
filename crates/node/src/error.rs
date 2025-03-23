@@ -2,12 +2,12 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum NodeVersionValidatorError {
-  #[error("IO error: {0}")]
-  IoError(#[from] std::io::Error),
+  #[error("{0} {1}")]
+  IoError(String, #[source] std::io::Error),
 
-  #[error("Node version file not found: {0}")]
+  #[error("{0} Node version file not found")]
   NodeVersionFileNotFound(String),
 
-  #[error("Node version file is empty: {0}")]
+  #[error("{0} Node version file is empty")]
   NodeVersionFileIsEmpty(String),
 }
