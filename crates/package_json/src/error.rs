@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use miette::Diagnostic;
 use thiserror::Error;
 
