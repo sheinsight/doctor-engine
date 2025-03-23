@@ -124,7 +124,7 @@ impl Validator for NpmrcValidator {
     let config = Config::builder()
       .add_source(source)
       .build()
-      .map_err(|e| NpmrcValidatorError::BuildConfigError(e))?;
+      .map_err(|e| NpmrcValidatorError::BuildConfigError(self.file_path.to_string_owned(), e))?;
 
     let registry = config
       .get::<String>("registry")
@@ -136,10 +136,10 @@ impl Validator for NpmrcValidator {
       }
 
       if registry != *expected {
-        return Err(NpmrcValidatorError::RegistryValueMatchedFailed(
-          expected.to_owned(),
-          registry,
-        ));
+        return Err(NpmrcValidatorError::RegistryValueMatchedFailed {
+          expect: expected.to_owned(),
+          actual: registry,
+        });
       }
     }
 

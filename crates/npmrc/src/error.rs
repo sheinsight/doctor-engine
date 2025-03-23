@@ -5,8 +5,8 @@ pub enum NpmrcValidatorError {
   #[error("Npmrc file not found {0}")]
   NpmrcFileNotFound(String),
 
-  #[error("Build config error {0}")]
-  BuildConfigError(#[from] config::ConfigError),
+  #[error("{0} {1}")]
+  BuildConfigError(String, #[source] config::ConfigError),
 
   #[error("Registry not found")]
   RegistryNotFound,
@@ -14,6 +14,6 @@ pub enum NpmrcValidatorError {
   #[error("Registry value is empty")]
   RegistryValueIsEmpty,
 
-  #[error("Registry value is not expected {0} , actual {1}")]
-  RegistryValueMatchedFailed(String, String),
+  #[error("Registry value is not expected {expect} , actual {actual}")]
+  RegistryValueMatchedFailed { expect: String, actual: String },
 }
