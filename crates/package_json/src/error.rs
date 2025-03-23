@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use miette::Diagnostic;
 use thiserror::Error;
 
@@ -6,27 +8,33 @@ pub enum PackageJsonValidatorError {
   #[error("npm alias parser error: {version}")]
   NpmAliasParserError { version: String },
 
-  #[error("{0} : no name field")]
+  #[error("{0} no name field")]
   NoNameError(String),
 
-  #[error("{0} : not found private field")]
+  #[error("{0} not found private field")]
   NoPrivateError(String),
 
-  #[error(
-    "{file_path} : no matched private field , expect {expect_value} but actual {actual_value}"
-  )]
+  #[error("{path} no matched private field , expect {expect_value} but actual {actual_value}")]
   NoMatchedPrivateError {
-    file_path: String,
+    path: String,
     expect_value: bool,
     actual_value: bool,
   },
 
-  #[error("{0} : no package manager field")]
+  #[error("{0} no package manager field")]
   NoPackageManagerError(String),
 
-  #[error("IO error: {0}")]
-  IoError(#[from] std::io::Error),
+  #[error("{path} {error}")]
+  IoError {
+    path: String,
+    #[source]
+    error: std::io::Error,
+  },
 
-  #[error("Parse error: {0}")]
-  ParseError(#[from] serde_json::Error),
+  #[error("{path} {error}")]
+  ParseError {
+    path: String,
+    #[source]
+    error: serde_json::Error,
+  },
 }

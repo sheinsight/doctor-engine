@@ -1,6 +1,6 @@
 use std::{collections::HashMap, fs, path::Path};
 
-use doctor_ext::MultiFrom;
+use doctor_ext::{MultiFrom, PathExt};
 use serde::{Deserialize, Serialize};
 
 use crate::{error::PackageJsonValidatorError, version::Version};
@@ -37,15 +37,31 @@ impl MultiFrom for PackageJson {
   type Error = PackageJsonValidatorError;
 
   fn from_file<P: AsRef<Path>>(path: P) -> Result<Self, Self::Error> {
-    let content = fs::read_to_string(path)?;
-    let package_json: PackageJson = serde_json::from_str(&content)?;
+    let path = path.as_ref();
+    let content = fs::read_to_string(&path).map_err(|e| PackageJsonValidatorError::IoError {
+      path: path.to_string_owned(),
+      error: e,
+    })?;
+
+    let package_json: PackageJson =
+      serde_json::from_str(&content).map_err(|e| PackageJsonValidatorError::ParseError {
+        path: path.to_string_owned(),
+        error: e,
+      })?;
     Ok(package_json)
   }
 
   fn from_cwd<P: AsRef<Path>>(cwd: P) -> Result<Self, Self::Error> {
     let path = cwd.as_ref().join(FILE_NAME);
-    let content = fs::read_to_string(path)?;
-    let package_json: PackageJson = serde_json::from_str(&content)?;
+    let content = fs::read_to_string(&path).map_err(|e| PackageJsonValidatorError::IoError {
+      path: path.to_string_owned(),
+      error: e,
+    })?;
+    let package_json: PackageJson =
+      serde_json::from_str(&content).map_err(|e| PackageJsonValidatorError::ParseError {
+        path: path.to_string_owned(),
+        error: e,
+      })?;
     Ok(package_json)
   }
 }

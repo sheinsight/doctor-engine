@@ -135,7 +135,7 @@ impl Validator for PackageJsonValidator {
       if let Some(actual_value) = self.package_json.private {
         if actual_value != expect_value {
           return Err(PackageJsonValidatorError::NoMatchedPrivateError {
-            file_path: self.file_path.to_string_owned(),
+            path: self.file_path.to_string_owned(),
             expect_value,
             actual_value,
           });
