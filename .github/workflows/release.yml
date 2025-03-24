@@ -132,4 +132,7 @@ jobs:
         run: |
           ls -l
           ls -R ./artifacts
+          npm run artifacts
+          ls -R ./artifacts
+          ls -R ./npm
         shell: bash
