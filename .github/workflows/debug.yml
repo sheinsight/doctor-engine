@@ -75,6 +75,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y musl-tools gcc-aarch64-linux-gnu
 
+      - name: ls2
+        if: contains(matrix.settings.target, 'musl') && contains(matrix.settings.host, 'ubuntu')
+        run: |
+          ls -la /usr
+          ls -la /usr/lib
+
       - name: Configure ARM64 musl linkage
         if: contains(matrix.settings.target, 'aarch64') && contains(matrix.settings.target, 'musl')
         run: |
