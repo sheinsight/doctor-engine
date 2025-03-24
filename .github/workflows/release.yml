@@ -75,7 +75,9 @@ jobs:
           npm install
 
       - name: Build
-        run: npm run build -- --target ${{ matrix.settings.target }}
+        run: |
+          cd napi/doctor-engine
+          npm run build -- --target ${{ matrix.settings.target }}
         shell: bash
 
       - name: Upload artifact
