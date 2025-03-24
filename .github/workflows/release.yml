@@ -70,7 +70,9 @@ jobs:
           toolchain: "1.85.0"
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          cd napi/doctor-engine
+          npm install
 
       - name: Build
         run: npm run build -- --target ${{ matrix.settings.target }}
