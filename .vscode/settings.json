@@ -15,6 +15,7 @@
     "embertest",
     "isnan",
     "jquery",
+    "libgcc",
     "miette",
     "napi",
     "nashorn",
