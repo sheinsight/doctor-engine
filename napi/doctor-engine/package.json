@@ -34,7 +34,6 @@
 	},
 	"files": ["index.js", "index.d.ts"],
 	"license": "MIT",
-	"packageManager": "pnpm@9.10.0",
 	"devDependencies": {
 		"@napi-rs/cli": "^3.0.0-alpha.75"
 	}
