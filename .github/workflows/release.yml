@@ -4,6 +4,7 @@ env:
   APP_NAME: engine
   MACOSX_DEPLOYMENT_TARGET: '10.13'
   CARGO_INCREMENTAL: '1'
+  NAPI_DIR: napi/doctor-engine
 permissions:
   contents: write
   id-token: write
@@ -50,6 +51,12 @@ jobs:
     
     name: stable - ${{ matrix.settings.target }} - node@20
     runs-on: ${{ matrix.settings.host }}
+
+
+    defaults:
+      run:
+        working-directory: ${{ env.NAPI_DIR }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -61,7 +68,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: napi/doctor-engine/package-lock.json
+          cache-dependency-path: ${{ env.NAPI_DIR }}/package-lock.json
 
       - name: Install rust toolchain
         uses: actions-rs/toolchain@v1
@@ -70,21 +77,17 @@ jobs:
           toolchain: "1.85.0"
 
       - name: Install dependencies
-        run: |
-          cd napi/doctor-engine
-          npm install
+        run: npm install
 
       - name: Build
-        run: |
-          cd napi/doctor-engine
-          npm run build -- --target ${{ matrix.settings.target }}
+        run: npm run build -- --target ${{ matrix.settings.target }}
         shell: bash
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: bindings-${{ matrix.settings.target }}
-          path: napi/doctor-engine/${{ env.APP_NAME }}.*.node
+          path: ${{ env.NAPI_DIR }}/${{ env.APP_NAME }}.*.node
           if-no-files-found: error
 
 
