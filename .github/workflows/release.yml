@@ -71,10 +71,11 @@ jobs:
           cache-dependency-path: ${{ env.NAPI_DIR }}/package-lock.json
 
       - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1
+        uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           target: ${{ matrix.settings.target }}
-          toolchain: "1.85.0"
+          override: true
+          # toolchain: "1.85.0"
 
       - name: Install dependencies
         run: npm install
