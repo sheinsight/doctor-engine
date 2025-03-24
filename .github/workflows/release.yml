@@ -129,5 +129,7 @@ jobs:
           path: artifacts
           merge-multiple: true
       - name: List packages
-        run: ls -R ./artifacts
+        run: |
+          ls -l
+          ls -R ./artifacts
         shell: bash
