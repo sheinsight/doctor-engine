@@ -79,6 +79,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Install musl tools
+        if: contains(matrix.settings.target, 'musl')
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y musl-tools
+
       - name: Build
         run: npm run build -- --target ${{ matrix.settings.target }}
         shell: bash
