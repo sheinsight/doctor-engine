@@ -128,10 +128,17 @@ jobs:
         with:
           path: ${{ env.NAPI_DIR }}/artifacts
           merge-multiple: true
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: ${{ env.NAPI_DIR }}/package-lock.json
       - name: List packages
         run: |
           ls -l
           ls -R ./artifacts
+          npm i
           npm run artifacts
           ls -R ./artifacts
           ls -R ./npm
