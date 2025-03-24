@@ -1,7 +1,7 @@
 name: shined-doctor-engine-release
 env:
   DEBUG: napi:*
-  APP_NAME: doctor-engine
+  APP_NAME: engine
   MACOSX_DEPLOYMENT_TARGET: '10.13'
   CARGO_INCREMENTAL: '1'
 permissions:
