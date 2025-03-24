@@ -85,6 +85,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y musl-tools
 
+      - name: Enable long paths on Windows
+        if: contains(matrix.settings.host, 'windows')
+        run: |
+          git config --system core.longpaths true
+        shell: bash
+
       - name: Build
         run: npm run build -- --target ${{ matrix.settings.target }}
         shell: bash
