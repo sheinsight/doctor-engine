@@ -1,11 +1,11 @@
 {
-	"name": "@shined/doctor-engine",
+	"name": "@shined/doctor",
 	"version": "0.0.1",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"napi": {
-		"binaryName": "engine",
-    "packageName": "@shined/doctor-engine",
+		"binaryName": "doctor",
+    "packageName": "@shined/doctor",
 		"targets":[
 			"x86_64-apple-darwin",
 			"aarch64-apple-darwin",

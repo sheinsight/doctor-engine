@@ -1,7 +1,7 @@
 name: shined-doctor-engine-release
 env:
   DEBUG: napi:*
-  APP_NAME: engine
+  APP_NAME: doctor
   MACOSX_DEPLOYMENT_TARGET: '10.13'
   CARGO_INCREMENTAL: '1'
   NAPI_DIR: napi/doctor-engine
@@ -139,6 +139,7 @@ jobs:
           ls -l
           ls -R ./artifacts
           npm i
+          npm run create-npm-dirs
           npm run artifacts
           ls -R ./artifacts
           ls -R ./npm
