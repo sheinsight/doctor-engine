@@ -1,6 +1,6 @@
 {
 	"name": "@shined/doctor",
-	"version": "0.0.1-snapshot.0",
+	"version": "0.0.1-snapshot.1",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"napi": {
@@ -23,7 +23,7 @@
 		"build:js": "napi build --platform --js index.js --dts index.d.ts",
 		"build": "napi build --platform --release",
 		"build:debug": "napi build --platform",
-		"prepublishOnly": "napi prepublish -t npm",
+		"prepublishOnly": "napi prepublish -t npm --gh-release-id $GITHUB_REF_NAME",
 		"universal": "napi universal"
 	},
 	"repository": {
