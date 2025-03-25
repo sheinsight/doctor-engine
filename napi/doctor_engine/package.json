@@ -1,6 +1,6 @@
 {
 	"name": "@shined/doctor",
-	"version": "0.0.1-snapshot.5",
+	"version": "0.0.1-snapshot.6",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"napi": {
