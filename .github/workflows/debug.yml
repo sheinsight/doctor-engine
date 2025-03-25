@@ -3,10 +3,15 @@ env:
 permissions:
   contents: write
   id-token: write
+# on:
+#   push:
+#     branches:
+#       - main
+
 on:
   push:
-    branches:
-      - main
+    tags:
+      - "d*"
 
 jobs:
   debug:
@@ -17,8 +22,27 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Checkout
+      - name: Create Draft Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: ${{ github.ref_name }}
+          draft: true
+          prerelease: false
+
+      - name: Publish
         run: |
-          echo "RELEASE_ID: ${{ github.event.release.id }}"
+          echo "RELEASE_ID: ${{ steps.create_release.outputs.id }}"
         env:
-          RELEASE_ID: ${{ github.event.release.id }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          RELEASE_ID: ${{ steps.create_release.outputs.id }}
+
+      - name: Update Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          prerelease: false
+          draft: false
+          make_latest: true
