@@ -164,6 +164,8 @@ jobs:
           release_name: ${{ github.ref_name }}
           draft: true
           prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish
         run: |
