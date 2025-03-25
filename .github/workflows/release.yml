@@ -10,7 +10,8 @@ permissions:
   id-token: write
 on:
   release:
-    types: [prereleased]
+    # types: [prereleased]
+    types: [released]
 # on:
 #   push:
 #     branches:
