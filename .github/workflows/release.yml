@@ -175,6 +175,7 @@ jobs:
           npm publish
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # 如果没有的话 napi prepublish 会报错
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_ID: ${{ steps.create_release.outputs.id }}
 
