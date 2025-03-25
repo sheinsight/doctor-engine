@@ -143,4 +143,14 @@ jobs:
           npm run artifacts
           ls -R ./artifacts
           ls -R ./npm
+          npm run build:js
+          ls -l
         shell: bash
+      - name: Publish
+        run: |
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+          npm config set provenance true
+          npm publish 
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}

@@ -19,3 +19,4 @@ napi-build = { workspace = true }
 [dependencies]
 napi        = { workspace = true }
 napi-derive = { workspace = true }
+doctor = { path = "../../crates/doctor" }

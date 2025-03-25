@@ -69,24 +69,24 @@ function requireNative() {
   } else if (process.platform === 'android') {
     if (process.arch === 'arm64') {
       try {
-        return require('./engine.android-arm64.node')
+        return require('./doctor.android-arm64.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@shined/doctor-engine-android-arm64')
+        return require('@shined/doctor-android-arm64')
       } catch (e) {
         loadErrors.push(e)
       }
 
     } else if (process.arch === 'arm') {
       try {
-        return require('./engine.android-arm-eabi.node')
+        return require('./doctor.android-arm-eabi.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@shined/doctor-engine-android-arm-eabi')
+        return require('@shined/doctor-android-arm-eabi')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -97,36 +97,36 @@ function requireNative() {
   } else if (process.platform === 'win32') {
     if (process.arch === 'x64') {
       try {
-        return require('./engine.win32-x64-msvc.node')
+        return require('./doctor.win32-x64-msvc.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@shined/doctor-engine-win32-x64-msvc')
+        return require('@shined/doctor-win32-x64-msvc')
       } catch (e) {
         loadErrors.push(e)
       }
 
     } else if (process.arch === 'ia32') {
       try {
-        return require('./engine.win32-ia32-msvc.node')
+        return require('./doctor.win32-ia32-msvc.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@shined/doctor-engine-win32-ia32-msvc')
+        return require('@shined/doctor-win32-ia32-msvc')
       } catch (e) {
         loadErrors.push(e)
       }
 
     } else if (process.arch === 'arm64') {
       try {
-        return require('./engine.win32-arm64-msvc.node')
+        return require('./doctor.win32-arm64-msvc.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@shined/doctor-engine-win32-arm64-msvc')
+        return require('@shined/doctor-win32-arm64-msvc')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -136,36 +136,36 @@ function requireNative() {
     }
   } else if (process.platform === 'darwin') {
     try {
-        return require('./engine.darwin-universal.node')
+        return require('./doctor.darwin-universal.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@shined/doctor-engine-darwin-universal')
+        return require('@shined/doctor-darwin-universal')
       } catch (e) {
         loadErrors.push(e)
       }
 
     if (process.arch === 'x64') {
       try {
-        return require('./engine.darwin-x64.node')
+        return require('./doctor.darwin-x64.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@shined/doctor-engine-darwin-x64')
+        return require('@shined/doctor-darwin-x64')
       } catch (e) {
         loadErrors.push(e)
       }
 
     } else if (process.arch === 'arm64') {
       try {
-        return require('./engine.darwin-arm64.node')
+        return require('./doctor.darwin-arm64.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@shined/doctor-engine-darwin-arm64')
+        return require('@shined/doctor-darwin-arm64')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -176,24 +176,24 @@ function requireNative() {
   } else if (process.platform === 'freebsd') {
     if (process.arch === 'x64') {
       try {
-        return require('./engine.freebsd-x64.node')
+        return require('./doctor.freebsd-x64.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@shined/doctor-engine-freebsd-x64')
+        return require('@shined/doctor-freebsd-x64')
       } catch (e) {
         loadErrors.push(e)
       }
 
     } else if (process.arch === 'arm64') {
       try {
-        return require('./engine.freebsd-arm64.node')
+        return require('./doctor.freebsd-arm64.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@shined/doctor-engine-freebsd-arm64')
+        return require('@shined/doctor-freebsd-arm64')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -205,24 +205,24 @@ function requireNative() {
     if (process.arch === 'x64') {
       if (isMusl()) {
         try {
-        return require('./engine.linux-x64-musl.node')
+        return require('./doctor.linux-x64-musl.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@shined/doctor-engine-linux-x64-musl')
+        return require('@shined/doctor-linux-x64-musl')
       } catch (e) {
         loadErrors.push(e)
       }
 
       } else {
         try {
-        return require('./engine.linux-x64-gnu.node')
+        return require('./doctor.linux-x64-gnu.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@shined/doctor-engine-linux-x64-gnu')
+        return require('@shined/doctor-linux-x64-gnu')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -231,24 +231,24 @@ function requireNative() {
     } else if (process.arch === 'arm64') {
       if (isMusl()) {
         try {
-        return require('./engine.linux-arm64-musl.node')
+        return require('./doctor.linux-arm64-musl.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@shined/doctor-engine-linux-arm64-musl')
+        return require('@shined/doctor-linux-arm64-musl')
       } catch (e) {
         loadErrors.push(e)
       }
 
       } else {
         try {
-        return require('./engine.linux-arm64-gnu.node')
+        return require('./doctor.linux-arm64-gnu.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@shined/doctor-engine-linux-arm64-gnu')
+        return require('@shined/doctor-linux-arm64-gnu')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -257,24 +257,24 @@ function requireNative() {
     } else if (process.arch === 'arm') {
       if (isMusl()) {
         try {
-        return require('./engine.linux-arm-musleabihf.node')
+        return require('./doctor.linux-arm-musleabihf.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@shined/doctor-engine-linux-arm-musleabihf')
+        return require('@shined/doctor-linux-arm-musleabihf')
       } catch (e) {
         loadErrors.push(e)
       }
 
       } else {
         try {
-        return require('./engine.linux-arm-gnueabihf.node')
+        return require('./doctor.linux-arm-gnueabihf.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@shined/doctor-engine-linux-arm-gnueabihf')
+        return require('@shined/doctor-linux-arm-gnueabihf')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -283,24 +283,24 @@ function requireNative() {
     } else if (process.arch === 'riscv64') {
       if (isMusl()) {
         try {
-        return require('./engine.linux-riscv64-musl.node')
+        return require('./doctor.linux-riscv64-musl.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@shined/doctor-engine-linux-riscv64-musl')
+        return require('@shined/doctor-linux-riscv64-musl')
       } catch (e) {
         loadErrors.push(e)
       }
 
       } else {
         try {
-        return require('./engine.linux-riscv64-gnu.node')
+        return require('./doctor.linux-riscv64-gnu.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@shined/doctor-engine-linux-riscv64-gnu')
+        return require('@shined/doctor-linux-riscv64-gnu')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -308,24 +308,24 @@ function requireNative() {
       }
     } else if (process.arch === 'ppc64') {
       try {
-        return require('./engine.linux-ppc64-gnu.node')
+        return require('./doctor.linux-ppc64-gnu.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@shined/doctor-engine-linux-ppc64-gnu')
+        return require('@shined/doctor-linux-ppc64-gnu')
       } catch (e) {
         loadErrors.push(e)
       }
 
     } else if (process.arch === 's390x') {
       try {
-        return require('./engine.linux-s390x-gnu.node')
+        return require('./doctor.linux-s390x-gnu.node')
       } catch (e) {
         loadErrors.push(e)
       }
       try {
-        return require('@shined/doctor-engine-linux-s390x-gnu')
+        return require('@shined/doctor-linux-s390x-gnu')
       } catch (e) {
         loadErrors.push(e)
       }
@@ -342,7 +342,7 @@ nativeBinding = requireNative()
 
 if (!nativeBinding || process.env.NAPI_RS_FORCE_WASI) {
   try {
-    nativeBinding = require('./engine.wasi.cjs')
+    nativeBinding = require('./doctor.wasi.cjs')
   } catch (err) {
     if (process.env.NAPI_RS_FORCE_WASI) {
       loadErrors.push(err)
@@ -350,7 +350,7 @@ if (!nativeBinding || process.env.NAPI_RS_FORCE_WASI) {
   }
   if (!nativeBinding) {
     try {
-      nativeBinding = require('@shined/doctor-engine-wasm32-wasi')
+      nativeBinding = require('@shined/doctor-wasm32-wasi')
     } catch (err) {
       if (process.env.NAPI_RS_FORCE_WASI) {
         loadErrors.push(err)
@@ -370,4 +370,5 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-module.exports.helloWorld = nativeBinding.helloWorld
+module.exports.innerLint = nativeBinding.innerLint
+module.exports.NaPiCategory = nativeBinding.NaPiCategory
