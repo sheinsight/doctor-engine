@@ -1,6 +1,6 @@
 {
 	"name": "@shined/doctor",
-	"version": "0.0.1-snapshot.4",
+	"version": "0.0.1-snapshot.5",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"napi": {
@@ -24,7 +24,8 @@
 		"build": "napi build --platform --release",
 		"build:debug": "napi build --platform",
 		"prepublishOnly": "napi prepublish -t npm --gh-release-id $RELEASE_ID",
-		"universal": "napi universal"
+		"universal": "napi universal",
+		"demo":"napi prepublish -h"
 	},
 	"repository": {
 		"url": "git+https://github.com/sheinsight/doctor-engine.git"
