@@ -158,23 +158,23 @@ jobs:
 
       - name: Create Draft Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           tag_name: ${{ github.ref_name }}
-          release_name: ${{ github.ref_name }}
           draft: true
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish
+        if: startsWith(github.ref, 'refs/tags/')
         run: |
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
           npm config set provenance true
           npm publish
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GITHUB_REF_NAME: ${{ github.ref_name }}
           RELEASE_ID: ${{ steps.create_release.outputs.id }}
 
       - name: Update Release
