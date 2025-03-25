@@ -45,13 +45,13 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           echo "Current release info:"
-          gh release view ${{ github.ref_name }} --json id,draft,name,tagName
+          gh release view ${{ github.ref_name }} 
           
           echo "Updating release..."
           gh release edit ${{ github.ref_name }} --draft=false --latest
           
           echo "Updated release info:"
-          gh release view ${{ github.ref_name }} --json id,draft,name,tagName
+          gh release view ${{ github.ref_name }}  
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_ID: ${{ steps.create_release.outputs.id }}
