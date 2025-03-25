@@ -178,13 +178,11 @@ jobs:
           RELEASE_ID: ${{ steps.create_release.outputs.id }}
 
       - name: Update Release
-        uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
-        with:
-          tag_name: ${{ github.ref_name }}
-          prerelease: false
-          draft: false
-          make_latest: true
+        run: |
+          gh release edit ${{ github.ref_name }} --draft=false --latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # released:
   #     name: released
