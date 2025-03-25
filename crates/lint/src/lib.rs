@@ -3,7 +3,9 @@ use std::{path::Path, rc::Rc, sync::Arc};
 
 use common::{error::LintError, file_diagnostic::FileDiagnostic, named_source};
 use oxc_allocator::Allocator;
-use oxc_linter::{ConfigStoreBuilder, FixKind, FrameworkFlags, LintOptions, Oxlintrc};
+use oxc_linter::{
+  AllowWarnDeny, ConfigStoreBuilder, FixKind, FrameworkFlags, LintOptions, Oxlintrc,
+};
 use oxc_parser::Parser;
 use oxc_semantic::SemanticBuilder;
 
@@ -142,6 +144,7 @@ impl Linter {
       LintOptions {
         fix: FixKind::None,
         framework_hints: FrameworkFlags::empty(),
+        report_unused_directive: Some(AllowWarnDeny::Deny),
       },
       config,
     );
@@ -242,7 +245,8 @@ mod tests {
 
     // 3. 文件遍历和 lint 执行
     let walk_start = Instant::now();
-    let cwd = "/Users/ityuany/GitRepository/csp-new";
+    // let cwd = "/Users/ityuany/GitRepository/csp-new";
+    let cwd = "./fixtures";
 
     let file_diagnostics = WalkParallel::new(&cwd)
       .with_patterns(WalkPatterns::default())
