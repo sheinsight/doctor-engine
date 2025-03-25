@@ -1,6 +1,6 @@
 {
 	"name": "@shined/doctor",
-	"version": "0.0.1-snapshot.2",
+	"version": "0.0.1-snapshot.3",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"napi": {
@@ -23,11 +23,11 @@
 		"build:js": "napi build --platform --js index.js --dts index.d.ts",
 		"build": "napi build --platform --release",
 		"build:debug": "napi build --platform",
-		"prepublishOnly": "napi prepublish -t npm --gh-release-id $GITHUB_REF_NAME",
+		"prepublishOnly": "napi prepublish -t npm --gh-release-id $RELEASE_ID",
 		"universal": "napi universal"
 	},
 	"repository": {
-		"url": "https://github.com/sheinsight/doctor-engine"
+		"url": "git+https://github.com/sheinsight/doctor-engine.git"
 	},
 	"publishConfig": {
 		"access": "public",

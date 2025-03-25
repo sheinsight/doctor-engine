@@ -153,10 +153,11 @@ jobs:
         run: |
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
           npm config set provenance true
-          npm publish 
+          npm publish
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
+          RELEASE_ID: ${{ github.event.release.id }}
   released:
       name: released
       runs-on: ubuntu-latest
