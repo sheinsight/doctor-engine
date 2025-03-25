@@ -1,5 +1,5 @@
 name: shined-doctor-engine-debug
-env:
+
 permissions:
   contents: write
   id-token: write
