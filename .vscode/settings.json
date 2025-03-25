@@ -9,8 +9,10 @@
   "cSpell.words": [
     "applescript",
     "atomtest",
+    "binstall",
     "bitflags",
     "cdylib",
+    "clippy",
     "docsrs",
     "embertest",
     "isnan",
@@ -28,12 +30,14 @@
     "phantomjs",
     "prereleased",
     "prototypejs",
+    "ropey",
     "rsplit",
     "rustc",
     "serde",
     "serviceworker",
     "shelljs",
     "softprops",
+    "taplo",
     "thiserror"
   ]
 }

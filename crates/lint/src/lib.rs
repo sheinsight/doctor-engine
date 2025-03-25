@@ -1,7 +1,7 @@
 #![recursion_limit = "512"]
 use std::{path::Path, rc::Rc, sync::Arc};
 
-use common::{error::LintError, file_diagnostic::FileDiagnostic, named_source};
+use common::{error::LintError, named_source};
 use oxc_allocator::Allocator;
 use oxc_linter::{
   AllowWarnDeny, ConfigStoreBuilder, FixKind, FrameworkFlags, LintOptions, Oxlintrc,
@@ -13,6 +13,7 @@ mod category;
 mod common;
 pub use category::Category;
 pub use common::{
+  FileDiagnostic,
   environments::{Environment, EnvironmentFlags},
   lint_mode::LintMode,
 };

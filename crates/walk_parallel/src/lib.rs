@@ -14,7 +14,7 @@ pub const DEFAULT_PATTERNS: &[&str] = &["**/*.{js,jsx,ts,tsx,cjs,mjs,cts,mts}"];
 
 pub struct WalkParallel<'a> {
   cwd: &'a Path,
-  patterns: WalkPatterns<'a>,
+  patterns: WalkPatterns,
 }
 
 impl<'a> WalkParallel<'a> {
@@ -25,7 +25,7 @@ impl<'a> WalkParallel<'a> {
     }
   }
 
-  pub fn with_patterns(mut self, patterns: WalkPatterns<'a>) -> Self {
+  pub fn with_patterns(mut self, patterns: WalkPatterns) -> Self {
     self.patterns = patterns;
     self
   }
@@ -35,9 +35,14 @@ impl<'a> WalkParallel<'a> {
     F: Fn(PathBuf) -> Result<R, WalkError> + Send + Sync,
     R: Send + Sync,
   {
-    let glob = Glob::new(self.patterns.walk)?;
-    let x = self.patterns.ignore.into_iter().copied();
-    let entries = glob.walk(self.cwd).not(x)?;
+    let glob = Glob::new(&self.patterns.walk)?;
+    let ignore = self
+      .patterns
+      .ignore
+      .iter()
+      .map(|s| s.as_str())
+      .collect::<Vec<_>>();
+    let entries = glob.walk(self.cwd).not(ignore)?;
 
     let res = entries
       .par_bridge()

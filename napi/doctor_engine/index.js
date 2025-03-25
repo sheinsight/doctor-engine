@@ -370,5 +370,6 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
+module.exports.innerDebugLint = nativeBinding.innerDebugLint
 module.exports.innerLint = nativeBinding.innerLint
 module.exports.NaPiCategory = nativeBinding.NaPiCategory

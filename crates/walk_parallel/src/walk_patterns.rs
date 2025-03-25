@@ -28,42 +28,48 @@ pub const DEFAULT_TEST_PATTERNS: &[&str] = &[
 pub const DEFAULT_DTS_PATTERNS: &[&str] = &["**/*.d.ts"];
 
 #[derive(Debug, Clone, Serialize)]
-pub struct WalkPatterns<'a> {
-  pub walk: &'a str,
-  pub ignore: &'a [&'a str],
-  pub testing: &'a [&'a str],
-  pub dts: &'a [&'a str],
+pub struct WalkPatterns {
+  pub walk: String,
+  pub ignore: Vec<String>,
+  pub testing: Vec<String>,
+  pub dts: Vec<String>,
 }
 
-impl<'a> Default for WalkPatterns<'a> {
+impl Default for WalkPatterns {
   fn default() -> Self {
     Self {
-      walk: DEFAULT_PATTERNS,
-      ignore: DEFAULT_IGNORE_PATTERNS,
-      testing: DEFAULT_TEST_PATTERNS,
-      dts: DEFAULT_DTS_PATTERNS,
+      walk: DEFAULT_PATTERNS.to_string(),
+      ignore: DEFAULT_IGNORE_PATTERNS
+        .iter()
+        .map(|s| s.to_string())
+        .collect(),
+      testing: DEFAULT_TEST_PATTERNS
+        .iter()
+        .map(|s| s.to_string())
+        .collect(),
+      dts: DEFAULT_DTS_PATTERNS.iter().map(|s| s.to_string()).collect(),
     }
   }
 }
 
-impl<'a> WalkPatterns<'a> {
-  pub fn with_walk(mut self, walk: &'a str) -> Self {
-    self.walk = walk;
+impl WalkPatterns {
+  pub fn with_walk(mut self, walk: &str) -> Self {
+    self.walk = walk.to_string();
     self
   }
 
-  pub fn with_ignore(mut self, ignore: &'a [&'static str]) -> Self {
-    self.ignore = ignore;
+  pub fn with_ignore(mut self, ignore: &[String]) -> Self {
+    self.ignore = ignore.iter().map(|s| s.to_string()).collect();
     self
   }
 
-  pub fn with_testing(mut self, testing: &'a [&'static str]) -> Self {
-    self.testing = testing;
+  pub fn with_testing(mut self, testing: &[String]) -> Self {
+    self.testing = testing.iter().map(|s| s.to_string()).collect();
     self
   }
 
-  pub fn with_dts(mut self, dts: &'a [&'static str]) -> Self {
-    self.dts = dts;
+  pub fn with_dts(mut self, dts: &[String]) -> Self {
+    self.dts = dts.iter().map(|s| s.to_string()).collect();
     self
   }
 
