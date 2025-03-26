@@ -3,29 +3,32 @@
 	"version": "0.0.1-snapshot.8",
 	"main": "index.js",
 	"types": "index.d.ts",
+	
 	"napi": {
-		"binaryName": "doctor",
-    "packageName": "@shined/doctor",
-		"targets":[
-			"x86_64-apple-darwin",
-			"aarch64-apple-darwin",
-			"x86_64-pc-windows-msvc",
-			"aarch64-pc-windows-msvc",
-			"x86_64-unknown-linux-gnu",
-			"x86_64-unknown-linux-musl",
-			"aarch64-unknown-linux-gnu",
-			"aarch64-unknown-linux-musl"
-		]
+		"name": "doctor",
+		"triples": {
+			"defaults": false,
+			"additional": [
+				"x86_64-apple-darwin",
+				"aarch64-apple-darwin",
+				"x86_64-pc-windows-msvc",
+				"aarch64-pc-windows-msvc",
+				"x86_64-unknown-linux-gnu",
+				"x86_64-unknown-linux-musl",
+				"aarch64-unknown-linux-gnu",
+				"aarch64-unknown-linux-musl"
+			]
+		}
 	},
 	"scripts": {
-		"create-npm-dirs": "napi create-npm-dirs",
-		"artifacts": "napi artifacts ",
+		"create-npm-dirs": "napi create-npm-dir -t .",
+		"artifacts": "napi artifacts",
 		"build:js": "napi build --platform --js index.js --dts index.d.ts",
 		"build": "napi build --platform --release",
 		"build:debug": "napi build --platform",
 		"prepublishOnly": "napi prepublish -t npm --gh-release-id $RELEASE_ID",
 		"universal": "napi universal",
-		"demo":"napi prepublish -h"
+		"demo":"napi create-npm-dir -h"
 	},
 	"repository": {
 		"url": "git+https://github.com/sheinsight/doctor-engine.git"
@@ -37,6 +40,6 @@
 	"files": ["index.js", "index.d.ts"],
 	"license": "MIT",
 	"devDependencies": {
-		"@napi-rs/cli": "^3.0.0-alpha.75"
+		"@napi-rs/cli": "^2.18.4"
 	}
 }
