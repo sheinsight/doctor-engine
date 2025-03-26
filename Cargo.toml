@@ -35,8 +35,9 @@ wax          = "0.6.0"
 
 
 #napi
-napi        = { version = "3.0.0-alpha.33", features = ["tokio_rt"] }
-napi-build  = "2.1.6"
+napi = { version = "3.0.0-alpha.33", features = ["tokio_rt"] }
+# napi-build  = "2.1.6"
+napi-build  = "2.0.1"
 napi-derive = "3.0.0-alpha.29"
 
 lazy-regex = "3.4.1"
