@@ -10,4 +10,5 @@ version                = "0.1.0"
 
 [dependencies]
 doctor_ext = { path = "../ext" }
+lazy-regex = { workspace = true }
 thiserror  = { workspace = true }

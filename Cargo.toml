@@ -39,7 +39,8 @@ napi        = "3.0.0-alpha.33"
 napi-build  = "2.1.6"
 napi-derive = "3.0.0-alpha.29"
 
-ropey = "1.0.0"
+lazy-regex = "3.4.1"
+ropey      = "1.0.0"
 
 # lint
 oxc_allocator   = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v0.16.2", package = "oxc_allocator" }

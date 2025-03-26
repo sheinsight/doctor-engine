@@ -4,8 +4,11 @@ use std::{
 };
 
 use doctor_ext::{MultiFrom, PathExt, Validator};
+use lazy_regex::regex_is_match;
 
-use crate::error::NodeVersionValidatorError;
+use crate::error::{
+  InvalidNodeVersion, NodeVersionFileIsEmpty, NodeVersionFileNotFound, NodeVersionValidatorError,
+};
 
 const FILE_NAME: &str = ".node-version";
 
@@ -45,9 +48,7 @@ impl Validator for NodeVersionValidator {
   /// ```
   fn validate(&self) -> Result<(), Self::Error> {
     if !self.file_path.exists() {
-      return Err(NodeVersionValidatorError::NodeVersionFileNotFound(
-        self.file_path.to_string_owned(),
-      ));
+      return Err(NodeVersionFileNotFound::with_path(self.file_path.to_string_owned()).into());
     }
 
     let version = fs::read_to_string(&self.file_path)
@@ -56,9 +57,13 @@ impl Validator for NodeVersionValidator {
     let version = version.trim();
 
     if version.is_empty() {
-      return Err(NodeVersionValidatorError::NodeVersionFileIsEmpty(
-        version.to_string(),
-      ));
+      return Err(NodeVersionFileIsEmpty::with_path(self.file_path.to_string_owned()).into());
+    }
+
+    let is_valid = regex_is_match!(r#"^\d+\.\d+\.\d+$"#, version);
+
+    if !is_valid {
+      return Err(InvalidNodeVersion::with_version(version.to_string()).into());
     }
 
     Ok(())
@@ -111,6 +116,19 @@ impl MultiFrom for NodeVersionValidator {
 #[cfg(test)]
 mod tests {
   use super::*;
+
+  #[test]
+  fn test_validate_node_version_file_invalid() {
+    let node = NodeVersionValidator::from_cwd("./fixtures/invalid").unwrap();
+    let result = node.validate();
+
+    assert!(result.is_err());
+
+    assert!(matches!(
+      result,
+      Err(NodeVersionValidatorError::InvalidNodeVersion(_))
+    ));
+  }
 
   #[test]
   fn test_validate_node_version_file_not_found() {
