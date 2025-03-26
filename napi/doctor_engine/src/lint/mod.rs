@@ -46,7 +46,7 @@ fn to_napi_error<E: ToString>(e: E) -> napi::Error {
 }
 
 #[napi]
-pub fn inner_debug_lint(
+pub async fn inner_debug_lint(
   oxlint_config: String,
   glob_js_args: GlobJsArgs,
 ) -> Result<Vec<Diagnostic>> {
@@ -88,7 +88,10 @@ pub fn inner_debug_lint(
 }
 
 #[napi]
-pub fn inner_lint(glob_js_args: GlobJsArgs, category: NaPiCategory) -> Result<Vec<Diagnostic>> {
+pub async fn inner_lint(
+  glob_js_args: GlobJsArgs,
+  category: NaPiCategory,
+) -> Result<Vec<Diagnostic>> {
   let category = match category {
     NaPiCategory::V20250601Inner => Category::V20250601Inner(Category20250601Inner::default()),
   };
