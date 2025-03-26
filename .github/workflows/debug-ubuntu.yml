@@ -20,12 +20,22 @@ jobs:
       matrix:
         settings:
           # linux x86_64
+          - host: ubuntu-20.04
+            target: x86_64-unknown-linux-gnu
+          - host: ubuntu-20.04
+            target: x86_64-unknown-linux-musl
+          
+          - host: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+          - host: ubuntu-22.04
+            target: x86_64-unknown-linux-musl
+
           - host: ubuntu-24.04
             target: x86_64-unknown-linux-gnu
           - host: ubuntu-24.04
             target: x86_64-unknown-linux-musl
     
-    name: stable - ${{ matrix.settings.target }} - node@20
+    name: ${{ matrix.settings.host }} - ${{ matrix.settings.target }} - node@20
     runs-on: ${{ matrix.settings.host }}
 
     defaults:
