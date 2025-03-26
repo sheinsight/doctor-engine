@@ -1,4 +1,4 @@
-name: shined-doctor-engine-debug
+name: shined-doctor-engine-debug-ubuntu
 env:
   DEBUG: napi:*
   APP_NAME: doctor
