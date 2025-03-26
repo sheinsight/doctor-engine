@@ -1,10 +1,10 @@
-use error::WalkError;
 use rayon::prelude::*;
 use std::path::{Path, PathBuf};
-use walk_patterns::WalkPatterns;
 use wax::Glob;
-pub mod error;
-pub mod walk_patterns;
+mod error;
+mod walk_patterns;
+pub use error::WalkError;
+pub use walk_patterns::WalkPatterns;
 
 pub const JS_FILE_EXTENSIONS: &[&str] = &["js", "jsx", "cjs", "mjs"];
 

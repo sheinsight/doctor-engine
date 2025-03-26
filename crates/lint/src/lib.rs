@@ -209,7 +209,7 @@ impl Linter {
 mod tests {
   use std::{collections::HashMap, error::Error, time::Instant};
 
-  use doctor_walk_parallel::{WalkParallel, error::WalkError, walk_patterns::WalkPatterns};
+  use doctor_walk_parallel::{WalkError, WalkParallel, WalkPatterns};
 
   use crate::{
     category::Category,
