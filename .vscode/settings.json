@@ -13,6 +13,7 @@
     "bitflags",
     "cdylib",
     "clippy",
+    "deque",
     "docsrs",
     "embertest",
     "isnan",

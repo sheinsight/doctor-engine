@@ -20,12 +20,16 @@ license      = "MIT"
 repository   = "https://github.com/sheinsight/doctor-engine"
 rust-version = "1.85.0"
 
+[patch.crates-io]
+crossbeam-deque = { version = "=0.8.3" }  # 使用与 0.8.16 兼容的版本
+crossbeam-epoch = { version = "=0.9.14" } # 使用与 0.8.16 兼容的版本
+crossbeam-utils = { version = "=0.8.16" }
+
 [workspace.dependencies]
 bitflags     = "2.8.0"
 config       = "0.14.0"
 jsonpath_lib = "0.3.0"
 miette       = { version = "7.5.0", features = ["derive", "fancy"] }
-rayon        = "1.10.0"
 rustc-hash   = "2.1.1"
 serde        = "1.0.219"
 serde_json   = "1.0.140"
@@ -33,6 +37,7 @@ thiserror    = "2.0.12"
 tokio        = { version = "1.44.1", features = ["macros", "rt-multi-thread"] }
 wax          = "0.6.0"
 
+rayon = "1.10.0"
 
 #napi
 napi        = { version = "3.0.0-alpha.33", features = ["tokio_rt"] }
