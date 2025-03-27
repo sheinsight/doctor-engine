@@ -2,8 +2,8 @@ name: shined-doctor-engine-release
 env:
   DEBUG: napi:*
   APP_NAME: doctor
-  MACOSX_DEPLOYMENT_TARGET: '10.13'
-  CARGO_INCREMENTAL: '1'
+  # MACOSX_DEPLOYMENT_TARGET: '10.13'
+  # CARGO_INCREMENTAL: '1'
   NAPI_DIR: napi/doctor_engine
 permissions:
   contents: write
@@ -47,9 +47,9 @@ jobs:
             target: aarch64-pc-windows-msvc
 
           # linux x86_64
-          - host: ubuntu-20.04
+          - host: ubuntu-22.04
             target: x86_64-unknown-linux-gnu
-          - host: ubuntu-20.04
+          - host: ubuntu-22.04
             target: x86_64-unknown-linux-musl
           
           #linux arm
