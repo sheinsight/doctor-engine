@@ -20,11 +20,6 @@ license      = "MIT"
 repository   = "https://github.com/sheinsight/doctor-engine"
 rust-version = "1.85.0"
 
-[patch.crates-io]
-crossbeam-deque = { version = "=0.8.3" }  # 使用与 0.8.16 兼容的版本
-crossbeam-epoch = { version = "=0.9.14" } # 使用与 0.8.16 兼容的版本
-crossbeam-utils = { version = "=0.8.16" }
-
 [workspace.dependencies]
 bitflags     = "2.8.0"
 config       = "0.14.0"
