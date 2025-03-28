@@ -71,14 +71,14 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: ${{ runner.os }}-${{ matrix.target }}-cargo-${{ hashFiles('**/Cargo.lock', 'justfile') }}
+          key: ${{ runner.os }}-${{ matrix.settings.target }}-cargo-${{ hashFiles('**/Cargo.lock', 'justfile') }}
 
       - name: Install dependencies
         run: npm install
 
       - name: Build
         run: |
-          npm run build -- --target ${{ matrix.settings.target }}
+          cargo zigbuild --release --target ${{ matrix.settings.target }}
         shell: bash
       
       

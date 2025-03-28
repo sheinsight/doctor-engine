@@ -6,7 +6,7 @@ set shell := ["bash", "-cu"]
 
 setup:
     curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
-    cargo binstall taplo-cli -y
+    cargo binstall taplo-cli cargo-zigbuild -y
     @echo '✅ Setup complete!'
 
 ready:
