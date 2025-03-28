@@ -171,12 +171,14 @@ jobs:
           # windows x86_64
           - host: windows-latest
             target: x86_64-pc-windows-msvc
-          - host: windows-latest
-            target: x86_64-pc-windows-gnu
+          # napi 在windows 上只支持 msvc
+          # - host: windows-latest
+          #   target: x86_64-pc-windows-gnu
           - host: windows-latest
             target: aarch64-pc-windows-msvc
-          - host: windows-latest
-            target: aarch64-pc-windows-gnu
+          # aarch64-pc-windows-gnu 不是标准支持的目标平台
+          # - host: windows-latest
+          #   target: aarch64-pc-windows-gnu
 
     name: ${{ matrix.settings.host }} - ${{ matrix.settings.target }} - node@20
     runs-on: ${{ matrix.settings.host }}
