@@ -32,7 +32,7 @@ thiserror    = "=2.0.12"
 tokio        = { version = "=1.44.1", features = ["macros", "rt-multi-thread"] }
 wax          = "=0.6.0"
 
-rayon = "=1.8.0"
+rayon = "=1.10.0"
 
 #napi
 napi        = { version = "=3.0.0-alpha.33", features = ["tokio_rt"] }
