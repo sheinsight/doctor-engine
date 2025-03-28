@@ -83,7 +83,7 @@ jobs:
           cache-dependency-path: ${{ env.NAPI_DIR }}/package-lock.json
 
       - name: Install dependencies
-        run: pnpm install
+        run: npm install
 
       # - name: Setup Zig
       #   uses: goto-bus-stop/setup-zig@v2
