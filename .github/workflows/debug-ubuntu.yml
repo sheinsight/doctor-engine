@@ -56,10 +56,10 @@ jobs:
           cache: npm
           cache-dependency-path: ${{ env.NAPI_DIR }}/package-lock.json
 
-      - name: Setup Zig
-        uses: goto-bus-stop/setup-zig@v2
-        with:
-          version: 0.11.0
+      # - name: Setup Zig
+      #   uses: goto-bus-stop/setup-zig@v2
+      #   with:
+      #     version: 0.11.0
   
       - name: Install rust toolchain
         uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -89,7 +89,8 @@ jobs:
       - name: Build
         run: |
           just setup
-          cargo zigbuild --release --target ${{ matrix.settings.target }}
+          # cargo zigbuild --release --target ${{ matrix.settings.target }}
+          npm run build -- --target ${{ matrix.settings.target }}
         shell: bash
       
       
