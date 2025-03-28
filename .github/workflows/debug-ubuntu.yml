@@ -78,17 +78,6 @@ jobs:
 
       - name: Build
         run: |
-          if [[ "${{ matrix.settings.target }}" == *"gnu"* ]]; then
-            # GNU 构建，设置 RUSTFLAGS 确保 GLIBC 2.31 兼容性
-            export RUSTFLAGS="-C target-feature=-crt-static -C link-args=-Wl,--hash-style=both"
-          else
-            # MUSL 构建，使用静态链接
-            export RUSTFLAGS="-C target-feature=+crt-static"
-          fi
-          
-          # 设置链接器环境变量
-          export CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=gcc
-          export CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER=musl-gcc
           npm run build -- --target ${{ matrix.settings.target }}
         shell: bash
       
