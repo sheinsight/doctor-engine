@@ -162,3 +162,53 @@ jobs:
           name: bindings-${{ matrix.settings.target }}
           path: ${{ env.NAPI_DIR }}/${{ env.APP_NAME }}.*.node
           if-no-files-found: error
+
+  build-windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        settings:
+          ## windows
+          - host: windows-latest
+            target: x86_64-pc-windows-msvc
+
+    name: ${{ matrix.settings.host }} - ${{ matrix.settings.target }} - node@20
+    runs-on: ${{ matrix.settings.host }}
+
+    defaults:
+      run:
+        working-directory: ${{ env.NAPI_DIR }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: ${{ env.NAPI_DIR }}/package-lock.json
+
+      - name: Enable long paths on Windows
+        if: contains(matrix.settings.host, 'windows')
+        run: |
+          git config --system core.longpaths true
+        shell: bash
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build -- --target ${{ matrix.settings.target }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bindings-${{ matrix.settings.target }}
+          path: ${{ env.NAPI_DIR }}/${{ env.APP_NAME }}.*.node
+          if-no-files-found: error
+        
+        
