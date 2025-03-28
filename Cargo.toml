@@ -26,7 +26,7 @@ config       = "=0.14.0"
 jsonpath_lib = "=0.3.0"
 miette       = { version = "=7.5.0", features = ["derive", "fancy"] }
 rustc-hash   = "=2.1.1"
-serde        = "=1.0.210"
+serde        = "=1.0.219"
 serde_json   = "=1.0.140"
 thiserror    = "=2.0.12"
 tokio        = { version = "=1.44.1", features = ["macros", "rt-multi-thread"] }
@@ -49,6 +49,19 @@ oxc_linter      = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlin
 oxc_parser      = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v0.16.2", package = "oxc_parser" }
 oxc_semantic    = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v0.16.2", package = "oxc_semantic" }
 oxc_span        = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v0.16.2", package = "oxc_span" }
+
+## 
+biome_console            = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_console" }
+biome_deserialize        = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_deserialize" }
+biome_deserialize_macros = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_deserialize_macros" }
+biome_diagnostics        = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_diagnostics" }
+biome_formatter          = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_formatter" }
+biome_json_formatter     = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_json_formatter" }
+biome_json_parser        = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_json_parser" }
+biome_json_syntax        = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_json_syntax" }
+biome_parser             = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_parser" }
+biome_rowan              = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_rowan" }
+
 
 [profile.release]
 # 发布构建优化

@@ -1,8 +1,8 @@
 
 
-# [[bin]]
-# name = "hello"
-# path = "src/main.rs"
+[[bin]]
+name = "hello"
+path = "src/main.rs"
 
 [package]
 authors.workspace      = true
@@ -22,3 +22,7 @@ serde        = { workspace = true, features = ["derive"] }
 serde_json   = { workspace = true }
 thiserror    = { workspace = true }
 tokio        = { workspace = true }
+
+biome_deserialize = { workspace = true }
+biome_json_parser = { workspace = true }
+biome_json_syntax = { workspace = true }
