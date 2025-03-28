@@ -39,28 +39,18 @@ jobs:
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
-            build: ls -l && cd ./napi/doctor_engine && ls -l && npm run build -- --target x86_64-unknown-linux-gnu
 
           - host: ubuntu-latest
             target: x86_64-unknown-linux-musl
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
-            build: ls -l && cd ./napi/doctor_engine && ls -l && npm run build -- --target x86_64-unknown-linux-musl
 
           - host: ubuntu-latest
             target: aarch64-unknown-linux-gnu
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
-            build: |
-              set -e 
-              rustup target add aarch64-unknown-linux-gnu
-              ls -l && cd ./napi/doctor_engine && ls -l && npm run build -- --target aarch64-unknown-linux-gnu
               
           - host: ubuntu-latest
             target: aarch64-unknown-linux-musl
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine-zig
-            build: |-
-              set -e 
-              rustup target add aarch64-unknown-linux-musl &&
-              ls -l && cd ./napi/doctor_engine && ls -l && npm run build -- --target aarch64-unknown-linux-musl
     
     name: ${{ matrix.settings.host }} - ${{ matrix.settings.target }} - node@20
     runs-on: ${{ matrix.settings.host }}
@@ -81,7 +71,6 @@ jobs:
           node-version: 20
           cache: npm
           cache-dependency-path: ${{ env.NAPI_DIR }}/package-lock.json
-
       - name: Install dependencies
         run: npm install
 
@@ -107,7 +96,13 @@ jobs:
         with:
           image: ${{ matrix.settings.docker }}
           options: '--user 0:0 -v ${{ github.workspace }}/.cargo-cache/git/db:/usr/local/cargo/git/db -v ${{ github.workspace }}/.cargo/registry/cache:/usr/local/cargo/registry/cache -v ${{ github.workspace }}/.cargo/registry/index:/usr/local/cargo/registry/index -v ${{ github.workspace }}:/build -w /build'
-          run: ${{ matrix.settings.build }}
+          run: |
+            set -e 
+            rustup target add ${{ matrix.settings.target }}
+            ls -l
+            cd ./napi/doctor_engine
+            ls -l
+            npm run build -- --target ${{ matrix.settings.target }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
