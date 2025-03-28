@@ -144,6 +144,12 @@ jobs:
           cache: npm
           cache-dependency-path: ${{ env.NAPI_DIR }}/package-lock.json
 
+      - name: Install rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          target: ${{ matrix.settings.target }}
+          override: true
+
       - name: Install dependencies
         run: npm install
 
