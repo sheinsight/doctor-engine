@@ -113,7 +113,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bindings-${{ matrix.settings.target }}
-          path: ${{ env.APP_NAME }}.*.node
+          path: ${{ env.NAPI_DIR }}/${{ env.APP_NAME }}.*.node
           if-no-files-found: error
   
       # - name: Install rust toolchain
