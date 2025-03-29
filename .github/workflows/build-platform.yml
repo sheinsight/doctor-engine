@@ -77,10 +77,13 @@ jobs:
             rustup target add ${{ inputs.target }}
             cd ./napi/doctor_engine
             npm run build -- --target ${{ inputs.target }}
+            ls -l
             
       - name: Build
         if: ${{ !inputs.docker }}
-        run: npm run build -- --target ${{ inputs.target }}
+        run: |
+          npm run build -- --target ${{ inputs.target }}
+          ls -l
         
       - name: Upload artifact
         uses: actions/upload-artifact@v4
