@@ -15,214 +15,36 @@ on:
       - main
 
 jobs:
-  build-linux:
+  build-platforms:
     strategy:
       fail-fast: false
       matrix:
-        settings:
-          # linux x86_64
-          # - host: ubuntu-20.04
-          #   target: x86_64-unknown-linux-gnu
-          # - host: ubuntu-20.04
-          #   target: x86_64-unknown-linux-musl
-          
-          # - host: ubuntu-22.04
-          #   target: x86_64-unknown-linux-gnu
-          # - host: ubuntu-22.04
-          #   target: x86_64-unknown-linux-musl
-
-          # - host: ubuntu-24.04
-          #   target: x86_64-unknown-linux-gnu
-          # - host: ubuntu-24.04
-          #   target: x86_64-unknown-linux-musl
-
-          - host: ubuntu-latest
+        platform:
+          # Linux 平台
+          - host: ubuntu-latest 
             target: x86_64-unknown-linux-gnu
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
-
-          - host: ubuntu-latest
-            target: x86_64-unknown-linux-musl
-            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
-
           - host: ubuntu-latest
             target: aarch64-unknown-linux-gnu
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
-              
           - host: ubuntu-latest
             target: aarch64-unknown-linux-musl
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine-zig
-    
-    name: ${{ matrix.settings.host }} - ${{ matrix.settings.target }} - node@20
-    runs-on: ${{ matrix.settings.host }}
-
-    defaults:
-      run:
-        working-directory: ${{ env.NAPI_DIR }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-          cache-dependency-path: ${{ env.NAPI_DIR }}/package-lock.json
-      - name: Install dependencies
-        run: npm install
-
-      # - name: Setup Zig
-      #   uses: goto-bus-stop/setup-zig@v2
-      #   with:
-      #     version: 0.11.0
-
-      - name: Cache cargo
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            .cargo-cache
-            target/
-          key: ${{ matrix.settings.target }}-cargo-${{ matrix.settings.host }}
-
-      - name: Build in docker
-        uses: addnab/docker-run-action@v3
-        if: ${{ matrix.settings.docker }}
-        with:
-          image: ${{ matrix.settings.docker }}
-          options: '--user 0:0 -v ${{ github.workspace }}/.cargo-cache/git/db:/usr/local/cargo/git/db -v ${{ github.workspace }}/.cargo/registry/cache:/usr/local/cargo/registry/cache -v ${{ github.workspace }}/.cargo/registry/index:/usr/local/cargo/registry/index -v ${{ github.workspace }}:/build -w /build'
-          run: |
-            set -e 
-            rustup target add ${{ matrix.settings.target }}
-            ls -l
-            cd ./napi/doctor_engine
-            ls -l
-            npm run build -- --target ${{ matrix.settings.target }}
-
-
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: bindings-${{ matrix.settings.target }}
-          path: ${{ env.NAPI_DIR }}/${{ env.APP_NAME }}.*.node
-          if-no-files-found: error
-
-  build-macos:
-    strategy:
-      fail-fast: false
-      matrix:
-        settings:
-          ## macos
+          # macOS 平台
           - host: macos-latest
             target: x86_64-apple-darwin
           - host: macos-latest
             target: aarch64-apple-darwin
-      
-    name: ${{ matrix.settings.host }} - ${{ matrix.settings.target }} - node@20
-    runs-on: ${{ matrix.settings.host }}
-
-    defaults:
-      run:
-        working-directory: ${{ env.NAPI_DIR }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-          cache-dependency-path: ${{ env.NAPI_DIR }}/package-lock.json
-
-      - name: Install rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          target: ${{ matrix.settings.target }}
-          override: true
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build
-        run: npm run build -- --target ${{ matrix.settings.target }}
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: bindings-${{ matrix.settings.target }}
-          path: ${{ env.NAPI_DIR }}/${{ env.APP_NAME }}.*.node
-          if-no-files-found: error
-
-  build-windows:
-    strategy:
-      fail-fast: false
-      matrix:
-        settings:
-          # windows x86_64
+          # Windows 平台
           - host: windows-latest
             target: x86_64-pc-windows-msvc
-          # napi 在windows 上只支持 msvc
-          # - host: windows-latest
-          #   target: x86_64-pc-windows-gnu
           - host: windows-latest
             target: aarch64-pc-windows-msvc
-          # aarch64-pc-windows-gnu 不是标准支持的目标平台
-          # - host: windows-latest
-          #   target: aarch64-pc-windows-gnu
-
-    name: ${{ matrix.settings.host }} - ${{ matrix.settings.target }} - node@20
-    runs-on: ${{ matrix.settings.host }}
-
-    defaults:
-      run:
-        working-directory: ${{ env.NAPI_DIR }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-          cache-dependency-path: ${{ env.NAPI_DIR }}/package-lock.json
-
-      - name: Install rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          target: ${{ matrix.settings.target }}
-          override: true
-
-      - name: Enable long paths on Windows
-        if: contains(matrix.settings.host, 'windows')
-        run: |
-          git config --system core.longpaths true
-        shell: bash
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build
-        run: npm run build -- --target ${{ matrix.settings.target }}
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: bindings-${{ matrix.settings.target }}
-          path: ${{ env.NAPI_DIR }}/${{ env.APP_NAME }}.*.node
-          if-no-files-found: error
-        
-        
+    
+    name: Build ${{ matrix.platform.target }}
+    uses: ./.github/workflows/build-platform.yml
+    with:
+      host: ${{ matrix.platform.host }}
+      target: ${{ matrix.platform.target }}
+      docker: ${{ matrix.platform.docker }}
+ 
