@@ -88,3 +88,12 @@ jobs:
           name: bindings-${{ inputs.target }}
           path: ${{ env.NAPI_DIR }}/${{ env.APP_NAME }}.*.node
           if-no-files-found: error 
+
+      - name: Upload Js
+        uses: actions/upload-artifact@v4
+        with:
+          name: js
+          path: |
+            ${{ env.NAPI_DIR }}/index.js
+            ${{ env.NAPI_DIR }}/index.d.ts
+          if-no-files-found: error 
