@@ -25,3 +25,5 @@ Cargo.lock
 /target
 node_modules
 *.node
+napi/doctor_engine/index.js
+napi/doctor_engine/index.d.ts
