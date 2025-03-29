@@ -5,8 +5,8 @@
 	"types": "index.d.ts",
 	"napi": {
 		"binaryName": "doctor",
-    "packageName": "@shined/doctor",
-		"targets":[
+		"packageName": "@shined/doctor",
+		"targets": [
 			"x86_64-apple-darwin",
 			"aarch64-apple-darwin",
 			"x86_64-pc-windows-msvc",
@@ -25,7 +25,8 @@
 		"build:debug": "napi build --platform",
 		"prepublishOnly": "napi prepublish -t npm --gh-release-id $RELEASE_ID",
 		"universal": "napi universal",
-		"demo":"napi prepublish -h"
+		"demo": "napi prepublish -h",
+		"prepack": "clean-pkg-json"
 	},
 	"repository": {
 		"url": "git+https://github.com/sheinsight/doctor-engine.git"
@@ -34,9 +35,13 @@
 		"access": "public",
 		"tag": "snapshot"
 	},
-	"files": ["index.js", "index.d.ts"],
+	"files": [
+		"index.js",
+		"index.d.ts"
+	],
 	"license": "MIT",
 	"devDependencies": {
-		"@napi-rs/cli": "^3.0.0-alpha.75"
+		"@napi-rs/cli": "^3.0.0-alpha.75",
+		"clean-pkg-json": "^1.2.1"
 	}
 }
