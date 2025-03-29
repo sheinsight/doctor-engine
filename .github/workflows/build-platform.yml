@@ -1,0 +1,90 @@
+name: building-platform-binary
+
+on:
+  workflow_call:
+    inputs:
+      host:
+        required: true
+        type: string
+      target:
+        required: true
+        type: string
+      docker:
+        required: false
+        type: string
+    
+env:
+  NAPI_DIR: napi/doctor_engine
+  APP_NAME: doctor
+
+jobs:
+  build:
+    name: ${{ inputs.host }} - ${{ inputs.target }} - node@20
+    runs-on: ${{ inputs.host }}
+    
+    defaults:
+      run:
+        working-directory: ${{ env.NAPI_DIR }}
+        
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: ${{ env.NAPI_DIR }}/package-lock.json
+          
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            .cargo-cache
+            target/
+          key: ${{ inputs.target }}-cargo-${{ inputs.host }}
+          
+      - name: Install rust toolchain
+        if: ${{ !inputs.docker }}
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          target: ${{ inputs.target }}
+          override: true
+          
+      - name: Enable long paths on Windows
+        if: contains(inputs.host, 'windows')
+        run: |
+          git config --system core.longpaths true
+        shell: bash
+        
+      - name: Build in docker
+        uses: addnab/docker-run-action@v3
+        if: ${{ inputs.docker }}
+        with:
+          image: ${{ inputs.docker }}
+          options: '--user 0:0 -v ${{ github.workspace }}/.cargo-cache/git/db:/usr/local/cargo/git/db -v ${{ github.workspace }}/.cargo/registry/cache:/usr/local/cargo/registry/cache -v ${{ github.workspace }}/.cargo/registry/index:/usr/local/cargo/registry/index -v ${{ github.workspace }}:/build -w /build'
+          run: |
+            set -e 
+            rustup target add ${{ inputs.target }}
+            cd ./napi/doctor_engine
+            npm run build -- --target ${{ inputs.target }}
+            
+      - name: Build
+        if: ${{ !inputs.docker }}
+        run: npm run build -- --target ${{ inputs.target }}
+        
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bindings-${{ inputs.target }}
+          path: ${{ env.NAPI_DIR }}/${{ env.APP_NAME }}.*.node
+          if-no-files-found: error 
