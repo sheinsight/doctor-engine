@@ -100,3 +100,4 @@ jobs:
             ${{ env.NAPI_DIR }}/index.js
             ${{ env.NAPI_DIR }}/index.d.ts
           if-no-files-found: error 
+          overwrite: true
