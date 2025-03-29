@@ -2,7 +2,6 @@ name: debug
 env:
   DEBUG: napi:*
   APP_NAME: doctor
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   NAPI_DIR: napi/doctor_engine
   CARGO_PROFILE_RELEASE_BUILD_OVERRIDE_DEBUG: true
 
@@ -21,34 +20,8 @@ concurrency:
 
 jobs:
   build-platforms:
-    strategy:
-      fail-fast: false
-      matrix:
-        platform:
-          # Linux 平台
-          - host: ubuntu-latest 
-            target: x86_64-unknown-linux-gnu
-            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
-          - host: ubuntu-latest
-            target: aarch64-unknown-linux-gnu
-            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
-          - host: ubuntu-latest
-            target: aarch64-unknown-linux-musl
-            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine-zig
-          # macOS 平台
-          - host: macos-latest
-            target: x86_64-apple-darwin
-          - host: macos-latest
-            target: aarch64-apple-darwin
-          # Windows 平台
-          - host: windows-latest
-            target: x86_64-pc-windows-msvc
-          - host: windows-latest
-            target: aarch64-pc-windows-msvc
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Hello, world!"
     
-    name: Build ${{ matrix.platform.target }}
-    uses: ./.github/workflows/build-platform.yml
-    with:
-      host: ${{ matrix.platform.host }}
-      target: ${{ matrix.platform.target }}
-      docker: ${{ matrix.platform.docker }}
