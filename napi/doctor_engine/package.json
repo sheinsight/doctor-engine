@@ -1,6 +1,6 @@
 {
 	"name": "@shined/doctor",
-	"version": "0.0.1-snapshot.11",
+	"version": "0.0.1",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"napi": {
@@ -31,8 +31,7 @@
 		"url": "git+https://github.com/sheinsight/doctor-engine.git"
 	},
 	"publishConfig": {
-		"access": "public",
-		"tag": "snapshot"
+		"access": "public"
 	},
 	"files": ["index.js", "index.d.ts"],
 	"license": "MIT",
