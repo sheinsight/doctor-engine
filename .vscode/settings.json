@@ -28,6 +28,7 @@
     "npmjs",
     "oxlint",
     "Oxlintrc",
+    "pathdiff",
     "phantomjs",
     "prereleased",
     "prototypejs",

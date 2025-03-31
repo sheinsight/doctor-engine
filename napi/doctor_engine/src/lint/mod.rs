@@ -40,6 +40,7 @@ pub struct GlobJsArgs {
   pub ignore: Option<Vec<String>>,
   pub cwd: String,
   pub verbose: Option<bool>,
+  pub absolute: Option<bool>,
 }
 
 fn to_napi_error<E: ToString>(e: E) -> napi::Error {
@@ -85,7 +86,7 @@ pub async fn inner_debug_lint(
     let file_diagnostic =
       file_diagnostic.map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
 
-    let f_diags = Diagnostic::from_file_diagnostic(&file_diagnostic);
+    let f_diags = Diagnostic::from_file_diagnostic(&file_diagnostic, &glob_js_args.cwd);
     diags.extend(f_diags);
   }
 
