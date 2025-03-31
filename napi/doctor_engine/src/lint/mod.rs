@@ -39,6 +39,7 @@ pub struct GlobJsArgs {
   pub pattern: Option<String>,
   pub ignore: Option<Vec<String>>,
   pub cwd: String,
+  pub verbose: Option<bool>,
 }
 
 fn to_napi_error<E: ToString>(e: E) -> napi::Error {
@@ -52,7 +53,11 @@ pub async fn inner_debug_lint(
 ) -> Result<Vec<Diagnostic>> {
   let rc: Oxlintrc = serde_json::from_str(&oxlint_config)
     .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-  let linter = Linter::from(rc.clone()).with_show_report(true);
+  let mut linter = Linter::from(rc.clone());
+
+  if let Some(verbose) = glob_js_args.verbose {
+    linter = linter.with_show_report(verbose);
+  }
 
   let mut patterns = WalkPatterns::default();
 
@@ -113,7 +118,11 @@ pub async fn inner_lint(
     .build()
     .map_err(to_napi_error)?;
 
-  let linter = Linter::from(rc.clone()).with_show_report(true);
+  let mut linter = Linter::from(rc.clone());
+
+  if let Some(verbose) = glob_js_args.verbose {
+    linter = linter.with_show_report(verbose);
+  }
 
   let file_diagnostics = WalkParallel::new(&glob_js_args.cwd)
     .with_patterns(patterns)
