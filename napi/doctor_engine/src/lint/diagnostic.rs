@@ -22,7 +22,7 @@ impl Diagnostic {
     for diag in file_diagnostic.diagnostics.iter() {
       let file_name = file_diagnostic.path_with_source.file_path.clone();
 
-      let code = file_diagnostic.path_with_source.source_code.clone();
+      let code = diag.code.to_string();
 
       let help = diag.help.as_deref().unwrap_or_default().to_string();
 
