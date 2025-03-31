@@ -145,7 +145,8 @@ impl Linter {
       LintOptions {
         fix: FixKind::None,
         framework_hints: FrameworkFlags::empty(),
-        report_unused_directive: Some(AllowWarnDeny::Deny),
+        // report_unused_directive: Some(AllowWarnDeny::Deny),
+        report_unused_directive: Some(AllowWarnDeny::Allow),
       },
       config,
     );

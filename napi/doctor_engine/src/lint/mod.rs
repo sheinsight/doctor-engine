@@ -142,7 +142,7 @@ pub async fn inner_lint(
   for file_diagnostic in file_diagnostics {
     let file_diagnostic = file_diagnostic.map_err(to_napi_error)?;
 
-    let f_diags = Diagnostic::from_file_diagnostic(&file_diagnostic);
+    let f_diags = Diagnostic::from_file_diagnostic(&file_diagnostic, &glob_js_args.cwd);
     diags.extend(f_diags);
 
     for diag in file_diagnostic.diagnostics {
