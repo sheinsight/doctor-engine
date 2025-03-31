@@ -6,15 +6,24 @@ use serde::{Deserialize, Serialize};
   Debug, Default, PartialEq, Eq, Hash, Clone, Serialize, Deserialize, Copy, PartialOrd, Ord,
 )]
 pub struct Span {
-  pub start: u32,
-  pub end: u32,
+  pub offset: u32,
+  pub len: u32,
 }
 
 impl Span {
-  pub fn new(span: &oxc_span::Span) -> Self {
+  pub fn new(offset: usize, len: usize) -> Self {
     Self {
-      start: span.start,
-      end: span.end,
+      offset: offset as u32,
+      len: len as u32,
+    }
+  }
+}
+
+impl From<oxc_diagnostics::LabeledSpan> for Span {
+  fn from(value: oxc_diagnostics::LabeledSpan) -> Self {
+    Self {
+      offset: value.offset() as u32,
+      len: value.offset() as u32 + value.len() as u32,
     }
   }
 }

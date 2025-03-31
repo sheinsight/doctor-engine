@@ -34,17 +34,14 @@ impl Diagnostic {
         Severity::Error => "error".to_string(),
       };
 
+      let source_code = file_diagnostic.path_with_source.source_code.clone();
+
       let labels = diag
         .labels
         .as_ref()
         .map(|v| {
           v.iter()
-            .map(|l| {
-              return LabeledLoc::with_labeled_span(
-                &file_diagnostic.path_with_source.source_code,
-                l.clone(),
-              );
-            })
+            .map(|l| LabeledLoc::new(&source_code, l.offset(), l.len()))
             .collect::<Vec<_>>()
         })
         .unwrap_or_default();

@@ -1,5 +1,4 @@
 use napi_derive::napi;
-use oxc_diagnostics::LabeledSpan;
 
 use super::{Location, Span};
 
@@ -11,12 +10,11 @@ pub struct LabeledLoc {
 }
 
 impl LabeledLoc {
-  pub fn with_labeled_span(source_text: &str, span: LabeledSpan) -> Self {
-    let span = Span {
-      start: span.offset() as u32,
-      end: span.offset() as u32 + span.len() as u32,
-    };
-    let loc = Location::with_source(source_text, span);
+  pub fn new(source_code: &str, offset: usize, len: usize) -> Self {
+    let start = offset;
+    let end = offset + len;
+    let span = super::Span::new(offset, len);
+    let loc = super::Location::with_source(&source_code, start, end);
     Self { span, loc }
   }
 }
