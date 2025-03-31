@@ -7,14 +7,14 @@ use serde::{Deserialize, Serialize};
 )]
 pub struct Span {
   pub offset: u32,
-  pub len: u32,
+  pub length: u32,
 }
 
 impl Span {
   pub fn new(offset: usize, len: usize) -> Self {
     Self {
       offset: offset as u32,
-      len: len as u32,
+      length: len as u32,
     }
   }
 }
@@ -23,7 +23,7 @@ impl From<oxc_diagnostics::LabeledSpan> for Span {
   fn from(value: oxc_diagnostics::LabeledSpan) -> Self {
     Self {
       offset: value.offset() as u32,
-      len: value.offset() as u32 + value.len() as u32,
+      length: value.offset() as u32 + value.len() as u32,
     }
   }
 }
