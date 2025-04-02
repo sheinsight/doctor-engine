@@ -16,6 +16,24 @@ pub trait MultiFrom: Sized {
   fn from_cwd<P: AsRef<Path>>(cwd: P) -> Result<Self, Self::Error>;
 }
 
+/// A trait for types that can validate configuration files or other resources
+///
+/// # Examples
+///
+/// ```rust
+/// use doctor_ext::Validator;
+///
+/// struct MyValidator;
+///
+/// impl Validator for MyValidator {
+///     type Error = std::io::Error;
+///
+///     fn validate(&self) -> Result<(), Self::Error> {
+///         // Validation logic here
+///         Ok(())
+///     }
+/// }
+/// ```
 pub trait Validator {
   type Error;
   fn validate(&self) -> Result<(), Self::Error>;

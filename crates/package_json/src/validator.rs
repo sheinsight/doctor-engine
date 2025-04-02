@@ -32,6 +32,77 @@ pub enum ValidatePrivate {
   False,
 }
 
+/// validate package.json file
+///
+/// # Example
+///
+/// ```rust
+/// use doctor_package_json::validator::PackageJsonValidator;
+/// use std::path::Path;
+/// use doctor_ext::Validator;
+///
+/// let validator = PackageJsonValidator::builder()
+///   .config_path("./fixtures/package.json")
+///   .build();
+///
+/// let result = validator.validate();
+///
+/// assert!(result.is_ok());
+/// ```
+///
+/// # Validate name
+///
+/// ```rust
+/// use doctor_package_json::validator::{PackageJsonValidator,ValidateName};
+/// use doctor_package_json::error::PackageJsonValidatorError;
+/// use std::path::Path;
+/// use doctor_ext::Validator;
+///
+/// let validator = PackageJsonValidator::builder()
+///   .config_path("./fixtures/no_name.json")
+///   .with_validate_name(ValidateName::Exist)
+///   .build();
+///
+/// let result = validator.validate();
+///
+/// assert!(matches!(result, Err(PackageJsonValidatorError::MissingNameErr(_))));
+/// ```
+///
+/// # Validate private
+///
+/// ```rust
+/// use doctor_package_json::validator::{PackageJsonValidator,ValidatePrivate};
+/// use doctor_package_json::error::PackageJsonValidatorError;
+/// use std::path::Path;
+/// use doctor_ext::Validator;
+///
+/// let validator = PackageJsonValidator::builder()
+///   .config_path("./fixtures/no_private.json")
+///   .with_validate_private(ValidatePrivate::Exist)
+///   .build();
+///
+/// let result = validator.validate();
+///
+/// assert!(matches!(result, Err(PackageJsonValidatorError::MissingPrivateErr(_))));
+/// ```
+///
+/// # Validate package manager
+///
+/// ```rust
+/// use doctor_package_json::validator::{PackageJsonValidator,ValidatePackageManager};
+/// use doctor_package_json::error::PackageJsonValidatorError;
+/// use std::path::Path;
+/// use doctor_ext::Validator;
+///
+/// let validator = PackageJsonValidator::builder()
+///   .config_path("./fixtures/no_package_manager.json")
+///   .with_validate_package_manager(ValidatePackageManager::Exist)
+///   .build();
+///
+/// let result = validator.validate();
+///
+/// assert!(matches!(result, Err(PackageJsonValidatorError::MissingPackageManagerErr(_))));
+/// ```
 #[derive(TypedBuilder)]
 pub struct PackageJsonValidator<'a, P>
 where
@@ -149,6 +220,23 @@ where
 {
   type Error = PackageJsonValidatorError;
 
+  /// validate package.json file
+  ///
+  /// # Example
+  ///
+  /// ```rust
+  /// use doctor_package_json::validator::PackageJsonValidator;
+  /// use std::path::Path;
+  /// use doctor_ext::Validator;
+  ///
+  /// let validator = PackageJsonValidator::builder()
+  ///   .config_path("./fixtures/package.json")
+  ///   .build();
+  ///
+  /// let result = validator.validate();
+  ///
+  /// assert!(result.is_ok());
+  /// ```
   fn validate(&self) -> Result<(), Self::Error> {
     let path = self.config_path.as_ref();
 
