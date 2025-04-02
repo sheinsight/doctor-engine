@@ -1,11 +1,8 @@
-use std::{collections::HashMap, fs, path::Path};
+use std::collections::HashMap;
 
-use doctor_ext::{MultiFrom, PathExt};
 use serde::{Deserialize, Serialize};
 
-use crate::{error::PackageJsonValidatorError, version::Version};
-
-const FILE_NAME: &str = "package.json";
+use crate::{error::VersionError, version::Version};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PackageJson {
@@ -33,43 +30,10 @@ pub struct PackageJson {
   pub optional_dependencies: Option<HashMap<String, String>>,
 }
 
-impl MultiFrom for PackageJson {
-  type Error = PackageJsonValidatorError;
-
-  fn from_file<P: AsRef<Path>>(path: P) -> Result<Self, Self::Error> {
-    let path = path.as_ref();
-    let content = fs::read_to_string(&path).map_err(|e| PackageJsonValidatorError::IoError {
-      path: path.to_string_owned(),
-      error: e,
-    })?;
-
-    let package_json: PackageJson =
-      serde_json::from_str(&content).map_err(|e| PackageJsonValidatorError::ParseError {
-        path: path.to_string_owned(),
-        error: e,
-      })?;
-    Ok(package_json)
-  }
-
-  fn from_cwd<P: AsRef<Path>>(cwd: P) -> Result<Self, Self::Error> {
-    let path = cwd.as_ref().join(FILE_NAME);
-    let content = fs::read_to_string(&path).map_err(|e| PackageJsonValidatorError::IoError {
-      path: path.to_string_owned(),
-      error: e,
-    })?;
-    let package_json: PackageJson =
-      serde_json::from_str(&content).map_err(|e| PackageJsonValidatorError::ParseError {
-        path: path.to_string_owned(),
-        error: e,
-      })?;
-    Ok(package_json)
-  }
-}
-
 impl PackageJson {
   fn get_deps(
     deps: &Option<HashMap<String, String>>,
-  ) -> Result<HashMap<String, Version>, PackageJsonValidatorError> {
+  ) -> Result<HashMap<String, Version>, VersionError> {
     match deps {
       Some(deps) => {
         let mut dependencies = HashMap::with_capacity(deps.len());
@@ -83,13 +47,11 @@ impl PackageJson {
     }
   }
 
-  pub fn get_dependencies(&self) -> Result<HashMap<String, Version>, PackageJsonValidatorError> {
+  pub fn get_dependencies(&self) -> Result<HashMap<String, Version>, VersionError> {
     Self::get_deps(&self.dependencies)
   }
 
-  pub fn get_dev_dependencies(
-    &self,
-  ) -> Result<HashMap<String, Version>, PackageJsonValidatorError> {
+  pub fn get_dev_dependencies(&self) -> Result<HashMap<String, Version>, VersionError> {
     Self::get_deps(&self.dev_dependencies)
   }
 }

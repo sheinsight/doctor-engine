@@ -1,212 +1,165 @@
-use std::path::{Path, PathBuf};
+use std::{fs::read_to_string, path::Path};
 
 use doctor_ext::{MultiFrom, PathExt, Validator};
+use typed_builder::TypedBuilder;
 
-use crate::{error::PackageJsonValidatorError, package_json::PackageJson};
+use crate::{
+  error::{
+    IoErr, MissingNameErr, MissingPackageManagerErr, MissingPrivateErr, NoMatchedPrivateErr,
+    PackageJsonValidatorError, ParseErr,
+  },
+  package_json::PackageJson,
+};
 
-const FILE_NAME: &str = "package.json";
-
-/// PackageJsonValidator
-///
-/// # Example
-///
-/// ```rust
-/// use doctor_package_json::validator::PackageJsonValidator;
-/// use doctor_ext::MultiFrom;
-/// use doctor_ext::Validator;
-///
-/// let validator = PackageJsonValidator::from_cwd("fixtures/no_name")
-///   .unwrap()
-///   .with_validate_name();
-/// assert!(validator.validate().is_err());
-///
-/// let validator = PackageJsonValidator::from_cwd("fixtures/no_private")
-///   .unwrap()
-///   .with_validate_private_value(true);
-/// assert!(validator.validate().is_err());
-///
-/// let validator = PackageJsonValidator::from_cwd("fixtures/no_package_manager")
-///   .unwrap()
-///   .with_validate_package_manager();
-/// assert!(validator.validate().is_err());
-/// ```
 #[derive(Debug)]
-pub struct PackageJsonValidator {
-  file_path: PathBuf,
-  package_json: PackageJson,
-  with_validate_name: bool,
-  with_validate_package_manager: bool,
-  with_validate_private_value: Option<bool>,
+pub enum ValidateName {
+  Exist,
+  // Value(String),
 }
 
-impl PackageJsonValidator {
-  /// Validate name
-  ///
-  /// # Example
-  ///
-  /// ```rust
-  /// use doctor_package_json::validator::PackageJsonValidator;
-  /// use doctor_ext::MultiFrom;
-  /// use doctor_ext::Validator;
-  ///
-  /// let validator = PackageJsonValidator::from_cwd("fixtures/no_name")
-  ///   .unwrap()
-  ///   .with_validate_name();
-  /// assert!(validator.validate().is_err());
-  /// ```
-  pub fn with_validate_name(mut self) -> Self {
-    self.with_validate_name = true;
-    self
-  }
-
-  /// Validate private value
-  ///
-  /// # Example
-  ///
-  /// ```rust
-  /// use doctor_package_json::validator::PackageJsonValidator;
-  /// use doctor_ext::MultiFrom;
-  /// use doctor_ext::Validator;
-  ///
-  /// let validator = PackageJsonValidator::from_cwd("fixtures/no_private")
-  ///   .unwrap()
-  ///   .with_validate_private_value(true);
-  /// assert!(validator.validate().is_err());
-  /// ```
-  pub fn with_validate_private_value(mut self, expect_value: bool) -> Self {
-    self.with_validate_private_value = Some(expect_value);
-    self
-  }
-
-  /// Validate package manager
-  ///
-  /// # Example
-  ///
-  /// ```rust
-  /// use doctor_package_json::validator::PackageJsonValidator;
-  /// use doctor_ext::MultiFrom;
-  /// use doctor_ext::Validator;
-  ///
-  /// let validator = PackageJsonValidator::from_cwd("fixtures/no_package_manager")
-  ///   .unwrap()
-  ///   .with_validate_package_manager();
-  /// assert!(validator.validate().is_err());
-  /// ```
-  pub fn with_validate_package_manager(mut self) -> Self {
-    self.with_validate_package_manager = true;
-    self
-  }
+#[derive(Debug)]
+pub enum ValidatePackageManager {
+  Exist,
+  // Npm,
+  // Pnpm,
+  // Yarn,
 }
 
-impl Validator for PackageJsonValidator {
-  type Error = PackageJsonValidatorError;
+#[derive(Debug)]
+pub enum ValidatePrivate {
+  Exist,
+  True,
+  False,
+}
 
-  /// Validate package.json
-  ///
-  /// # Example
-  ///
-  /// ```rust
-  /// use doctor_package_json::validator::PackageJsonValidator;
-  /// use doctor_ext::MultiFrom;
-  /// use doctor_ext::Validator;
-  ///
-  /// let validator = PackageJsonValidator::from_cwd("fixtures/no_name")
-  ///   .unwrap()
-  ///   .with_validate_name();
-  /// assert!(validator.validate().is_err());
-  fn validate(&self) -> Result<(), Self::Error> {
-    if self.with_validate_name {
-      if self.package_json.name.is_none() {
-        return Err(PackageJsonValidatorError::NoNameError(
-          self.file_path.to_string_owned(),
-        ));
-      }
+#[derive(Debug, TypedBuilder)]
+pub struct PackageJsonValidator<P>
+where
+  P: AsRef<Path>,
+{
+  config_path: P,
+
+  #[builder(default = None, setter(strip_option))]
+  with_validate_name: Option<ValidateName>,
+
+  #[builder(default = None, setter(strip_option))]
+  with_validate_private: Option<ValidatePrivate>,
+
+  #[builder(default = None, setter(strip_option))]
+  with_validate_package_manager: Option<ValidatePackageManager>,
+}
+
+impl<P> PackageJsonValidator<P>
+where
+  P: AsRef<Path>,
+{
+  fn validate_package_manager(
+    &self,
+    package_json: &PackageJson,
+  ) -> Result<(), PackageJsonValidatorError> {
+    if let Some(validate_package_manager) = &self.with_validate_package_manager {
+      let path = self.config_path.as_ref();
+
+      let Some(_) = &package_json.package_manager else {
+        return MissingPackageManagerErr::builder()
+          .config_path(path.to_string_owned())
+          .build()
+          .into();
+      };
+
+      match validate_package_manager {
+        ValidatePackageManager::Exist => Ok(()),
+      }?;
     }
 
-    if self.with_validate_package_manager {
-      if self.package_json.package_manager.is_none() {
-        return Err(PackageJsonValidatorError::NoPackageManagerError(
-          self.file_path.to_string_owned(),
-        ));
-      }
-    }
+    Ok(())
+  }
 
-    if let Some(expect_value) = self.with_validate_private_value {
-      if let Some(actual_value) = self.package_json.private {
-        if actual_value != expect_value {
-          return Err(PackageJsonValidatorError::NoMatchedPrivateError {
-            path: self.file_path.to_string_owned(),
-            expect_value,
-            actual_value,
-          });
+  fn validate_private(&self, package_json: &PackageJson) -> Result<(), PackageJsonValidatorError> {
+    if let Some(validate_private) = &self.with_validate_private {
+      let path = self.config_path.as_ref();
+
+      let Some(actual) = package_json.private else {
+        return MissingPrivateErr::builder()
+          .config_path(path.to_string_owned())
+          .build()
+          .into();
+      };
+
+      match validate_private {
+        ValidatePrivate::Exist => Ok(()),
+        ValidatePrivate::True if actual == true => Ok(()),
+        ValidatePrivate::False if actual == false => Ok(()),
+        _ => {
+          let expect = match validate_private {
+            ValidatePrivate::Exist => actual,
+            ValidatePrivate::True => true,
+            ValidatePrivate::False => false,
+          };
+          return NoMatchedPrivateErr::builder()
+            .config_path(path.to_string_owned())
+            .expect(expect)
+            .actual(actual)
+            .build()
+            .into();
         }
-      } else {
-        return Err(PackageJsonValidatorError::NoPrivateError(
-          self.file_path.to_string_owned(),
-        ));
-      }
+      }?;
+    }
+
+    Ok(())
+  }
+
+  fn validate_name(&self, package_json: &PackageJson) -> Result<(), PackageJsonValidatorError> {
+    if let Some(validate_name) = &self.with_validate_name {
+      let path = self.config_path.as_ref();
+
+      let Some(_) = &package_json.name else {
+        return MissingNameErr::builder()
+          .config_path(path.to_string_owned())
+          .build()
+          .into();
+      };
+
+      match validate_name {
+        ValidateName::Exist => Ok(()),
+      }?;
     }
 
     Ok(())
   }
 }
-
-impl MultiFrom for PackageJsonValidator {
+impl<P> Validator for PackageJsonValidator<P>
+where
+  P: AsRef<Path>,
+{
   type Error = PackageJsonValidatorError;
 
-  /// Create PackageJsonValidator from file
-  ///
-  /// # Example
-  ///
-  /// ```rust
-  /// use doctor_package_json::validator::PackageJsonValidator;
-  /// use doctor_ext::MultiFrom;
-  /// use doctor_ext::Validator;
-  /// use std::path::Path;
-  ///
-  /// let validator = PackageJsonValidator::from_file(Path::new("fixtures/no_name/package.json"))
-  ///   .unwrap();
-  /// assert!(!validator.validate().is_err());
-  /// ```
-  fn from_file<P: AsRef<Path>>(path: P) -> Result<Self, Self::Error> {
-    let package_json = PackageJson::from_file(&path)?;
-    let file_path = path.as_ref().to_path_buf();
+  fn validate(&self) -> Result<(), Self::Error> {
+    let path = self.config_path.as_ref();
 
-    Ok(Self {
-      file_path,
-      package_json,
-      with_validate_name: false,
-      with_validate_package_manager: false,
-      with_validate_private_value: None,
-    })
-  }
+    let content = read_to_string(&path).map_err(|e| {
+      IoErr::builder()
+        .path(path.to_string_owned())
+        .source(e)
+        .build()
+        .into()
+    })?;
 
-  /// Create PackageJsonValidator from current working directory
-  ///
-  /// # Example
-  ///
-  /// ```rust
-  /// use doctor_package_json::validator::PackageJsonValidator;
-  /// use doctor_ext::MultiFrom;
-  /// use doctor_ext::Validator;
-  /// use std::path::Path;
-  ///
-  /// let validator = PackageJsonValidator::from_cwd(Path::new("fixtures/no_name"))
-  ///   .unwrap();
-  /// assert!(!validator.validate().is_err());
-  /// ```
-  fn from_cwd<P: AsRef<Path>>(cwd: P) -> Result<Self, Self::Error> {
-    let path = cwd.as_ref().join(FILE_NAME);
-    let package_json = PackageJson::from_file(&path)?;
-    let file_path = path.to_path_buf();
+    let package_json = serde_json::from_str::<PackageJson>(&content).map_err(|e| {
+      ParseErr::builder()
+        .path(path.to_string_owned())
+        .source(e)
+        .build()
+        .into()
+    })?;
 
-    Ok(Self {
-      file_path,
-      package_json,
-      with_validate_name: false,
-      with_validate_package_manager: false,
-      with_validate_private_value: None,
-    })
+    self.validate_name(&package_json)?;
+
+    self.validate_private(&package_json)?;
+
+    self.validate_package_manager(&package_json)?;
+
+    Ok(())
   }
 }
 
@@ -216,28 +169,43 @@ mod tests {
 
   #[test]
   fn test_validate_name() {
-    let validator = PackageJsonValidator::from_cwd("fixtures/no_name")
-      .unwrap()
-      .with_validate_name();
-    let result = validator.validate();
-    assert!(result.is_err());
+    let result = PackageJsonValidator::builder()
+      .config_path("fixtures/no_name.json")
+      .with_validate_name(ValidateName::Exist)
+      .build()
+      .validate();
+
+    assert!(matches!(
+      result,
+      Err(PackageJsonValidatorError::MissingNameErr(_))
+    ))
   }
 
   #[test]
   fn test_validate_private() {
-    let validator = PackageJsonValidator::from_cwd("fixtures/no_private")
-      .unwrap()
-      .with_validate_private_value(true);
-    let result = validator.validate();
-    assert!(result.is_err());
+    let result = PackageJsonValidator::builder()
+      .config_path("fixtures/no_private.json")
+      .with_validate_private(ValidatePrivate::Exist)
+      .build()
+      .validate();
+
+    assert!(matches!(
+      result,
+      Err(PackageJsonValidatorError::MissingPrivateErr(_))
+    ))
   }
 
   #[test]
   fn test_validate_package_manager() {
-    let validator = PackageJsonValidator::from_cwd("fixtures/no_package_manager")
-      .unwrap()
-      .with_validate_package_manager();
-    let result = validator.validate();
-    assert!(result.is_err());
+    let result = PackageJsonValidator::builder()
+      .config_path("fixtures/no_package_manager.json")
+      .with_validate_package_manager(ValidatePackageManager::Exist)
+      .build()
+      .validate();
+
+    assert!(matches!(
+      result,
+      Err(PackageJsonValidatorError::MissingPackageManagerErr(_))
+    ))
   }
 }
