@@ -1,19 +1,30 @@
-use thiserror::Error;
+use doctor_ext::define_errors;
 
-#[derive(Error, Debug)]
-pub enum NpmrcValidatorError {
-  #[error("Npmrc file not found {0}")]
-  NpmrcFileNotFound(String),
+define_errors! {
+  NpmrcValidatorError {
+    #[message = "expected: {expect}, actual: {actual} in {config_path}"]
+    MatchedFailErr {
+      config_path: String,
+      expect: String,
+      actual: String,
+    },
 
-  #[error("{0} {1}")]
-  BuildConfigError(String, #[source] config::ConfigError),
+    #[message = "build config {config_path} failed, {source}"]
+    BuildConfigErr {
+      config_path: String,
+      source: config::ConfigError,
+    },
 
-  #[error("Registry not found")]
-  RegistryNotFound,
+    #[message = "field {field} not found in {config_path} , {source}"]
+    NotFoundFieldErr {
+      field: String,
+      config_path: String,
+      source: config::ConfigError,
+    },
 
-  #[error("Registry value is empty")]
-  RegistryValueIsEmpty,
-
-  #[error("Registry value is not expected {expect} , actual {actual}")]
-  RegistryValueMatchedFailed { expect: String, actual: String },
+    #[message = "unknown error {source}"]
+    UnknownErr {
+      source: Box<dyn std::error::Error>,
+    },
+  }
 }
