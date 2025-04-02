@@ -6,6 +6,23 @@ use typed_builder::TypedBuilder;
 
 use crate::error::{InvalidErr, NodeVersionValidatorError, NotFoundErr, UnknowErr};
 
+/// validate node version file
+///
+/// # Example
+///
+/// ```rust
+/// use doctor_node::validator::NodeVersionValidator;
+/// use std::path::Path;
+/// use doctor_ext::Validator;
+///
+/// let validator = NodeVersionValidator::builder()
+///   .config_path("./fixtures/.success")
+///   .build();
+///
+/// let result = validator.validate();
+///
+/// assert!(result.is_ok());
+/// ```
 #[derive(TypedBuilder)]
 pub struct NodeVersionValidator<'a, P>
 where
@@ -37,6 +54,23 @@ where
 {
   type Error = NodeVersionValidatorError;
 
+  /// validate node version file
+  ///
+  /// # Example
+  ///
+  /// ```rust
+  /// use doctor_node::validator::NodeVersionValidator;
+  /// use std::path::Path;
+  /// use doctor_ext::Validator;
+  ///
+  /// let validator = NodeVersionValidator::builder()
+  ///   .config_path("./fixtures/.success")
+  ///   .build();
+  ///
+  /// let result = validator.validate();
+  ///
+  /// assert!(result.is_ok());
+  /// ```
   fn validate(&self) -> Result<(), Self::Error> {
     let path = self.config_path.as_ref();
 
