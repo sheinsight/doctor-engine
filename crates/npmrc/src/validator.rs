@@ -9,6 +9,20 @@ use crate::error::{BuildConfigErr, MatchedFailErr, NotFoundFieldErr, NpmrcValida
 
 const REGISTRY: &str = "registry";
 
+/// NpmrcValidator is a validator for npmrc file
+///
+/// # Example
+///
+/// ```rust
+/// use doctor_npmrc::validator::NpmrcValidator;
+/// use doctor_ext::Validator;
+///
+/// let validator = NpmrcValidator::builder()
+///   .config_path("./fixtures/.npmrc")
+///   .with_registry_url(vec!["https://test.npmjs.org/"])
+///   .build();
+/// assert!(validator.validate().is_ok());
+/// ```
 #[derive(TypedBuilder)]
 pub struct NpmrcValidator<'a, P>
 where
@@ -67,6 +81,20 @@ where
 {
   type Error = NpmrcValidatorError;
 
+  /// Validate npmrc file
+  ///
+  /// # Example
+  ///
+  /// ```rust
+  /// use doctor_npmrc::validator::NpmrcValidator;
+  /// use doctor_ext::Validator;
+  ///
+  /// let validator = NpmrcValidator::builder()
+  ///   .config_path("./fixtures/.npmrc")
+  ///   .with_registry_url(vec!["https://test.npmjs.org/"])
+  ///   .build();
+  /// assert!(validator.validate().is_ok());
+  /// ```
   fn validate(&self) -> Result<(), Self::Error> {
     let source = File::from(self.config_path.as_ref()).format(FileFormat::Ini);
 
