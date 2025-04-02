@@ -7,14 +7,18 @@ use typed_builder::TypedBuilder;
 use crate::error::{InvalidErr, NodeVersionValidatorError, NotFoundErr, UnknowErr};
 
 #[derive(TypedBuilder)]
-pub struct NodeVersionValidator<P>
+pub struct NodeVersionValidator<'a, P>
 where
   P: AsRef<Path>,
 {
   config_path: P,
+
+  #[builder(default = None, setter(strip_option))]
+  with_additional_validation:
+    Option<Box<dyn Fn(String) -> Result<(), NodeVersionValidatorError> + 'a>>,
 }
 
-impl<P> Validator for NodeVersionValidator<P>
+impl<'a, P> Validator for NodeVersionValidator<'a, P>
 where
   P: AsRef<Path>,
 {
@@ -43,6 +47,10 @@ where
         .version(version.to_string())
         .build()
         .into();
+    }
+
+    if let Some(with_additional_validation) = &self.with_additional_validation {
+      with_additional_validation(version.to_string())?;
     }
 
     Ok(())
@@ -94,5 +102,27 @@ mod tests {
       .validate();
 
     assert!(res.is_ok());
+  }
+
+  #[test]
+  fn test_validate_node_version_file_additional_validation() {
+    let path = "./fixtures/.success";
+    let res = NodeVersionValidator::builder()
+      .config_path(path.to_string())
+      .with_additional_validation(Box::new(|version| {
+        if version.starts_with("v") {
+          Ok(())
+        } else {
+          InvalidErr::builder()
+            .config_path(path.to_string())
+            .version(version.to_string())
+            .build()
+            .into()
+        }
+      }))
+      .build()
+      .validate();
+
+    assert!(matches!(res, Err(NodeVersionValidatorError::InvalidErr(_))));
   }
 }

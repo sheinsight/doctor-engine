@@ -34,7 +34,7 @@ where
   with_registry_url: Option<Vec<&'a str>>,
 
   #[builder(default = None, setter(strip_option))]
-  additional_validation: Option<Box<dyn Fn(&Config) -> Result<(), NpmrcValidatorError> + 'a>>,
+  with_additional_validation: Option<Box<dyn Fn(&Config) -> Result<(), NpmrcValidatorError> + 'a>>,
 }
 
 impl<'a, P> NpmrcValidator<'a, P>
@@ -67,7 +67,7 @@ where
   }
 
   fn validate_additional_validation(&self, config: &Config) -> Result<(), NpmrcValidatorError> {
-    if let Some(additional_validation) = &self.additional_validation {
+    if let Some(additional_validation) = &self.with_additional_validation {
       additional_validation(config)?;
     }
 
@@ -177,7 +177,7 @@ mod tests {
 
     let result = NpmrcValidator::builder()
       .config_path("fixtures/.npmrc")
-      .additional_validation(Box::new(|config| {
+      .with_additional_validation(Box::new(|config| {
         config
           .get::<String>("unknown_field")
           .map_err(|e| UnknownErr::builder().source(Box::new(e)).build().into())?;
