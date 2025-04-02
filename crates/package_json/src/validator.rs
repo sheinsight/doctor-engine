@@ -1,6 +1,6 @@
 use std::{fs::read_to_string, path::Path};
 
-use doctor_ext::{MultiFrom, PathExt, Validator};
+use doctor_ext::{PathExt, Validator};
 use typed_builder::TypedBuilder;
 
 use crate::{
@@ -32,8 +32,8 @@ pub enum ValidatePrivate {
   False,
 }
 
-#[derive(Debug, TypedBuilder)]
-pub struct PackageJsonValidator<P>
+#[derive(TypedBuilder)]
+pub struct PackageJsonValidator<'a, P>
 where
   P: AsRef<Path>,
 {
@@ -47,9 +47,13 @@ where
 
   #[builder(default = None, setter(strip_option))]
   with_validate_package_manager: Option<ValidatePackageManager>,
+
+  #[builder(default = None, setter(strip_option))]
+  with_additional_validation:
+    Option<Box<dyn Fn(&PackageJson) -> Result<(), PackageJsonValidatorError> + 'a>>,
 }
 
-impl<P> PackageJsonValidator<P>
+impl<'a, P> PackageJsonValidator<'a, P>
 where
   P: AsRef<Path>,
 {
@@ -127,8 +131,19 @@ where
 
     Ok(())
   }
+
+  fn validate_additional_validation(
+    &self,
+    package_json: &PackageJson,
+  ) -> Result<(), PackageJsonValidatorError> {
+    if let Some(with_additional_validation) = &self.with_additional_validation {
+      with_additional_validation(package_json)?;
+    }
+
+    Ok(())
+  }
 }
-impl<P> Validator for PackageJsonValidator<P>
+impl<'a, P> Validator for PackageJsonValidator<'a, P>
 where
   P: AsRef<Path>,
 {
@@ -158,6 +173,8 @@ where
     self.validate_private(&package_json)?;
 
     self.validate_package_manager(&package_json)?;
+
+    self.validate_additional_validation(&package_json)?;
 
     Ok(())
   }
@@ -206,6 +223,26 @@ mod tests {
     assert!(matches!(
       result,
       Err(PackageJsonValidatorError::MissingPackageManagerErr(_))
+    ))
+  }
+
+  #[test]
+  fn test_validate_package_json_additional_validation() {
+    let path = "fixtures/no_package_manager.json";
+    let result = PackageJsonValidator::builder()
+      .config_path(path)
+      .with_additional_validation(Box::new(|_package_json| {
+        MissingNameErr::builder()
+          .config_path(path.to_string())
+          .build()
+          .into()
+      }))
+      .build()
+      .validate();
+
+    assert!(matches!(
+      result,
+      Err(PackageJsonValidatorError::MissingNameErr(_))
     ))
   }
 }

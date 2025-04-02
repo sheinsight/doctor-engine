@@ -18,6 +18,19 @@ where
     Option<Box<dyn Fn(String) -> Result<(), NodeVersionValidatorError> + 'a>>,
 }
 
+impl<'a, P> NodeVersionValidator<'a, P>
+where
+  P: AsRef<Path>,
+{
+  fn validate_additional_validation(&self, version: &str) -> Result<(), NodeVersionValidatorError> {
+    if let Some(with_additional_validation) = &self.with_additional_validation {
+      with_additional_validation(version.to_string())?;
+    }
+
+    Ok(())
+  }
+}
+
 impl<'a, P> Validator for NodeVersionValidator<'a, P>
 where
   P: AsRef<Path>,
@@ -49,9 +62,7 @@ where
         .into();
     }
 
-    if let Some(with_additional_validation) = &self.with_additional_validation {
-      with_additional_validation(version.to_string())?;
-    }
+    self.validate_additional_validation(&version)?;
 
     Ok(())
   }
