@@ -16,7 +16,7 @@ define_errors! {
     },
 
     #[message = "field {field} not found in {config_path} , {source}"]
-    NotFoundFieldErr {
+    MissingFieldErr {
       field: String,
       config_path: String,
       source: config::ConfigError,

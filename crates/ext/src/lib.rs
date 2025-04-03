@@ -63,6 +63,16 @@ macro_rules! define_errors {
             )*
         }
 
+        impl $error_enum {
+            pub fn to_key(&self) -> String {
+                match self {
+                    $(
+                        Self::$name { .. } => stringify!($name).to_string(),
+                    )*
+                }
+            }
+        }
+
         $(
             // 为每个具体错误类型定义结构体
             #[derive(Debug, typed_builder::TypedBuilder)]
@@ -70,6 +80,12 @@ macro_rules! define_errors {
                 $(
                     pub $field: $type
                 ),*
+            }
+
+            impl $name {
+                pub fn to_key(&self) -> String {
+                    stringify!($name).to_string()
+                }
             }
 
             // 实现 Into trait

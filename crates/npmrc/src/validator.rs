@@ -5,7 +5,7 @@ use doctor_ext::{PathExt, Validator};
 
 use typed_builder::TypedBuilder;
 
-use crate::error::{BuildConfigErr, MatchedFailErr, NotFoundFieldErr, NpmrcValidatorError};
+use crate::error::{BuildConfigErr, MatchedFailErr, MissingFieldErr, NpmrcValidatorError};
 
 const REGISTRY: &str = "registry";
 
@@ -44,7 +44,7 @@ where
   fn validate_registry(&self, config: &Config) -> Result<(), NpmrcValidatorError> {
     let config_path = self.config_path.as_ref();
 
-    let err = NotFoundFieldErr::builder()
+    let err = MissingFieldErr::builder()
       .field(REGISTRY.to_string())
       .config_path(config_path.to_string_owned());
 
@@ -154,7 +154,7 @@ mod tests {
 
     assert!(matches!(
       result,
-      Err(NpmrcValidatorError::NotFoundFieldErr { .. })
+      Err(NpmrcValidatorError::MissingFieldErr { .. })
     ));
   }
 

@@ -18,7 +18,6 @@ pub mod validator {
   pub use doctor_package_json::validator::PackageJsonValidator;
   pub use doctor_package_json::validator::ValidateName;
   pub use doctor_package_json::validator::ValidatePackageManager;
-  pub use doctor_package_json::validator::ValidatePrivate;
 }
 
 pub mod walk_parallel {
