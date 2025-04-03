@@ -9,10 +9,10 @@ pub mod lint {
 pub mod validator {
 
   pub use doctor_node::error::NodeVersionValidatorError;
-  pub use doctor_node::validator::NodeVersionValidator;
+  pub use doctor_node::validator::*;
 
   pub use doctor_npmrc::error::NpmrcValidatorError;
-  pub use doctor_npmrc::validator::NpmrcValidator;
+  pub use doctor_npmrc::validator::*;
 
   pub use doctor_package_json::error::PackageJsonValidatorError;
   pub use doctor_package_json::validator::*;
