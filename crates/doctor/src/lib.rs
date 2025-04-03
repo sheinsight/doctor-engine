@@ -15,9 +15,7 @@ pub mod validator {
   pub use doctor_npmrc::validator::NpmrcValidator;
 
   pub use doctor_package_json::error::PackageJsonValidatorError;
-  pub use doctor_package_json::validator::PackageJsonValidator;
-  pub use doctor_package_json::validator::ValidateName;
-  pub use doctor_package_json::validator::ValidatePackageManager;
+  pub use doctor_package_json::validator::*;
 }
 
 pub mod walk_parallel {
