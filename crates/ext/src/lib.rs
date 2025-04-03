@@ -67,7 +67,7 @@ macro_rules! define_errors {
             pub fn to_key(&self) -> String {
                 match self {
                     $(
-                        Self::$name { .. } => stringify!($name).to_string(),
+                        Self::$name { .. } => format!("{}-{}",stringify!($error_enum).to_string(),stringify!($name).to_string()),
                     )*
                 }
             }
