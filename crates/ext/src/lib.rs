@@ -10,12 +10,6 @@ impl PathExt for Path {
   }
 }
 
-pub trait MultiFrom: Sized {
-  type Error;
-  fn from_file<P: AsRef<Path>>(path: P) -> Result<Self, Self::Error>;
-  fn from_cwd<P: AsRef<Path>>(cwd: P) -> Result<Self, Self::Error>;
-}
-
 /// A trait for types that can validate configuration files or other resources
 ///
 /// # Examples
