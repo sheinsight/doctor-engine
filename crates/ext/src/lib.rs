@@ -10,6 +10,10 @@ impl PathExt for Path {
   }
 }
 
+pub trait ValidatorErrorExt {
+  fn to_key(&self) -> String;
+}
+
 /// A trait for types that can validate configuration files or other resources
 ///
 /// # Examples
@@ -29,8 +33,8 @@ impl PathExt for Path {
 /// }
 /// ```
 pub trait Validator {
-  type Error;
-  fn validate(&self) -> Result<(), Self::Error>;
+  type ValidatorErrorExt;
+  fn validate(&self) -> Result<(), Self::ValidatorErrorExt>;
 }
 
 #[macro_export]
@@ -57,8 +61,8 @@ macro_rules! define_errors {
             )*
         }
 
-        impl $error_enum {
-            pub fn to_key(&self) -> String {
+        impl doctor_ext::ValidatorErrorExt for $error_enum {
+            fn to_key(&self) -> String {
                 match self {
                     $(
                         Self::$name { .. } => format!("{}-{}",stringify!($error_enum).to_string(),stringify!($name).to_string()),

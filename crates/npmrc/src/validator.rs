@@ -79,7 +79,7 @@ impl<'a, P> Validator for NpmrcValidator<'a, P>
 where
   P: AsRef<Path>,
 {
-  type Error = NpmrcValidatorError;
+  type ValidatorErrorExt = NpmrcValidatorError;
 
   /// Validate npmrc file
   ///
@@ -95,7 +95,7 @@ where
   ///   .build();
   /// assert!(validator.validate().is_ok());
   /// ```
-  fn validate(&self) -> Result<(), Self::Error> {
+  fn validate(&self) -> Result<(), Self::ValidatorErrorExt> {
     let source = File::from(self.config_path.as_ref()).format(FileFormat::Ini);
 
     let config = Config::builder().add_source(source).build().map_err(|e| {
@@ -116,6 +116,8 @@ where
 
 #[cfg(test)]
 mod tests {
+  use doctor_ext::ValidatorErrorExt;
+
   use crate::error::UnknownErr;
 
   use super::*;
@@ -165,6 +167,7 @@ mod tests {
       .with_registry_url(vec!["https://test.npmjs.org/"])
       .build()
       .validate();
+
     assert!(matches!(
       result,
       Err(NpmrcValidatorError::MatchedFailErr { .. })

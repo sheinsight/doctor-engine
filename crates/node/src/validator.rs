@@ -52,7 +52,7 @@ impl<'a, P> Validator for NodeVersionValidator<'a, P>
 where
   P: AsRef<Path>,
 {
-  type Error = NodeVersionValidatorError;
+  type ValidatorErrorExt = NodeVersionValidatorError;
 
   /// validate node version file
   ///
@@ -71,7 +71,7 @@ where
   ///
   /// assert!(result.is_ok());
   /// ```
-  fn validate(&self) -> Result<(), Self::Error> {
+  fn validate(&self) -> Result<(), Self::ValidatorErrorExt> {
     let path = self.config_path.as_ref();
 
     if !path.exists() {
