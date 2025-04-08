@@ -116,7 +116,6 @@ where
 
 #[cfg(test)]
 mod tests {
-  use doctor_ext::ValidatorErrorExt;
 
   use crate::error::UnknownErr;
 
@@ -129,6 +128,7 @@ mod tests {
       .with_registry_url(vec!["https://test.npmjs.org/"])
       .build()
       .validate();
+
     assert!(result.is_ok());
   }
 
@@ -139,6 +139,10 @@ mod tests {
       .with_registry_url(vec!["https://test.npmjs.org"])
       .build()
       .validate();
+
+    if let Err(e) = &result {
+      println!("--->>> {}", e.to_string());
+    }
 
     assert!(matches!(
       result,

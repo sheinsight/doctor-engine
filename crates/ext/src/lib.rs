@@ -11,7 +11,8 @@ impl PathExt for Path {
 }
 
 pub trait ValidatorErrorExt {
-  fn to_key(&self) -> String;
+  fn to_name(&self) -> String;
+  fn to_description(&self) -> String;
 }
 
 /// A trait for types that can validate configuration files or other resources
@@ -20,11 +21,24 @@ pub trait ValidatorErrorExt {
 ///
 /// ```rust
 /// use doctor_ext::Validator;
+/// use doctor_ext::ValidatorErrorExt;
 ///
 /// struct MyValidator;
 ///
+/// struct MyError;
+///
+/// impl ValidatorErrorExt for MyError {
+///     fn to_name(&self) -> String {
+///         "MyError".to_string()
+///     }
+///
+///     fn to_description(&self) -> String {
+///         "MyError description".to_string()
+///     }
+/// }
+///
 /// impl Validator for MyValidator {
-///     type Error = std::io::Error;
+///     type Error = MyError;
 ///
 ///     fn validate(&self) -> Result<(), Self::Error> {
 ///         // Validation logic here
@@ -62,12 +76,16 @@ macro_rules! define_errors {
         }
 
         impl doctor_ext::ValidatorErrorExt for $error_enum {
-            fn to_key(&self) -> String {
+            fn to_name(&self) -> String {
                 match self {
                     $(
                         Self::$name { .. } => format!("{}-{}",stringify!($error_enum).to_string(),stringify!($name).to_string()),
                     )*
                 }
+            }
+
+            fn to_description(&self) -> String {
+                self.to_string()
             }
         }
 
@@ -81,7 +99,7 @@ macro_rules! define_errors {
             }
 
             impl $name {
-                pub fn to_key(&self) -> String {
+                pub fn to_name(&self) -> String {
                     stringify!($name).to_string()
                 }
             }
