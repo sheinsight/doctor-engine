@@ -247,7 +247,7 @@ mod tests {
 
     // 3. 文件遍历和 lint 执行
     let walk_start = Instant::now();
-    let cwd = "/Users/10015448/Git/metric-front";
+    let cwd = "/Users/10015448/Git/gtms";
     // let cwd = "./fixtures";
 
     let file_diagnostics = WalkParallel::new(&cwd)

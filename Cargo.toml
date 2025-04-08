@@ -21,29 +21,29 @@ repository   = "https://github.com/sheinsight/doctor-engine"
 rust-version = "1.85.0"
 
 [workspace.dependencies]
-bitflags     = "=2.8.0"
-config       = "=0.14.0"
-jsonpath_lib = "=0.3.0"
-miette       = { version = "=7.5.0", features = ["derive", "fancy"] }
-rustc-hash   = "=2.1.1"
-serde        = "=1.0.219"
-serde_json   = "=1.0.140"
-thiserror    = "=2.0.12"
-tokio        = { version = "=1.44.1", features = ["macros", "rt-multi-thread"] }
-wax          = "=0.6.0"
+bitflags     = "2.8.0"
+config       = "0.14.0"
+jsonpath_lib = "0.3.0"
+miette       = { version = "7.5.0", features = ["derive", "fancy"] }
+rustc-hash   = "2.1.1"
+serde        = "1.0.219"
+serde_json   = "1.0.140"
+thiserror    = "2.0.12"
+tokio        = { version = "1.44.1", features = ["macros", "rt-multi-thread"] }
+wax          = "0.6.0"
 
 pathdiff = "0.2.3"
-rayon    = "=1.10.0"
+rayon    = "1.10.0"
 
 #napi
-napi        = { version = "=3.0.0-alpha.33", features = ["tokio_rt"] }
-napi-build  = "=2.1.6"
-napi-derive = "=3.0.0-alpha.29"
+napi        = { version = "3.0.0-alpha.33", features = ["tokio_rt"] }
+napi-build  = "2.1.6"
+napi-derive = "3.0.0-alpha.29"
 
-lazy-regex = "=3.4.1"
-ropey      = "=1.6.1"
+lazy-regex = "3.4.1"
+ropey      = "1.6.1"
 
-typed-builder = "=0.21.0"
+typed-builder = "0.21.0"
 
 # lint
 oxc_allocator   = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v0.16.2", package = "oxc_allocator" }
