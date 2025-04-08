@@ -33,8 +33,8 @@ pub trait ValidatorErrorExt {
 /// }
 /// ```
 pub trait Validator {
-  type ValidatorErrorExt;
-  fn validate(&self) -> Result<(), Self::ValidatorErrorExt>;
+  type Error: ValidatorErrorExt;
+  fn validate(&self) -> Result<(), Self::Error>;
 }
 
 #[macro_export]

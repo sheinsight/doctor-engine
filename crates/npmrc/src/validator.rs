@@ -79,7 +79,7 @@ impl<'a, P> Validator for NpmrcValidator<'a, P>
 where
   P: AsRef<Path>,
 {
-  type ValidatorErrorExt = NpmrcValidatorError;
+  type Error = NpmrcValidatorError;
 
   /// Validate npmrc file
   ///
@@ -95,7 +95,7 @@ where
   ///   .build();
   /// assert!(validator.validate().is_ok());
   /// ```
-  fn validate(&self) -> Result<(), Self::ValidatorErrorExt> {
+  fn validate(&self) -> Result<(), Self::Error> {
     let source = File::from(self.config_path.as_ref()).format(FileFormat::Ini);
 
     let config = Config::builder().add_source(source).build().map_err(|e| {

@@ -218,7 +218,7 @@ impl<'a, P> Validator for PackageJsonValidator<'a, P>
 where
   P: AsRef<Path>,
 {
-  type ValidatorErrorExt = PackageJsonValidatorError;
+  type Error = PackageJsonValidatorError;
 
   /// validate package.json file
   ///
@@ -237,7 +237,7 @@ where
   ///
   /// assert!(result.is_ok());
   /// ```
-  fn validate(&self) -> Result<(), Self::ValidatorErrorExt> {
+  fn validate(&self) -> Result<(), Self::Error> {
     let path = self.config_path.as_ref();
 
     let content = read_to_string(&path).map_err(|e| {
