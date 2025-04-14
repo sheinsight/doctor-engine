@@ -24,22 +24,16 @@ define_errors! {
       config_path: String,
     },
 
-    #[message = "io error: {path} {source}"]
-    IoErr{
-      path: String,
-      source: std::io::Error,
-    },
-
     #[message = "parse error: {path} {source}"]
     ParseErr{
       path: String,
-      source: serde_json::Error,
+      source: std::io::Error,
     },
   }
 }
 
 define_errors! {
-  VersionError{
+  VersionError {
     #[message = "npm alias parser error: {version}"]
     AliasParserErr{
       version: String,

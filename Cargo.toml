@@ -53,6 +53,8 @@ oxc_parser      = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlin
 oxc_semantic    = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v0.16.2", package = "oxc_semantic" }
 oxc_span        = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v0.16.2", package = "oxc_span" }
 
+package_json_parser = "0.0.2"
+
 # biome
 # biome_console            = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_console" }
 # biome_deserialize        = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_deserialize" }

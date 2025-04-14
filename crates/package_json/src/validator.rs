@@ -1,14 +1,12 @@
-use std::{fs::read_to_string, path::Path};
+use std::path::Path;
 
 use doctor_ext::{PathExt, Validator};
+use package_json_parser::PackageJsonParser;
 use typed_builder::TypedBuilder;
 
-use crate::{
-  error::{
-    IoErr, MissingNameErr, MissingPackageManagerErr, MissingPrivateErr, NoMatchedPrivateErr,
-    PackageJsonValidatorError, ParseErr,
-  },
-  package_json::PackageJson,
+use crate::error::{
+  MissingNameErr, MissingPackageManagerErr, MissingPrivateErr, NoMatchedPrivateErr,
+  PackageJsonValidatorError, ParseErr,
 };
 
 #[derive(Debug)]
@@ -121,7 +119,7 @@ where
 
   #[builder(default = None, setter(strip_option))]
   with_additional_validation:
-    Option<Box<dyn Fn(&PackageJson) -> Result<(), PackageJsonValidatorError> + 'a>>,
+    Option<Box<dyn Fn(&PackageJsonParser) -> Result<(), PackageJsonValidatorError> + 'a>>,
 }
 
 impl<'a, P> PackageJsonValidator<'a, P>
@@ -130,7 +128,7 @@ where
 {
   fn validate_package_manager(
     &self,
-    package_json: &PackageJson,
+    package_json: &PackageJsonParser,
   ) -> Result<(), PackageJsonValidatorError> {
     if let Some(validate_package_manager) = &self.with_validate_package_manager {
       let path = self.config_path.as_ref();
@@ -150,7 +148,10 @@ where
     Ok(())
   }
 
-  fn validate_private(&self, package_json: &PackageJson) -> Result<(), PackageJsonValidatorError> {
+  fn validate_private(
+    &self,
+    package_json: &PackageJsonParser,
+  ) -> Result<(), PackageJsonValidatorError> {
     if let Some(validate_private) = &self.with_validate_private {
       let path = self.config_path.as_ref();
 
@@ -184,7 +185,10 @@ where
     Ok(())
   }
 
-  fn validate_name(&self, package_json: &PackageJson) -> Result<(), PackageJsonValidatorError> {
+  fn validate_name(
+    &self,
+    package_json: &PackageJsonParser,
+  ) -> Result<(), PackageJsonValidatorError> {
     if let Some(validate_name) = &self.with_validate_name {
       let path = self.config_path.as_ref();
 
@@ -205,7 +209,7 @@ where
 
   fn validate_additional_validation(
     &self,
-    package_json: &PackageJson,
+    package_json: &PackageJsonParser,
   ) -> Result<(), PackageJsonValidatorError> {
     if let Some(with_additional_validation) = &self.with_additional_validation {
       with_additional_validation(package_json)?;
@@ -240,15 +244,7 @@ where
   fn validate(&self) -> Result<(), Self::Error> {
     let path = self.config_path.as_ref();
 
-    let content = read_to_string(&path).map_err(|e| {
-      IoErr::builder()
-        .path(path.to_string_owned())
-        .source(e)
-        .build()
-        .into()
-    })?;
-
-    let package_json = serde_json::from_str::<PackageJson>(&content).map_err(|e| {
+    let package_json = package_json_parser::PackageJsonParser::parse(path).map_err(|e| {
       ParseErr::builder()
         .path(path.to_string_owned())
         .source(e)

@@ -15,15 +15,15 @@ rust-version.workspace = true
 version                = "0.1.0"
 
 [dependencies]
-doctor_ext    = { path = "../ext" }
-jsonpath_lib  = { workspace = true }
-miette        = { workspace = true }
-serde         = { workspace = true, features = ["derive"] }
-serde_json    = { workspace = true }
-thiserror     = { workspace = true }
-tokio         = { workspace = true }
-typed-builder = { workspace = true }
-
+doctor_ext          = { path = "../ext" }
+jsonpath_lib        = { workspace = true }
+miette              = { workspace = true }
+package_json_parser = { workspace = true }
+serde               = { workspace = true, features = ["derive"] }
+serde_json          = { workspace = true }
+thiserror           = { workspace = true }
+tokio               = { workspace = true }
+typed-builder       = { workspace = true }
 # biome_deserialize        = { workspace = true }
 # biome_deserialize_macros = { workspace = true }
 # biome_json_parser        = { workspace = true }
