@@ -53,6 +53,9 @@ oxc_parser      = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlin
 oxc_semantic    = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v0.16.2", package = "oxc_semantic" }
 oxc_span        = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v0.16.2", package = "oxc_span" }
 
+# glob
+glob                = "0.3.2"
+ignore              = "0.4.23"
 package_json_parser = "0.0.2"
 
 # biome

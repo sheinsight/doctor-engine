@@ -21,6 +21,9 @@ pub use common::{
 pub mod config;
 pub mod ext;
 pub mod inner;
+mod linter_runner;
+
+pub use linter_runner::*;
 
 pub struct Linter {
   oxlintrc: Oxlintrc,
@@ -61,80 +64,6 @@ impl Linter {
       _ => oxc_span::SourceType::mjs(),
     }
   }
-
-  // fn convert_severity(severity: oxc_diagnostics::Severity) -> miette::Severity {
-  //   match severity {
-  //     oxc_diagnostics::Severity::Error => miette::Severity::Error,
-  //     oxc_diagnostics::Severity::Warning => miette::Severity::Warning,
-  //     oxc_diagnostics::Severity::Advice => miette::Severity::Advice,
-  //   }
-  // }
-
-  // pub fn render_report(
-  //   &self,
-  //   source_code: miette::NamedSource<String>,
-  //   diagnostic: &OxcDiagnostic,
-  // ) -> String {
-  //   let url = diagnostic
-  //     .url
-  //     .as_ref()
-  //     .map_or(String::new(), |url| url.to_string());
-  //   let help = diagnostic
-  //     .help
-  //     .as_ref()
-  //     .map_or(String::new(), |help| help.to_string());
-  //   let scope = diagnostic
-  //     .code
-  //     .scope
-  //     .as_ref()
-  //     .map(|scope| scope.to_string());
-
-  //   let number = diagnostic
-  //     .code
-  //     .number
-  //     .as_ref()
-  //     .map(|number| number.to_string());
-
-  //   let labels = diagnostic.labels.as_ref().map_or(vec![], |labels| {
-  //     labels
-  //       .iter()
-  //       .map(|label| {
-  //         let start = label.offset();
-  //         let end = start + label.len();
-  //         let label = label
-  //           .label()
-  //           .map_or(diagnostic.message.clone().to_string(), |label| {
-  //             label.to_string()
-  //           });
-  //         miette::LabeledSpan::at(start..end, label)
-  //       })
-  //       .collect()
-  //   });
-
-  //   let severity = Self::convert_severity(diagnostic.severity);
-
-  //   let report = miette::miette!(
-  //     severity = severity,
-  //     url = url,
-  //     labels = labels,
-  //     help = help,
-  //     "{}/{}: {}",
-  //     scope.as_ref().unwrap_or(&String::new()),
-  //     number.as_ref().unwrap_or(&String::new()),
-  //     diagnostic.message
-  //   )
-  //   .with_source_code(source_code);
-
-  //   eprintln!("{:?}", report);
-
-  //   // println!("{}", diagnostic.message);
-
-  //   format!(
-  //     "{}/{}",
-  //     scope.unwrap_or_default(),
-  //     number.unwrap_or_default()
-  //   )
-  // }
 
   pub fn lint<P: AsRef<Path>>(&self, path: P) -> Result<FileDiagnostic, LintError> {
     let named_source = named_source::PathWithSource::try_from(path)?;
@@ -208,25 +137,22 @@ impl Linter {
 
 #[cfg(test)]
 mod tests {
-  use std::{collections::HashMap, error::Error, time::Instant};
+  use std::error::Error;
 
-  use doctor_walk_parallel::{WalkError, WalkParallel, WalkPatterns};
+  use doctor_walk_parallel::WalkPatterns;
 
   use crate::{
     category::Category,
     common::{environments::EnvironmentFlags, lint_mode::LintMode},
     config::OxlintrcBuilder,
     inner::Category20250601Inner,
+    linter_runner::LinterRunner,
   };
 
-  use super::*;
-
   #[test]
-  fn test_lint() -> Result<(), Box<dyn Error>> {
-    let total_start = Instant::now();
+  fn test() -> Result<(), Box<dyn Error>> {
+    let cwd = "/Users/10015448/Git/gtms";
 
-    // 1. 配置初始化
-    let config_start = Instant::now();
     let category = Category::V20250601Inner(Category20250601Inner::default());
 
     let rc = OxlintrcBuilder::default()
@@ -236,60 +162,87 @@ mod tests {
       .build()
       .unwrap();
 
-    let rc_str = serde_json::to_string_pretty(&rc).unwrap();
-    std::fs::write(".oxlintrc.json", rc_str).unwrap();
-    let config_time = config_start.elapsed();
+    let linter_runner = LinterRunner::builder()
+      .cwd(cwd.to_string().into())
+      .walk_patterns(WalkPatterns::default())
+      .with_show_report(true)
+      .oxlintrc(rc)
+      .build();
 
-    // 2. Linter 初始化
-    let linter_start = Instant::now();
-    let linter = Linter::from(rc).with_show_report(true);
-    let linter_time = linter_start.elapsed();
+    let res = linter_runner.run();
 
-    // 3. 文件遍历和 lint 执行
-    let walk_start = Instant::now();
-    let cwd = "/Users/10015448/Git/gtms";
-    // let cwd = "./fixtures";
+    Ok(())
+  }
 
-    let file_diagnostics = WalkParallel::new(&cwd)
-      .with_patterns(WalkPatterns::default())
-      .walk(|path| {
-        linter.lint(&path).map_err(|e| WalkError::HandlerError {
-          path: path.clone(),
-          error: e.to_string(),
-        })
-      })?;
+  #[test]
+  fn test_lint() -> Result<(), Box<dyn Error>> {
+    // let total_start = Instant::now();
 
-    let walk_time = walk_start.elapsed();
+    // // 1. 配置初始化
+    // let config_start = Instant::now();
+    // let category = Category::V20250601Inner(Category20250601Inner::default());
 
-    // 4. 统计结果处理
-    let stats_start = Instant::now();
-    let mut map = HashMap::new();
+    // let rc = OxlintrcBuilder::default()
+    //   .with_category(category)
+    //   .with_mode(LintMode::Production)
+    //   .with_envs(EnvironmentFlags::default())
+    //   .build()
+    //   .unwrap();
 
-    for file_diagnostic in file_diagnostics {
-      file_diagnostic?.diagnostics.iter().for_each(|diag| {
-        let name = match (diag.code.scope.as_ref(), diag.code.number.as_ref()) {
-          (None, None) => String::new(),
-          (None, Some(number)) => number.to_string(),
-          (Some(scope), None) => scope.to_string(),
-          (Some(scope), Some(number)) => format!("{scope}/{number}"),
-        };
-        map.entry(name).and_modify(|count| *count += 1).or_insert(1);
-      });
-    }
-    let stats_time = stats_start.elapsed();
+    // let rc_str = serde_json::to_string_pretty(&rc).unwrap();
+    // std::fs::write(".oxlintrc.json", rc_str).unwrap();
+    // let config_time = config_start.elapsed();
 
-    let total_time = total_start.elapsed();
+    // // 2. Linter 初始化
+    // let linter_start = Instant::now();
+    // let linter = Linter::from(rc).with_show_report(true);
+    // let linter_time = linter_start.elapsed();
 
-    // 打印执行耗时统计
-    println!("\n执行耗时统计:");
-    println!("配置初始化: {:?}", config_time);
-    println!("Linter 初始化: {:?}", linter_time);
-    println!("文件遍历和 lint 执行: {:?}", walk_time);
-    println!("统计结果处理: {:?}", stats_time);
-    println!("总执行时间: {:?}\n", total_time);
+    // // 3. 文件遍历和 lint 执行
+    // let walk_start = Instant::now();
+    // let cwd = "/Users/10015448/Git/gtms";
+    // // let cwd = "./fixtures";
 
-    println!("Lint 结果统计:");
-    println!("{:#?}", map);
+    // let file_diagnostics = WalkParallel::new(&cwd)
+    //   .with_patterns(WalkPatterns::default())
+    //   .walk(|path| {
+    //     linter.lint(&path).map_err(|e| WalkError::HandlerError {
+    //       path: path.clone(),
+    //       error: e.to_string(),
+    //     })
+    //   })?;
+
+    // let walk_time = walk_start.elapsed();
+
+    // // 4. 统计结果处理
+    // let stats_start = Instant::now();
+    // let mut map = HashMap::new();
+
+    // for file_diagnostic in file_diagnostics {
+    //   file_diagnostic?.diagnostics.iter().for_each(|diag| {
+    //     let name = match (diag.code.scope.as_ref(), diag.code.number.as_ref()) {
+    //       (None, None) => String::new(),
+    //       (None, Some(number)) => number.to_string(),
+    //       (Some(scope), None) => scope.to_string(),
+    //       (Some(scope), Some(number)) => format!("{scope}/{number}"),
+    //     };
+    //     map.entry(name).and_modify(|count| *count += 1).or_insert(1);
+    //   });
+    // }
+    // let stats_time = stats_start.elapsed();
+
+    // let total_time = total_start.elapsed();
+
+    // // 打印执行耗时统计
+    // println!("\n执行耗时统计:");
+    // println!("配置初始化: {:?}", config_time);
+    // println!("Linter 初始化: {:?}", linter_time);
+    // println!("文件遍历和 lint 执行: {:?}", walk_time);
+    // println!("统计结果处理: {:?}", stats_time);
+    // println!("总执行时间: {:?}\n", total_time);
+
+    // println!("Lint 结果统计:");
+    // println!("{:#?}", map);
 
     Ok(())
   }

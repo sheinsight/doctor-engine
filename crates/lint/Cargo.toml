@@ -9,17 +9,22 @@ rust-version.workspace = true
 version                = "0.1.0"
 
 [dependencies]
-bitflags             = { workspace = true }
+bitflags        = { workspace = true }
+glob            = { workspace = true }
+ignore          = { workspace = true }
+miette          = { workspace = true, features = ["fancy"] }
+oxc_allocator   = { workspace = true }
+oxc_diagnostics = { workspace = true }
+oxc_linter      = { workspace = true }
+oxc_parser      = { workspace = true }
+oxc_semantic    = { workspace = true }
+oxc_span        = { workspace = true }
+rayon           = { workspace = true }
+rustc-hash      = { workspace = true }
+serde           = { workspace = true }
+serde_json      = { workspace = true }
+thiserror       = { workspace = true }
+typed-builder   = { workspace = true }
+
+
 doctor_walk_parallel = { path = "../walk_parallel" }
-miette               = { workspace = true, features = ["fancy"] }
-oxc_allocator        = { workspace = true }
-oxc_diagnostics      = { workspace = true }
-oxc_linter           = { workspace = true }
-oxc_parser           = { workspace = true }
-oxc_semantic         = { workspace = true }
-oxc_span             = { workspace = true }
-rayon                = { workspace = true }
-rustc-hash           = { workspace = true }
-serde                = { workspace = true }
-serde_json           = { workspace = true }
-thiserror            = { workspace = true }

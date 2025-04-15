@@ -1,35 +1,20 @@
 use rayon::prelude::*;
 use std::path::{Path, PathBuf};
+use typed_builder::TypedBuilder;
 use wax::Glob;
 mod error;
 mod walk_patterns;
 pub use error::WalkError;
 pub use walk_patterns::WalkPatterns;
 
-pub const JS_FILE_EXTENSIONS: &[&str] = &["js", "jsx", "cjs", "mjs"];
-
-pub const TS_FILE_EXTENSIONS: &[&str] = &["ts", "tsx", "cts", "mts"];
-
-pub const DEFAULT_PATTERNS: &[&str] = &["**/*.{js,jsx,ts,tsx,cjs,mjs,cts,mts}"];
-
+#[derive(Debug, Clone, TypedBuilder)]
 pub struct WalkParallel<'a> {
   cwd: &'a Path,
+  #[builder(default = WalkPatterns::default())]
   patterns: WalkPatterns,
 }
 
 impl<'a> WalkParallel<'a> {
-  pub fn new<P: AsRef<Path> + 'a>(cwd: &'a P) -> Self {
-    Self {
-      cwd: cwd.as_ref(),
-      patterns: WalkPatterns::default(),
-    }
-  }
-
-  pub fn with_patterns(mut self, patterns: WalkPatterns) -> Self {
-    self.patterns = patterns;
-    self
-  }
-
   pub fn walk<F, R>(&self, f: F) -> Result<Vec<Result<R, WalkError>>, WalkError>
   where
     F: Fn(PathBuf) -> Result<R, WalkError> + Send + Sync,
