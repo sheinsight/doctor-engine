@@ -23,14 +23,14 @@ lint:
     cargo clippy --workspace --all-targets -- --deny warnings
     @echo '✅ Lint complete!'
 
-release-patch:
-    cargo release patch --no-push --no-publish --execute
-    @echo '✅ Release patch complete!'
+# release-patch:
+#     cargo release patch --no-push --no-publish --execute
+#     @echo '✅ Release patch complete!'
 
-release-minor:
-    cargo release minor --no-push --no-publish --execute
-    @echo '✅ Release minor complete!'
+# release-minor:
+#     cargo release minor --no-push --no-publish --execute
+#     @echo '✅ Release minor complete!'
 
-release-major:
-    cargo release major --no-push --no-publish --execute
-    @echo '✅ Release major complete!'
+# release-major:
+#     cargo release major --no-push --no-publish --execute
+#     @echo '✅ Release major complete!'
