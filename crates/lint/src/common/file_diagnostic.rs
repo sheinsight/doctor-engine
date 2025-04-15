@@ -1,6 +1,6 @@
 use oxc_diagnostics::OxcDiagnostic;
 
-use crate::named_source;
+use crate::common::named_source;
 
 #[derive(Debug)]
 pub struct FileDiagnostic {

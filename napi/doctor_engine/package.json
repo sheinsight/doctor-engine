@@ -25,6 +25,7 @@
 		"build:debug": "napi build --platform",
 		"prepublishOnly": "napi prepublish -t npm --gh-release-id $RELEASE_ID",
 		"universal": "napi universal",
+		"test": "vitest run",
 		"demo": "napi prepublish -h",
 		"prepack": "clean-pkg-json"
 	},
@@ -42,6 +43,7 @@
 	"license": "MIT",
 	"devDependencies": {
 		"@napi-rs/cli": "^3.0.0-alpha.75",
-		"clean-pkg-json": "^1.2.1"
+		"clean-pkg-json": "^1.2.1",
+		"vitest": "^3.1.1"
 	}
 }

@@ -14,5 +14,5 @@ pub enum WalkError {
   IoError(#[from] std::io::Error),
 
   #[error("Unknown error: {0}")]
-  Unknown(#[source] Box<dyn std::error::Error + Send + Sync>),
+  Unknown(String),
 }

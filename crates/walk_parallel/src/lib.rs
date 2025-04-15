@@ -1,5 +1,5 @@
 use rayon::prelude::*;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use typed_builder::TypedBuilder;
 use wax::Glob;
 mod error;
@@ -8,13 +8,13 @@ pub use error::WalkError;
 pub use walk_patterns::WalkPatterns;
 
 #[derive(Debug, Clone, TypedBuilder)]
-pub struct WalkParallel<'a> {
-  cwd: &'a Path,
+pub struct WalkParallel {
+  cwd: PathBuf,
   #[builder(default = WalkPatterns::default())]
   patterns: WalkPatterns,
 }
 
-impl<'a> WalkParallel<'a> {
+impl WalkParallel {
   pub fn walk<F, R>(&self, f: F) -> Result<Vec<Result<R, WalkError>>, WalkError>
   where
     F: Fn(PathBuf) -> Result<R, WalkError> + Send + Sync,
@@ -27,7 +27,7 @@ impl<'a> WalkParallel<'a> {
       .iter()
       .map(|s| s.as_str())
       .collect::<Vec<_>>();
-    let entries = glob.walk(self.cwd).not(ignore)?;
+    let entries = glob.walk(&self.cwd).not(ignore)?;
 
     let res = entries
       .par_bridge()

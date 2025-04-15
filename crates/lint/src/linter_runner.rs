@@ -41,7 +41,7 @@ impl LinterRunner {
     );
 
     let parallel = WalkParallel::builder()
-      .cwd(self.cwd.as_ref())
+      .cwd(self.cwd.clone())
       .patterns(self.walk_patterns.clone())
       .build();
 
@@ -52,7 +52,7 @@ impl LinterRunner {
         let named_source = named_source::PathWithSource::try_from(path.clone())?;
 
         let source_type =
-          oxc_span::SourceType::from_path(path).map_err(|e| WalkError::Unknown(e.into()))?;
+          oxc_span::SourceType::from_path(path).map_err(|e| WalkError::Unknown(e.to_string()))?;
 
         let allocator = Allocator::default();
 
@@ -85,17 +85,19 @@ impl LinterRunner {
         };
 
         if self.with_show_report {
-          self.custom_render_report(&diag);
+          self
+            .custom_render_report(&diag)
+            .map_err(|e| WalkError::Unknown(e.to_string()))?;
         }
 
         Ok(diag)
       })
-      .unwrap();
+      .map_err(|e| LintError::Unknown(e.to_string()))?;
 
     Ok(res)
   }
 
-  pub fn custom_render_report(&self, diagnostic: &FileDiagnostic) {
+  pub fn custom_render_report(&self, diagnostic: &FileDiagnostic) -> Result<(), LintError> {
     if !diagnostic.diagnostics.is_empty() {
       let handler = oxc_diagnostics::GraphicalReportHandler::new().with_links(true);
       let mut output = String::with_capacity(1024 * 1024);
@@ -104,9 +106,53 @@ impl LinterRunner {
 
       for diag in &diagnostic.diagnostics {
         let diag = diag.clone().with_source_code(named_source.clone());
-        handler.render_report(&mut output, diag.as_ref()).unwrap();
+        handler
+          .render_report(&mut output, diag.as_ref())
+          .map_err(|e| LintError::Unknown(e.to_string()))?;
       }
       eprintln!("{}", output);
     }
+
+    Ok(())
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use std::error::Error;
+
+  use doctor_walk_parallel::WalkPatterns;
+
+  use crate::{
+    category::Category,
+    common::{environments::EnvironmentFlags, lint_mode::LintMode},
+    config::OxlintrcBuilder,
+    inner::Category20250601Inner,
+    linter_runner::LinterRunner,
+  };
+
+  #[test]
+  fn test() -> Result<(), Box<dyn Error>> {
+    let cwd = "/Users/10015448/Git/gtms";
+
+    let category = Category::V20250601Inner(Category20250601Inner::default());
+
+    let rc = OxlintrcBuilder::default()
+      .with_category(category)
+      .with_mode(LintMode::Production)
+      .with_envs(EnvironmentFlags::default())
+      .build()
+      .unwrap();
+
+    let linter_runner = LinterRunner::builder()
+      .cwd(cwd.to_string().into())
+      .walk_patterns(WalkPatterns::default())
+      .with_show_report(true)
+      .oxlintrc(rc)
+      .build();
+
+    let _ = linter_runner.run();
+
+    Ok(())
   }
 }

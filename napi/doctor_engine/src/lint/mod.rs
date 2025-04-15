@@ -9,10 +9,10 @@ use std::collections::HashMap;
 pub use diagnostic::Diagnostic;
 use doctor::{
   lint::{
-    Category, EnvironmentFlags, LintMode, Linter, config::OxlintrcBuilder,
+    Category, EnvironmentFlags, LintMode, LinterRunner, config::OxlintrcBuilder,
     inner::Category20250601Inner,
   },
-  walk_parallel::{WalkError, WalkParallel, WalkPatterns},
+  walk_parallel::WalkPatterns,
 };
 pub use label::LabeledLoc;
 pub use location::Location;
@@ -54,11 +54,6 @@ pub async fn inner_debug_lint(
 ) -> Result<Vec<Diagnostic>> {
   let rc: Oxlintrc = serde_json::from_str(&oxlint_config)
     .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-  let mut linter = Linter::from(rc.clone());
-
-  if let Some(verbose) = glob_js_args.verbose {
-    linter = linter.with_show_report(verbose);
-  }
 
   let mut patterns = WalkPatterns::default();
 
@@ -70,15 +65,14 @@ pub async fn inner_debug_lint(
     patterns = patterns.with_ignore(ignore.as_slice());
   }
 
-  let file_diagnostics = WalkParallel::new(&glob_js_args.cwd)
-    .with_patterns(patterns)
-    .walk(|path| {
-      linter.lint(&path).map_err(|e| WalkError::HandlerError {
-        path: path.clone(),
-        error: e.to_string(),
-      })
-    })
-    .map_err(to_napi_error)?;
+  let linter_runner = LinterRunner::builder()
+    .cwd(glob_js_args.cwd.clone().into())
+    .walk_patterns(patterns)
+    .with_show_report(glob_js_args.verbose.unwrap_or(false))
+    .oxlintrc(rc)
+    .build();
+
+  let file_diagnostics = linter_runner.run().map_err(to_napi_error)?;
 
   let mut diags = Vec::new();
 
@@ -86,7 +80,7 @@ pub async fn inner_debug_lint(
     let file_diagnostic =
       file_diagnostic.map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
 
-    let f_diags = Diagnostic::from_file_diagnostic(&file_diagnostic, &glob_js_args.cwd);
+    let f_diags = Diagnostic::from_file_diagnostic(&file_diagnostic, glob_js_args.cwd.as_str());
     diags.extend(f_diags);
   }
 
@@ -119,21 +113,14 @@ pub async fn inner_lint(
     .build()
     .map_err(to_napi_error)?;
 
-  let mut linter = Linter::from(rc.clone());
+  let linter_runner = LinterRunner::builder()
+    .cwd(glob_js_args.cwd.clone().into())
+    .walk_patterns(patterns)
+    .with_show_report(glob_js_args.verbose.unwrap_or(false))
+    .oxlintrc(rc)
+    .build();
 
-  if let Some(verbose) = glob_js_args.verbose {
-    linter = linter.with_show_report(verbose);
-  }
-
-  let file_diagnostics = WalkParallel::new(&glob_js_args.cwd)
-    .with_patterns(patterns)
-    .walk(|path| {
-      linter.lint(&path).map_err(|e| WalkError::HandlerError {
-        path: path.clone(),
-        error: e.to_string(),
-      })
-    })
-    .map_err(to_napi_error)?;
+  let file_diagnostics = linter_runner.run().map_err(to_napi_error)?;
 
   let mut map = HashMap::new();
 
