@@ -9,6 +9,8 @@ pub const DEFAULT_IGNORE_PATTERNS: &[&str] = &[
   "**/coverage/**",
   "**/*.d.ts",
   "node_modules",
+  "*.min.js",
+  "*.min.css",
 ];
 
 pub const DEFAULT_TEST_PATTERNS: &[&str] = &[
@@ -16,13 +18,14 @@ pub const DEFAULT_TEST_PATTERNS: &[&str] = &[
   "**/tests/**",
   "**/spec/**",
   "**/specs/**",
+  "*.spec.js",
+  "*.spec.jsx",
   "*.spec.ts",
   "*.spec.tsx",
+  "*.test.js",
+  "*.test.jsx",
   "*.test.ts",
   "*.test.tsx",
-  "*.min.js",
-  "*.min.css",
-  "*.d.ts",
 ];
 
 pub const DEFAULT_DTS_PATTERNS: &[&str] = &["**/*.d.ts"];
