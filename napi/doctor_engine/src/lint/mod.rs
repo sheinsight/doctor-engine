@@ -8,6 +8,7 @@ use std::collections::HashMap;
 
 pub use diagnostic::Diagnostic;
 use doctor::{
+  ext::PathExt,
   lint::{
     Category, EnvironmentFlags, LintMode, LinterRunner, config::OxlintrcBuilder,
     inner::Category20250601Inner,
@@ -80,7 +81,17 @@ pub async fn inner_debug_lint(
     let file_diagnostic =
       file_diagnostic.map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
 
-    let f_diags = Diagnostic::from_file_diagnostic(&file_diagnostic, glob_js_args.cwd.as_str());
+    let source_code = std::fs::read_to_string(&file_diagnostic.file_path)
+      .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
+
+    let relative_path =
+      if let Some(r) = pathdiff::diff_paths(&file_diagnostic.file_path, &glob_js_args.cwd) {
+        r.to_string_owned()
+      } else {
+        file_diagnostic.file_path.to_string()
+      };
+
+    let f_diags = Diagnostic::from_file_diagnostic(&file_diagnostic, &relative_path, &source_code);
     diags.extend(f_diags);
   }
 
@@ -129,7 +140,10 @@ pub async fn inner_lint(
   for file_diagnostic in file_diagnostics {
     let file_diagnostic = file_diagnostic.map_err(to_napi_error)?;
 
-    let f_diags = Diagnostic::from_file_diagnostic(&file_diagnostic, &glob_js_args.cwd);
+    let source_code = std::fs::read_to_string(&file_diagnostic.file_path)?;
+
+    let f_diags =
+      Diagnostic::from_file_diagnostic(&file_diagnostic, &glob_js_args.cwd, &source_code);
     diags.extend(f_diags);
 
     for diag in file_diagnostic.diagnostics {

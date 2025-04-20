@@ -6,7 +6,7 @@ set shell := ["bash", "-cu"]
 
 setup:
     curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
-    cargo binstall taplo-cli cargo-release -y
+    cargo binstall taplo-cli cargo-release watchexec-cli@2.2.1 -y
     @echo '✅ Setup complete!'
 
 ready:
@@ -22,6 +22,11 @@ fmt:
 lint: 
     cargo clippy --workspace --all-targets -- --deny warnings
     @echo '✅ Lint complete!'
+
+watch:
+    echo "Running the project..."
+    # cargo watch -x build
+    watchexec -r -e rs cargo build
 
 # release-patch:
 #     cargo release patch --no-push --no-publish --execute

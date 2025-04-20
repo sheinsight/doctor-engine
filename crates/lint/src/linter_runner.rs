@@ -80,13 +80,13 @@ impl LinterRunner {
         let res = lint.run(Path::new(&named_source.file_path), semantic, module_record);
 
         let diag = FileDiagnostic {
-          path_with_source: named_source.clone(),
+          file_path: named_source.file_path,
           diagnostics: res.into_iter().map(|msg| msg.error).collect(),
         };
 
         if self.with_show_report {
           self
-            .custom_render_report(&diag)
+            .custom_render_report(&diag, &named_source.source_code)
             .map_err(|e| WalkError::Unknown(e.to_string()))?;
         }
 
@@ -97,12 +97,17 @@ impl LinterRunner {
     Ok(res)
   }
 
-  pub fn custom_render_report(&self, diagnostic: &FileDiagnostic) -> Result<(), LintError> {
+  pub fn custom_render_report(
+    &self,
+    diagnostic: &FileDiagnostic,
+    source_code: &str,
+  ) -> Result<(), LintError> {
     if !diagnostic.diagnostics.is_empty() {
       let handler = oxc_diagnostics::GraphicalReportHandler::new().with_links(true);
       let mut output = String::with_capacity(1024 * 1024);
-      let named_source: oxc_diagnostics::NamedSource<String> =
-        diagnostic.path_with_source.clone().into();
+
+      let named_source =
+        oxc_diagnostics::NamedSource::new(&diagnostic.file_path, source_code.to_string());
 
       for diag in &diagnostic.diagnostics {
         let diag = diag.clone().with_source_code(named_source.clone());

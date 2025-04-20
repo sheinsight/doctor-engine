@@ -1,4 +1,4 @@
-use doctor::{ext::PathExt, lint::FileDiagnostic};
+use doctor::lint::FileDiagnostic;
 use napi_derive::napi;
 use oxc_diagnostics::Severity;
 
@@ -17,11 +17,13 @@ pub struct Diagnostic {
 }
 
 impl Diagnostic {
-  pub fn from_file_diagnostic(file_diagnostic: &FileDiagnostic, cwd: &str) -> Vec<Diagnostic> {
+  pub fn from_file_diagnostic(
+    file_diagnostic: &FileDiagnostic,
+    relative_path: &String,
+    source_code: &str,
+  ) -> Vec<Diagnostic> {
     let mut diagnostics = Vec::new();
     for diag in file_diagnostic.diagnostics.iter() {
-      let file_name = file_diagnostic.path_with_source.file_path.clone();
-
       let code = diag.code.to_string();
 
       let help = diag.help.as_deref().unwrap_or_default().to_string();
@@ -34,8 +36,6 @@ impl Diagnostic {
         Severity::Error => "error".to_string(),
       };
 
-      let source_code = file_diagnostic.path_with_source.source_code.clone();
-
       let labels = diag
         .labels
         .as_ref()
@@ -46,14 +46,8 @@ impl Diagnostic {
         })
         .unwrap_or_default();
 
-      let relative_path = if let Some(r) = pathdiff::diff_paths(&file_name, &cwd) {
-        r.to_string_owned()
-      } else {
-        file_name
-      };
-
       let diagnostic = Diagnostic {
-        file_name: relative_path,
+        file_name: relative_path.clone(),
         help,
         url,
         severity,
