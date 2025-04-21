@@ -60,37 +60,44 @@ impl LinterRunner {
 
         let parser_return = parser.parse();
 
-        let program = allocator.alloc(&parser_return.program);
+        if !parser_return.panicked {
+          let program = allocator.alloc(&parser_return.program);
 
-        let semantic_builder_return = SemanticBuilder::new()
-          .with_check_syntax_error(true)
-          .with_cfg(true)
-          .build(program);
+          let semantic_builder_return = SemanticBuilder::new()
+            .with_check_syntax_error(true)
+            .with_cfg(true)
+            .build(program);
 
-        let semantic = semantic_builder_return.semantic;
+          let semantic = semantic_builder_return.semantic;
 
-        let module_record = Arc::new(oxc_linter::ModuleRecord::new(
-          Path::new(&named_source.file_path),
-          &parser_return.module_record,
-          &semantic,
-        ));
+          let semantic = Rc::new(semantic);
 
-        let semantic = Rc::new(semantic);
+          let module_record = Arc::new(oxc_linter::ModuleRecord::new(
+            Path::new(&named_source.file_path),
+            &parser_return.module_record,
+            &semantic,
+          ));
 
-        let res = lint.run(Path::new(&named_source.file_path), semantic, module_record);
+          let res = lint.run(Path::new(&named_source.file_path), semantic, module_record);
 
-        let diag = FileDiagnostic {
-          file_path: named_source.file_path,
-          diagnostics: res.into_iter().map(|msg| msg.error).collect(),
-        };
+          let diag = FileDiagnostic {
+            file_path: named_source.file_path.clone(),
+            diagnostics: res.into_iter().map(|msg| msg.error).collect(),
+          };
 
-        if self.with_show_report {
-          self
-            .custom_render_report(&diag, &named_source.source_code)
-            .map_err(|e| WalkError::Unknown(e.to_string()))?;
+          if self.with_show_report {
+            self
+              .custom_render_report(&diag, &named_source.source_code)
+              .map_err(|e| WalkError::Unknown(e.to_string()))?;
+          }
+
+          Ok(diag)
+        } else {
+          Ok(FileDiagnostic {
+            file_path: named_source.file_path,
+            diagnostics: vec![],
+          })
         }
-
-        Ok(diag)
       })
       .map_err(|e| LintError::Unknown(e.to_string()))?;
 
@@ -104,11 +111,11 @@ impl LinterRunner {
   ) -> Result<(), LintError> {
     if !diagnostic.diagnostics.is_empty() {
       let handler = oxc_diagnostics::GraphicalReportHandler::new().with_links(true);
-      let mut output = String::with_capacity(1024 * 1024);
 
       let named_source =
         oxc_diagnostics::NamedSource::new(&diagnostic.file_path, source_code.to_string());
 
+      let mut output = String::with_capacity(1024 * 1024);
       for diag in &diagnostic.diagnostics {
         let diag = diag.clone().with_source_code(named_source.clone());
         handler

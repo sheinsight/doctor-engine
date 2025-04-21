@@ -1,11 +1,9 @@
 use oxc_linter::Oxlintrc;
 use serde_json::{Map, Value, json};
-use std::path::PathBuf;
 
 use crate::{
   category::Category,
   common::{environments::EnvironmentFlags, error::LintError, lint_mode::LintMode},
-  config::{ReactConfig, TypescriptConfig},
   ext::CategoryGetter,
   inner::Category20250601Inner,
 };
@@ -38,9 +36,6 @@ pub struct OxlintrcBuilder {
   mode: LintMode,
   envs: EnvironmentFlags,
   globals: Map<String, Value>,
-  react: Option<ReactConfig>,
-  ts: Option<TypescriptConfig>,
-  package_json: Option<PathBuf>,
   category: Category,
 }
 
@@ -50,10 +45,7 @@ impl Default for OxlintrcBuilder {
       envs: EnvironmentFlags::default(),
       mode: LintMode::Development,
       globals: Map::new(),
-      category: Category::V20250601Inner(Category20250601Inner::default()),
-      react: None,
-      ts: None,
-      package_json: None,
+      category: Category::V20250601Inner(Category20250601Inner::builder().build()),
     }
   }
 }
@@ -69,23 +61,8 @@ impl OxlintrcBuilder {
     self
   }
 
-  pub fn with_react(mut self, react: ReactConfig) -> Self {
-    self.react = Some(react);
-    self
-  }
-
-  pub fn with_typescript(mut self, ts: TypescriptConfig) -> Self {
-    self.ts = Some(ts);
-    self
-  }
-
   pub fn with_envs(mut self, envs: EnvironmentFlags) -> Self {
     self.envs = envs;
-    self
-  }
-
-  pub fn with_package_json(mut self, package_json: PathBuf) -> Self {
-    self.package_json = Some(package_json);
     self
   }
 
@@ -95,17 +72,9 @@ impl OxlintrcBuilder {
   }
 
   pub fn build(&self) -> Result<Oxlintrc, LintError> {
-    let mut category = match &self.category {
+    let category = match &self.category {
       Category::V20250601Inner(category) => category.to_owned(),
     };
-
-    if let Some(react) = &self.react {
-      category = category.with_react(react.clone());
-    }
-
-    if let Some(ts) = &self.ts {
-      category = category.with_typescript(ts.clone());
-    }
 
     serde_json::from_value::<Oxlintrc>(json!({
         "plugins": category.get_def_plugins(),

@@ -1,9 +1,10 @@
 use oxc_linter::LintPlugins;
 use serde_json::{Map, Value, json};
+use typed_builder::TypedBuilder;
 
 use crate::{
   common::environments::EnvironmentFlags,
-  config::{ReactConfig, ReactRuntime, TypescriptConfig},
+  config::{ReactConfig, TypescriptConfig},
   ext::{CategoryGetter, RuleGetter},
   inner::v2025_06_01::{
     jest::JestRuleGetter, react::ReactRuleGetter, typescript::TypescriptRuleGetter,
@@ -15,30 +16,17 @@ use super::{
   unicorn::UnicornRuleGetter,
 };
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, TypedBuilder)]
 pub struct Category20250601Inner {
+  #[builder(default = Some(ReactConfig::default()), setter(strip_option))]
   pub react: Option<ReactConfig>,
+  #[builder(default = Some(TypescriptConfig::default()), setter(strip_option))]
   pub typescript: Option<TypescriptConfig>,
 }
 
 impl Default for Category20250601Inner {
   fn default() -> Self {
-    Self {
-      react: Some(ReactConfig::default().with_runtime(ReactRuntime::Automatic)),
-      typescript: Some(TypescriptConfig::default()),
-    }
-  }
-}
-
-impl Category20250601Inner {
-  pub fn with_react(mut self, react: ReactConfig) -> Self {
-    self.react = Some(react);
-    self
-  }
-
-  pub fn with_typescript(mut self, typescript: TypescriptConfig) -> Self {
-    self.typescript = Some(typescript);
-    self
+    Self::builder().build()
   }
 }
 
