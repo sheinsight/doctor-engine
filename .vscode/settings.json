@@ -6,6 +6,9 @@
   "dependi.decoration.compatible.template":"🟢 ${version}",
   "dependi.decoration.incompatible.template":"🔴 ${version}",
   // "dependi.decoration.position":"before",
+  "rust-analyzer.runnables.extraEnv": {
+    "RUST_MIN_STACK": "16777216"
+  },
   "cSpell.words": [
     "applescript",
     "atomtest",

@@ -37,7 +37,7 @@ use crate::{
 pub struct OxlintrcBuilder {
   mode: LintMode,
   envs: EnvironmentFlags,
-  define: Map<String, Value>,
+  globals: Map<String, Value>,
   react: Option<ReactConfig>,
   ts: Option<TypescriptConfig>,
   package_json: Option<PathBuf>,
@@ -49,7 +49,7 @@ impl Default for OxlintrcBuilder {
     Self {
       envs: EnvironmentFlags::default(),
       mode: LintMode::Development,
-      define: Map::new(),
+      globals: Map::new(),
       category: Category::V20250601Inner(Category20250601Inner::default()),
       react: None,
       ts: None,
@@ -64,8 +64,8 @@ impl OxlintrcBuilder {
     self
   }
 
-  pub fn with_define(mut self, define: Map<String, Value>) -> Self {
-    self.define = define;
+  pub fn with_globals(mut self, globals: Map<String, Value>) -> Self {
+    self.globals = globals;
     self
   }
 
@@ -110,7 +110,7 @@ impl OxlintrcBuilder {
     serde_json::from_value::<Oxlintrc>(json!({
         "plugins": category.get_def_plugins(),
         "env": self.envs,
-        "globals": self.define,
+        "globals": self.globals,
         "settings": {},
         "rules": category.get_def(),
         "overrides":[

@@ -138,7 +138,7 @@ mod tests {
 
   #[test]
   fn test() -> Result<(), Box<dyn Error>> {
-    let cwd = "/Users/10015448/Git/gtms";
+    let cwd = "/Users/10015448/Git/drawio_ui";
 
     let category = Category::V20250601Inner(Category20250601Inner::default());
 

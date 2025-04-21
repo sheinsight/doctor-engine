@@ -13,29 +13,29 @@ pub const DEFAULT_IGNORE_PATTERNS: &[&str] = &[
   "*.min.css",
 ];
 
-pub const DEFAULT_TEST_PATTERNS: &[&str] = &[
-  "**/test/**",
-  "**/tests/**",
-  "**/spec/**",
-  "**/specs/**",
-  "*.spec.js",
-  "*.spec.jsx",
-  "*.spec.ts",
-  "*.spec.tsx",
-  "*.test.js",
-  "*.test.jsx",
-  "*.test.ts",
-  "*.test.tsx",
-];
+// pub const DEFAULT_TEST_PATTERNS: &[&str] = &[
+//   "**/test/**",
+//   "**/tests/**",
+//   "**/spec/**",
+//   "**/specs/**",
+//   "*.spec.js",
+//   "*.spec.jsx",
+//   "*.spec.ts",
+//   "*.spec.tsx",
+//   "*.test.js",
+//   "*.test.jsx",
+//   "*.test.ts",
+//   "*.test.tsx",
+// ];
 
-pub const DEFAULT_DTS_PATTERNS: &[&str] = &["**/*.d.ts"];
+// pub const DEFAULT_DTS_PATTERNS: &[&str] = &["**/*.d.ts"];
 
 #[derive(Debug, Clone, Serialize)]
 pub struct WalkPatterns {
   pub walk: String,
   pub ignore: Vec<String>,
-  pub testing: Vec<String>,
-  pub dts: Vec<String>,
+  // pub testing: Vec<String>,
+  // pub dts: Vec<String>,
 }
 
 impl Default for WalkPatterns {
@@ -46,11 +46,11 @@ impl Default for WalkPatterns {
         .iter()
         .map(|s| s.to_string())
         .collect(),
-      testing: DEFAULT_TEST_PATTERNS
-        .iter()
-        .map(|s| s.to_string())
-        .collect(),
-      dts: DEFAULT_DTS_PATTERNS.iter().map(|s| s.to_string()).collect(),
+      // testing: DEFAULT_TEST_PATTERNS
+      //   .iter()
+      //   .map(|s| s.to_string())
+      //   .collect(),
+      // dts: DEFAULT_DTS_PATTERNS.iter().map(|s| s.to_string()).collect(),
     }
   }
 }
@@ -66,15 +66,15 @@ impl WalkPatterns {
     self
   }
 
-  pub fn with_testing(mut self, testing: &[String]) -> Self {
-    self.testing = testing.iter().map(|s| s.to_string()).collect();
-    self
-  }
+  // pub fn with_testing(mut self, testing: &[String]) -> Self {
+  //   self.testing = testing.iter().map(|s| s.to_string()).collect();
+  //   self
+  // }
 
-  pub fn with_dts(mut self, dts: &[String]) -> Self {
-    self.dts = dts.iter().map(|s| s.to_string()).collect();
-    self
-  }
+  // pub fn with_dts(mut self, dts: &[String]) -> Self {
+  //   self.dts = dts.iter().map(|s| s.to_string()).collect();
+  //   self
+  // }
 
   pub fn build(self) -> Self {
     self
