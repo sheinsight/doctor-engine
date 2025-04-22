@@ -1,7 +1,11 @@
 use ::ignore::DirEntry;
 use extensions::Extensions;
 use rayon::prelude::*;
-use std::path::PathBuf;
+use std::{
+  fs,
+  io::Read,
+  path::{Path, PathBuf},
+};
 use typed_builder::TypedBuilder;
 
 // mod demo;
@@ -69,6 +73,10 @@ impl WalkParallelJs {
       .map(|entry| entry.path().to_owned())
       .filter(|path| path.is_file())
       .filter(|path| {
+        if is_ts_video(path) {
+          return false;
+        }
+
         // 大于 1mb 的过滤
         if let Ok(metadata) = std::fs::metadata(path) {
           return metadata.len() < 1024 * 1024;
@@ -81,4 +89,15 @@ impl WalkParallelJs {
 
     Ok(res)
   }
+}
+
+pub fn is_ts_video(path: &Path) -> bool {
+  if let Ok(mut file) = fs::File::open(path) {
+    let mut buffer = [0; 4];
+    if file.read_exact(&mut buffer).is_ok() {
+      // TS 视频文件的魔数是 0x47
+      return buffer[0] == 0x47;
+    }
+  }
+  false
 }
