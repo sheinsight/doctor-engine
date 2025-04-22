@@ -1,6 +1,6 @@
 {
 	"name": "@shined/doctor",
-	"version": "0.0.2-snapshot.14",
+	"version": "0.0.2",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"napi": {
@@ -34,7 +34,7 @@
 	},
 	"publishConfig": {
 		"access": "public",
-		"tag": "snapshot"
+		"tag": "latest"
 	},
 	"files": [
 		"index.js",
