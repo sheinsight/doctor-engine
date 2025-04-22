@@ -62,13 +62,17 @@ impl WalkParallelJs {
     let walker = inner.build();
 
     let ext = Extensions::default();
-
     let res = walker
       .par_bridge()
       .filter_map(Result::ok)
       .filter(|entry| self.is_wanted_entry(entry, &ext))
       .map(|entry| entry.path().to_owned())
       .filter(|path| path.is_file())
+      .filter(|path| {
+        // 大于 1mb 的过滤
+        let metadata = std::fs::metadata(path).unwrap();
+        metadata.len() > 1024 * 1024
+      })
       .map(f)
       .collect::<Vec<Result<R, WalkError>>>();
 
