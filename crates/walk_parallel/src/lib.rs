@@ -70,8 +70,11 @@ impl WalkParallelJs {
       .filter(|path| path.is_file())
       .filter(|path| {
         // 大于 1mb 的过滤
-        let metadata = std::fs::metadata(path).unwrap();
-        metadata.len() > 1024 * 1024
+        if let Ok(metadata) = std::fs::metadata(path) {
+          return metadata.len() < 1024 * 1024;
+        } else {
+          return false;
+        }
       })
       .map(f)
       .collect::<Vec<Result<R, WalkError>>>();
