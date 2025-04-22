@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-pub const IGNORE_PATTERNS: [&str; 2] = ["**/node_modules/**", "node_modules"];
+pub const IGNORE_PATTERNS: [&str; 3] = ["**/node_modules/**", "node_modules", "**/*.d.ts"];
 
 #[derive(Clone, Debug)]
 pub struct WalkIgnore(pub Vec<String>);
