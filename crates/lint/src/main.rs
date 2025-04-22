@@ -1,0 +1,44 @@
+use doctor_lint::{
+  Category, EnvironmentFlags, LintMode, LinterRunner, config::OxlintrcBuilder,
+  inner::Category20250601Inner,
+};
+use std::time::Instant;
+
+fn main() -> anyhow::Result<()> {
+  let start_time = Instant::now();
+
+  let cwd = "/Users/10015448/Git/drawio_ui";
+
+  eprintln!("1--->>>");
+
+  let category = Category::V20250601Inner(Category20250601Inner::default());
+
+  eprintln!("2--->>>");
+
+  let rc = OxlintrcBuilder::default()
+    .with_category(category)
+    .with_mode(LintMode::Production)
+    .with_envs(EnvironmentFlags::default())
+    .build()
+    .unwrap();
+
+  eprintln!("3--->>>");
+
+  let linter_runner = LinterRunner::builder()
+    .cwd(cwd.to_string().into())
+    // .ignore(vec![])
+    .with_show_report(false)
+    .oxlintrc(rc)
+    .build();
+
+  eprintln!("4--->>>");
+
+  let _ = linter_runner.run();
+
+  eprintln!("5--->>>");
+
+  let duration = start_time.elapsed();
+  eprintln!("Total execution time: {:?}", duration);
+
+  Ok(())
+}

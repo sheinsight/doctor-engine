@@ -13,7 +13,7 @@ use doctor::{
     Category, EnvironmentFlags, LintMode, LinterRunner, config::OxlintrcBuilder,
     inner::Category20250601Inner,
   },
-  walk_parallel::WalkPatterns,
+  walk_parallel::WalkIgnore,
 };
 pub use label::LabeledLoc;
 pub use location::Location;
@@ -37,7 +37,6 @@ pub struct Response {
 #[derive(Debug, Clone)]
 #[napi[object]]
 pub struct GlobJsArgs {
-  pub pattern: Option<String>,
   pub ignore: Option<Vec<String>>,
   pub cwd: String,
   pub verbose: Option<bool>,
@@ -56,19 +55,15 @@ pub async fn inner_debug_lint(
   let rc: Oxlintrc = serde_json::from_str(&oxlint_config)
     .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
 
-  let mut patterns = WalkPatterns::default();
+  let mut ignore = WalkIgnore::default();
 
-  if let Some(pattern_str) = glob_js_args.pattern {
-    patterns = patterns.with_walk(&pattern_str);
-  }
-
-  if let Some(ignore) = glob_js_args.ignore {
-    patterns = patterns.with_ignore(ignore.as_slice());
+  if let Some(ignore_patterns) = glob_js_args.ignore {
+    ignore.extend(ignore_patterns);
   }
 
   let linter_runner = LinterRunner::builder()
     .cwd(glob_js_args.cwd.clone().into())
-    .walk_patterns(patterns)
+    .ignore(ignore)
     .with_show_report(glob_js_args.verbose.unwrap_or(false))
     .oxlintrc(rc)
     .build();
@@ -107,14 +102,9 @@ pub async fn inner_lint(
     NaPiCategory::V20250601Inner => Category::V20250601Inner(Category20250601Inner::default()),
   };
 
-  let mut patterns = WalkPatterns::default();
-
-  if let Some(pattern_str) = glob_js_args.pattern {
-    patterns = patterns.with_walk(&pattern_str);
-  }
-
-  if let Some(ignore) = glob_js_args.ignore {
-    patterns = patterns.with_ignore(ignore.as_slice());
+  let mut ignore = WalkIgnore::default();
+  if let Some(ignore_patterns) = glob_js_args.ignore {
+    ignore.extend(ignore_patterns);
   }
 
   let rc = OxlintrcBuilder::default()
@@ -126,7 +116,7 @@ pub async fn inner_lint(
 
   let linter_runner = LinterRunner::builder()
     .cwd(glob_js_args.cwd.clone().into())
-    .walk_patterns(patterns)
+    .ignore(ignore)
     .with_show_report(glob_js_args.verbose.unwrap_or(false))
     .oxlintrc(rc)
     .build();
@@ -142,8 +132,15 @@ pub async fn inner_lint(
 
     let source_code = std::fs::read_to_string(&file_diagnostic.file_path)?;
 
-    let f_diags =
-      Diagnostic::from_file_diagnostic(&file_diagnostic, &glob_js_args.cwd, &source_code);
+    let relative_path = if glob_js_args.absolute.unwrap_or(false) {
+      file_diagnostic.file_path.to_string()
+    } else if let Some(r) = pathdiff::diff_paths(&file_diagnostic.file_path, &glob_js_args.cwd) {
+      r.to_string_owned()
+    } else {
+      file_diagnostic.file_path.to_string()
+    };
+
+    let f_diags = Diagnostic::from_file_diagnostic(&file_diagnostic, &relative_path, &source_code);
     diags.extend(f_diags);
 
     for diag in file_diagnostic.diagnostics {

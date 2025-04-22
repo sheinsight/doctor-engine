@@ -4,7 +4,7 @@ use std::{
   sync::Arc,
 };
 
-use doctor_walk_parallel::{WalkError, WalkParallel, WalkPatterns};
+use doctor_walk_parallel::{WalkError, WalkIgnore, WalkParallelJs};
 use oxc_allocator::Allocator;
 use oxc_linter::{ConfigStoreBuilder, Oxlintrc};
 use oxc_parser::Parser;
@@ -19,11 +19,13 @@ use crate::{
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct LinterRunner {
   cwd: PathBuf,
-  walk_patterns: WalkPatterns,
   oxlintrc: Oxlintrc,
 
   #[builder(default = false)]
   with_show_report: bool,
+
+  #[builder(default = WalkIgnore::default())]
+  pub ignore: WalkIgnore,
 }
 
 impl LinterRunner {
@@ -40,9 +42,9 @@ impl LinterRunner {
       config,
     );
 
-    let parallel = WalkParallel::builder()
+    let parallel = WalkParallelJs::builder()
       .cwd(self.cwd.clone())
-      .patterns(self.walk_patterns.clone())
+      .ignore(self.ignore.clone())
       .build();
 
     let res: Vec<Result<FileDiagnostic, WalkError>> = parallel
@@ -129,42 +131,39 @@ impl LinterRunner {
   }
 }
 
-#[cfg(test)]
-mod tests {
-  use std::error::Error;
+// #[cfg(test)]
+// mod tests {
+//   use std::error::Error;
 
-  use doctor_walk_parallel::WalkPatterns;
+//   use crate::{
+//     category::Category,
+//     common::{environments::EnvironmentFlags, lint_mode::LintMode},
+//     config::OxlintrcBuilder,
+//     inner::Category20250601Inner,
+//     linter_runner::LinterRunner,
+//   };
 
-  use crate::{
-    category::Category,
-    common::{environments::EnvironmentFlags, lint_mode::LintMode},
-    config::OxlintrcBuilder,
-    inner::Category20250601Inner,
-    linter_runner::LinterRunner,
-  };
+//   #[test]
+//   fn test1() -> Result<(), Box<dyn Error>> {
+//     let cwd = "/Users/10015448/Git/drawio_ui";
 
-  #[test]
-  fn test() -> Result<(), Box<dyn Error>> {
-    let cwd = "/Users/10015448/Git/drawio_ui";
+//     let category = Category::V20250601Inner(Category20250601Inner::default());
 
-    let category = Category::V20250601Inner(Category20250601Inner::default());
+//     let rc = OxlintrcBuilder::default()
+//       .with_category(category)
+//       .with_mode(LintMode::Production)
+//       .with_envs(EnvironmentFlags::default())
+//       .build()
+//       .unwrap();
 
-    let rc = OxlintrcBuilder::default()
-      .with_category(category)
-      .with_mode(LintMode::Production)
-      .with_envs(EnvironmentFlags::default())
-      .build()
-      .unwrap();
+//     let linter_runner = LinterRunner::builder()
+//       .cwd(cwd.to_string().into())
+//       .with_show_report(true)
+//       .oxlintrc(rc)
+//       .build();
 
-    let linter_runner = LinterRunner::builder()
-      .cwd(cwd.to_string().into())
-      .walk_patterns(WalkPatterns::default())
-      .with_show_report(true)
-      .oxlintrc(rc)
-      .build();
+//     let _ = linter_runner.run();
 
-    let _ = linter_runner.run();
-
-    Ok(())
-  }
-}
+//     Ok(())
+//   }
+// }

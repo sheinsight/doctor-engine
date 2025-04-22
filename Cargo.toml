@@ -58,6 +58,8 @@ glob                = "0.3.2"
 ignore              = "0.4.23"
 package_json_parser = "0.0.2"
 
+
+anyhow = { version = "^1.0.98" }
 # biome
 # biome_console            = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_console" }
 # biome_deserialize        = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_deserialize" }
