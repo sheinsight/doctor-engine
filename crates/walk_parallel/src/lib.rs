@@ -95,8 +95,8 @@ pub fn is_ts_video(path: &Path) -> bool {
   if let Ok(mut file) = fs::File::open(path) {
     let mut buffer = [0; 4];
     if file.read_exact(&mut buffer).is_ok() {
-      // TS 视频文件的魔数是 0x47
-      return buffer[0] == 0x47;
+      // 检查多个包的同步字节
+      return buffer[0] == 0x47 && buffer[188] == 0x47 && buffer[376] == 0x47;
     }
   }
   false
