@@ -93,7 +93,7 @@ impl WalkParallelJs {
 
 pub fn is_ts_video(path: &Path) -> bool {
   if let Ok(mut file) = fs::File::open(path) {
-    let mut buffer = [0; 4];
+    let mut buffer = [0; 188 * 3];
     if file.read_exact(&mut buffer).is_ok() {
       // 检查多个包的同步字节
       return buffer[0] == 0x47 && buffer[188] == 0x47 && buffer[376] == 0x47;
