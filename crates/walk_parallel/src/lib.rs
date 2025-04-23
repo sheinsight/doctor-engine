@@ -64,17 +64,34 @@ impl WalkParallelJs {
       .map(|entry| entry.path().to_owned())
       .filter(|path| path.is_file())
       .filter(|path| {
-        if is_minified_by_characteristics(path) {
+        let Some(extension) = path.extension() else {
+          eprintln!("Unsupported file extension: {:?}", path);
           return false;
+        };
+
+        if extension == "js" {
+          if is_minified_by_characteristics(path) {
+            eprintln!("Unsupported minified js file: {:?}", path);
+            return false;
+          }
         }
 
-        if is_ts_video(path) {
-          return false;
+        if extension == "ts" {
+          if is_ts_video(path) {
+            eprintln!("Unsupported ts video file: {:?}", path);
+            return false;
+          }
         }
 
         // 大于 1mb 的过滤
         if let Ok(metadata) = std::fs::metadata(path) {
-          return metadata.len() < 1024 * 1024;
+          // MB 单位
+          let size = metadata.len() / 1024 / 1024;
+          let is_large_file = size > 1;
+          if is_large_file {
+            eprintln!("Unsupported large file: {:?}, {}MB", path, size);
+          }
+          return !is_large_file;
         } else {
           return false;
         }
@@ -87,15 +104,6 @@ impl WalkParallelJs {
 }
 
 pub fn is_ts_video(path: &Path) -> bool {
-  let Some(extension) = path.extension() else {
-    return false;
-  };
-
-  // 只有 ts 文件才进行魔数特征检测
-  if extension != "ts" {
-    return false;
-  }
-
   if let Ok(mut file) = fs::File::open(path) {
     let mut buffer = [0; 188 * 3];
     if file.read_exact(&mut buffer).is_ok() {
@@ -107,15 +115,6 @@ pub fn is_ts_video(path: &Path) -> bool {
 }
 
 fn is_minified_by_characteristics(path: &Path) -> bool {
-  let Some(extension) = path.extension() else {
-    return false;
-  };
-
-  // 只有 js 文件才进行特征检测
-  if extension != "js" {
-    return false;
-  }
-
   let Some(file_name) = path.file_name() else {
     return false;
   };
@@ -146,18 +145,11 @@ fn is_minified_by_characteristics(path: &Path) -> bool {
     // 3. 检查是否存在很长的行（超过1000字符）
     let has_long_lines = lines.iter().any(|line| line.len() > 1000);
 
-    // 4. 检查空白字符比例
-    let whitespace_ratio =
-      content.chars().filter(|c| c.is_whitespace()).count() as f64 / content.len() as f64;
-
     // 5. 检查是否包含 sourceMappingURL（压缩文件常有）
     let has_source_map = content.contains("sourceMappingURL");
 
     // 组合多个特征进行判断
-    avg_line_length > 500.0
-      || (semicolon_packed && has_long_lines)
-      || whitespace_ratio < 0.1
-      || has_source_map
+    avg_line_length > 500.0 || (semicolon_packed && has_long_lines) || has_source_map
   } else {
     false
   }
