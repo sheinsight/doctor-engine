@@ -87,6 +87,15 @@ impl WalkParallelJs {
 }
 
 pub fn is_ts_video(path: &Path) -> bool {
+  let Some(extension) = path.extension() else {
+    return false;
+  };
+
+  // 只有 ts 文件才进行魔数特征检测
+  if extension != "ts" {
+    return false;
+  }
+
   if let Ok(mut file) = fs::File::open(path) {
     let mut buffer = [0; 188 * 3];
     if file.read_exact(&mut buffer).is_ok() {
