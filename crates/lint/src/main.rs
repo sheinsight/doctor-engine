@@ -2,6 +2,7 @@ use doctor_lint::{
   Category, EnvironmentFlags, LintMode, LinterRunner, config::OxlintrcBuilder,
   inner::Category20250601Inner,
 };
+use doctor_walk_parallel::WalkIgnore;
 use std::time::Instant;
 
 fn main() -> anyhow::Result<()> {
@@ -24,18 +25,20 @@ fn main() -> anyhow::Result<()> {
 
   eprintln!("3--->>>");
 
+  let ignore = WalkIgnore(vec!["**/node_modules/**".to_string()]);
+
   let linter_runner = LinterRunner::builder()
     .cwd(cwd.to_string().into())
-    // .ignore(vec![])
+    .ignore(ignore)
     .with_show_report(false)
     .oxlintrc(rc)
     .build();
 
   eprintln!("4--->>>");
 
-  let _ = linter_runner.run();
+  let res = linter_runner.run();
 
-  eprintln!("5--->>>");
+  eprintln!("5--->>>{:#?}", res.is_err());
 
   let duration = start_time.elapsed();
   eprintln!("Total execution time: {:?}", duration);

@@ -32,15 +32,6 @@ impl WalkParallelJs {
     if file_type.is_dir() {
       return false;
     }
-    let Some(file_name) = dir_entry.path().file_name() else {
-      return false;
-    };
-    if [".min.", "-min.", "_min."]
-      .iter()
-      .any(|e| file_name.to_string_lossy().contains(e))
-    {
-      return false;
-    }
     let Some(extension) = dir_entry.path().extension() else {
       return false;
     };
@@ -73,6 +64,10 @@ impl WalkParallelJs {
       .map(|entry| entry.path().to_owned())
       .filter(|path| path.is_file())
       .filter(|path| {
+        if is_minified_by_characteristics(path) {
+          return false;
+        }
+
         if is_ts_video(path) {
           return false;
         }
@@ -100,4 +95,52 @@ pub fn is_ts_video(path: &Path) -> bool {
     }
   }
   false
+}
+
+fn is_minified_by_characteristics(path: &Path) -> bool {
+  let Some(file_name) = path.file_name() else {
+    return false;
+  };
+
+  if [".min.", "-min.", "_min."]
+    .iter()
+    .any(|e| file_name.to_string_lossy().contains(e))
+  {
+    return false;
+  }
+
+  if let Ok(content) = fs::read_to_string(path) {
+    if content.is_empty() {
+      return false;
+    }
+
+    // 1. 检查平均行长度
+    let lines: Vec<&str> = content.lines().collect();
+    let avg_line_length =
+      lines.iter().map(|line| line.len() as f64).sum::<f64>() / lines.len() as f64;
+
+    // 2. 检查分号后面是否紧跟其他字符（压缩代码常见特征）
+    let semicolon_packed = content.contains(";var")
+      || content.contains(";function")
+      || content.contains(";const")
+      || content.contains(";let");
+
+    // 3. 检查是否存在很长的行（超过1000字符）
+    let has_long_lines = lines.iter().any(|line| line.len() > 1000);
+
+    // 4. 检查空白字符比例
+    let whitespace_ratio =
+      content.chars().filter(|c| c.is_whitespace()).count() as f64 / content.len() as f64;
+
+    // 5. 检查是否包含 sourceMappingURL（压缩文件常有）
+    let has_source_map = content.contains("sourceMappingURL");
+
+    // 组合多个特征进行判断
+    avg_line_length > 500.0
+      || (semicolon_packed && has_long_lines)
+      || whitespace_ratio < 0.1
+      || has_source_map
+  } else {
+    false
+  }
 }
