@@ -98,6 +98,15 @@ pub fn is_ts_video(path: &Path) -> bool {
 }
 
 fn is_minified_by_characteristics(path: &Path) -> bool {
+  let Some(extension) = path.extension() else {
+    return false;
+  };
+
+  // 只有 js 文件才进行特征检测
+  if extension != "js" {
+    return false;
+  }
+
   let Some(file_name) = path.file_name() else {
     return false;
   };
