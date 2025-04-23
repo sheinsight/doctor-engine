@@ -14,3 +14,5 @@ pub mod inner;
 mod linter_runner;
 
 pub use linter_runner::*;
+
+pub use config::*;

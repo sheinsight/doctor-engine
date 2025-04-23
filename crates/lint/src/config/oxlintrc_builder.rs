@@ -1,5 +1,9 @@
+use std::ops::{Deref, DerefMut};
+
 use oxc_linter::Oxlintrc;
-use serde_json::{Map, Value, json};
+use rustc_hash::FxHashMap;
+use serde::Serialize;
+use serde_json::json;
 
 use crate::{
   category::Category,
@@ -31,11 +35,41 @@ use crate::{
  * 👍 8. 要知道 category，主要是用来区分版本信息的
  */
 
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "lowercase")]
+pub enum GlobalValue {
+  Writable,
+  Readonly,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct Globals(pub FxHashMap<String, GlobalValue>);
+
+impl Default for Globals {
+  fn default() -> Self {
+    Self(FxHashMap::default())
+  }
+}
+
+impl Deref for Globals {
+  type Target = FxHashMap<String, GlobalValue>;
+
+  fn deref(&self) -> &Self::Target {
+    &self.0
+  }
+}
+
+impl DerefMut for Globals {
+  fn deref_mut(&mut self) -> &mut Self::Target {
+    &mut self.0
+  }
+}
+
 #[derive(Debug, Clone)]
 pub struct OxlintrcBuilder {
   mode: LintMode,
   envs: EnvironmentFlags,
-  globals: Map<String, Value>,
+  globals: Globals,
   category: Category,
 }
 
@@ -44,7 +78,7 @@ impl Default for OxlintrcBuilder {
     Self {
       envs: EnvironmentFlags::default(),
       mode: LintMode::Development,
-      globals: Map::new(),
+      globals: Globals::default(),
       category: Category::V20250601Inner(Category20250601Inner::builder().build()),
     }
   }
@@ -56,7 +90,7 @@ impl OxlintrcBuilder {
     self
   }
 
-  pub fn with_globals(mut self, globals: Map<String, Value>) -> Self {
+  pub fn with_globals(mut self, globals: Globals) -> Self {
     self.globals = globals;
     self
   }

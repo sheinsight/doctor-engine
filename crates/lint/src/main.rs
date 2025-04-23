@@ -1,10 +1,10 @@
 use doctor_lint::{
-  Category, EnvironmentFlags, LintMode, LinterRunner, config::OxlintrcBuilder,
-  inner::Category20250601Inner,
+  Category, EnvironmentFlags, GlobalValue, Globals, LintMode, LinterRunner,
+  config::OxlintrcBuilder, inner::Category20250601Inner,
 };
 use doctor_walk_parallel::WalkIgnore;
-use std::time::Instant;
 
+use std::time::Instant;
 fn main() -> anyhow::Result<()> {
   let start_time = Instant::now();
 
@@ -16,12 +16,18 @@ fn main() -> anyhow::Result<()> {
 
   eprintln!("2--->>>");
 
+  let mut globals = Globals::default();
+
+  globals.insert("a".to_string(), GlobalValue::Writable);
+
   let rc = OxlintrcBuilder::default()
     .with_category(category)
+    .with_globals(globals)
     .with_mode(LintMode::Production)
     .with_envs(EnvironmentFlags::default())
-    .build()
-    .unwrap();
+    .build()?;
+
+  std::fs::write("oxlintrc.json", serde_json::to_string_pretty(&rc).unwrap())?;
 
   eprintln!("3--->>>");
 
