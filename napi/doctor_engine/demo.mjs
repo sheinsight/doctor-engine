@@ -11,7 +11,7 @@ import { innerDebugLint, initializeLogger,innerLint, NaPiCategory } from './inde
     cwd: '/Users/10015448/Git/drawio_ui',
     verbose: false,
     globals: {
-      CKEDITOR: 'xxxreadonly',
+      CKEDITOR: 'readonly',
     },
   }, NaPiCategory.V20250601Inner)
   // const res = await innerDebugLint(JSON.stringify({

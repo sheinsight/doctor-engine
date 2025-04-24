@@ -4,7 +4,9 @@ use doctor_ext::{PathExt, Validator};
 use lazy_regex::regex;
 use typed_builder::TypedBuilder;
 
-use crate::error::{InvalidErr, NodeVersionValidatorError, NotFoundErr, UnknowErr};
+use crate::error::{
+  InvalidErr, NodeVersionValidatorError, NotFoundErr, UNknowErr, VersionRequirementNotMet,
+};
 
 /// validate node version file
 ///
@@ -31,6 +33,9 @@ where
   config_path: P,
 
   #[builder(default = None, setter(strip_option))]
+  with_valid_range: Option<Vec<String>>,
+
+  #[builder(default = None, setter(strip_option))]
   with_additional_validation:
     Option<Box<dyn Fn(String) -> Result<(), NodeVersionValidatorError> + 'a>>,
 }
@@ -42,6 +47,30 @@ where
   fn validate_additional_validation(&self, version: &str) -> Result<(), NodeVersionValidatorError> {
     if let Some(with_additional_validation) = &self.with_additional_validation {
       with_additional_validation(version.to_string())?;
+    }
+
+    let Ok(version) = node_semver::Version::parse(version) else {
+      return InvalidErr::builder()
+        .config_path(self.config_path.as_ref().to_string_owned())
+        .version(version.to_string())
+        .build()
+        .into();
+    };
+
+    if let Some(with_valid_range) = &self.with_valid_range {
+      for range in with_valid_range {
+        if let Ok(range) = node_semver::Range::parse(range) {
+          if range.satisfies(&version) {
+            return Ok(());
+          } else {
+            return VersionRequirementNotMet::builder()
+              .config_path(self.config_path.as_ref().to_string_owned())
+              .version(version.to_string())
+              .build()
+              .into();
+          }
+        }
+      }
     }
 
     Ok(())
@@ -82,7 +111,7 @@ where
     }
 
     let version =
-      read_to_string(path).map_err(|e| UnknowErr::builder().source(Box::new(e)).build().into())?;
+      read_to_string(path).map_err(|e| UNknowErr::builder().source(Box::new(e)).build().into())?;
 
     let version = version.trim();
 
@@ -169,5 +198,16 @@ mod tests {
       .validate();
 
     assert!(matches!(res, Err(NodeVersionValidatorError::InvalidErr(_))));
+  }
+
+  #[test]
+  fn test_validate_node_version_file_valid_range() {
+    let res = NodeVersionValidator::builder()
+      .config_path("./fixtures/.range")
+      .with_valid_range(vec!["^18.0.0".to_string(), "^2.0.0".to_string()])
+      .build()
+      .validate();
+
+    assert!(res.is_ok());
   }
 }

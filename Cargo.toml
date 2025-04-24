@@ -60,9 +60,9 @@ anyhow     = { version = "^1.0.98" }
 env_logger = "0.11.8"
 log        = "0.4.27"
 
+node-semver  = "2.2.0"
 strum        = "0.27.1"
 strum_macros = "0.27.1"
-
 
 doctor               = { path = "crates/doctor" }
 doctor_ext           = { path = "crates/ext" }

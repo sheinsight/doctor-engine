@@ -12,8 +12,13 @@ define_errors! {
       version:String,
     },
     #[message = "unknown error {source}"]
-    UnknowErr{
+    UNknowErr{
       source: Box<dyn std::error::Error>,
-    }
+    },
+    #[message = "Version {version} found in {config_path} does not meet the version requirements."]
+    VersionRequirementNotMet {
+      config_path: String,
+      version: String,
+    },
   }
 }
