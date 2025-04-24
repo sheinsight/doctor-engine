@@ -3,9 +3,11 @@
 
 
 import { expect, test } from 'vitest'
-import { innerDebugLint } from '../index.js'
+import { innerDebugLint, initializeLogger } from '../index.js'
+
 
 test('adds 1 + 2 to equal 3', async () => {
+  initializeLogger()
   const res = await innerDebugLint(
     JSON.stringify({
       env: {
@@ -126,7 +128,7 @@ test('adds 1 + 2 to equal 3', async () => {
     }),
     {
       cwd: 'tests/fixtures',
-      verbose: true,
+      verbose: false,
     },
   )
 

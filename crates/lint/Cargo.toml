@@ -26,6 +26,5 @@ serde_json      = { workspace = true }
 thiserror       = { workspace = true }
 typed-builder   = { workspace = true }
 
-
-doctor_ext           = { path = "../ext" }
-doctor_walk_parallel = { path = "../walk_parallel" }
+doctor_ext           = { workspace = true }
+doctor_walk_parallel = { workspace = true }

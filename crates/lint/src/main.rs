@@ -14,7 +14,7 @@ fn main() -> anyhow::Result<()> {
 
   let category = Category::V20250601Inner(Category20250601Inner::default());
 
-  eprintln!("2--->>>");
+  eprintln!("2--->>> 规范 ");
 
   let mut globals = Globals::default();
 

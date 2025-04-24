@@ -56,8 +56,23 @@ oxc_span        = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlin
 ignore              = "0.4.23"
 package_json_parser = "0.0.2"
 
+anyhow     = { version = "^1.0.98" }
+env_logger = "0.11.8"
+log        = "0.4.27"
 
-anyhow = { version = "^1.0.98" }
+strum        = "0.27.1"
+strum_macros = "0.27.1"
+
+
+doctor               = { path = "crates/doctor" }
+doctor_ext           = { path = "crates/ext" }
+doctor_lint          = { path = "crates/lint" }
+doctor_node          = { path = "crates/node" }
+doctor_npmrc         = { path = "crates/npmrc" }
+doctor_package_json  = { path = "crates/package_json" }
+doctor_walk_parallel = { path = "crates/walk_parallel" }
+
+
 # biome
 # biome_console            = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_console" }
 # biome_deserialize        = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_deserialize" }

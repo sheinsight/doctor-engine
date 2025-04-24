@@ -66,20 +66,20 @@ impl WalkParallelJs {
       .filter(|path| {
         let Some(extension) = path.extension() else {
           // 忽略
-          eprintln!("Ignore Unable to get file name extension: {:?}", path);
+          log::warn!("Ignore Unable to get file name extension: {:?}", path);
           return false;
         };
 
         if extension == "js" {
           if is_minified_by_characteristics(path) {
-            eprintln!("Ignore minified js file: {:?}", path);
+            log::warn!("Ignore minified js file: {:?}", path);
             return false;
           }
         }
 
         if extension == "ts" {
           if is_ts_video(path) {
-            eprintln!("Ignore ts video file: {:?}", path);
+            log::warn!("Ignore ts video file: {:?}", path);
             return false;
           }
         }
@@ -90,9 +90,10 @@ impl WalkParallelJs {
           let size = metadata.len() / 1024 / 1024;
           let is_large_file = size > 1;
           if is_large_file {
-            eprintln!(
+            log::warn!(
               "Ignore large file, Only support 1MB: {:?} ({}MB)",
-              path, size
+              path,
+              size
             );
           }
           return !is_large_file;

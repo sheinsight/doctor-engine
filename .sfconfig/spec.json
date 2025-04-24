@@ -1,0 +1,11 @@
+{
+  "globals": {
+    "a": "writable"
+  },
+  "ignore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/target/**"
+  ]
+}

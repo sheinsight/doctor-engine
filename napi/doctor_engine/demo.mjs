@@ -1,8 +1,11 @@
 
 
-import { innerDebugLint,innerLint, NaPiCategory } from './index.js'
+import { innerDebugLint, initializeLogger  } from './index.js'
 
 (async () => {
+
+  // initializeLogger(LogLevel.Error);
+  initializeLogger();
   console.log('start')
   const res = await innerDebugLint(JSON.stringify({
     env: {
@@ -126,6 +129,6 @@ import { innerDebugLint,innerLint, NaPiCategory } from './index.js'
     verbose: false,
   });
 
-  console.log(res);
+  // console.log(res);
   console.log('end')
 })()
