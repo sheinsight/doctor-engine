@@ -17,6 +17,7 @@
 			"aarch64-unknown-linux-musl"
 		]
 	},
+	"bin": "./bin/index.mjs",
 	"scripts": {
 		"create-npm-dirs": "napi create-npm-dirs",
 		"artifacts": "napi artifacts ",
