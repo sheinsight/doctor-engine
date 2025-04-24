@@ -4,6 +4,7 @@ use oxc_linter::Oxlintrc;
 use rustc_hash::FxHashMap;
 use serde::Serialize;
 use serde_json::json;
+use strum_macros::EnumString;
 
 use crate::{
   category::Category,
@@ -35,7 +36,8 @@ use crate::{
  * 👍 8. 要知道 category，主要是用来区分版本信息的
  */
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, EnumString)]
+#[strum(serialize_all = "lowercase")]
 #[serde(rename_all = "lowercase")]
 pub enum GlobalValue {
   Writable,

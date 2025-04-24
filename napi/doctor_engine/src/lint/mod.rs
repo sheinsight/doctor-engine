@@ -10,8 +10,8 @@ pub use diagnostic::Diagnostic;
 use doctor::{
   ext::PathExt,
   lint::{
-    Category, EnvironmentFlags, LintMode, LinterRunner, config::OxlintrcBuilder,
-    inner::Category20250601Inner,
+    Category, EnvironmentFlags, GlobalValue, Globals, LintMode, LinterRunner,
+    config::OxlintrcBuilder, inner::Category20250601Inner,
   },
   walk_parallel::WalkIgnore,
 };
@@ -41,6 +41,7 @@ pub struct GlobJsArgs {
   pub cwd: String,
   pub verbose: Option<bool>,
   pub absolute: Option<bool>,
+  pub globals: Option<HashMap<String, String>>,
 }
 
 fn to_napi_error<E: ToString>(e: E) -> napi::Error {
@@ -107,10 +108,26 @@ pub async fn inner_lint(
     ignore.extend(ignore_patterns);
   }
 
+  let mut globals = Globals::default();
+
+  if let Some(g) = glob_js_args.globals {
+    for (key, value) in g {
+      if let Ok(value) = value.parse::<GlobalValue>() {
+        globals.insert(key.into(), value);
+      } else {
+        return Err(napi::Error::new(
+          napi::Status::InvalidArg,
+          format!("invalid global value: {value} , Only `readonly` or `writable` is allowed"),
+        ));
+      }
+    }
+  }
+
   let rc = OxlintrcBuilder::default()
     .with_category(category)
     .with_mode(LintMode::Production)
     .with_envs(EnvironmentFlags::default())
+    .with_globals(globals)
     .build()
     .map_err(to_napi_error)?;
 
