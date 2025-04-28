@@ -27,5 +27,7 @@ typed-builder       = { workspace = true }
 # biome_deserialize_macros = { workspace = true }
 # biome_json_parser        = { workspace = true }
 # biome_json_syntax        = { workspace = true }
+biome_json_parser = { workspace = true }
+biome_json_syntax = { workspace = true }
 
 doctor_ext = { workspace = true }

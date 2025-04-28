@@ -7,13 +7,15 @@ import { innerDebugLint, initializeLogger,innerLint, NaPiCategory } from './inde
   // initializeLogger(LogLevel.Error);
   initializeLogger();
   console.log('start')
+  
   const res = await innerLint({
     cwd: '/Users/10015448/Git/drawio_ui',
-    verbose: false,
+    verbose: TRUE,
     globals: {
       CKEDITOR: 'readonly',
     },
   }, NaPiCategory.V20250601Inner)
+
   // const res = await innerDebugLint(JSON.stringify({
   //   env: {
   //     amd: true,

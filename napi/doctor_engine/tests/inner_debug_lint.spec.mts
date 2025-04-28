@@ -3,7 +3,7 @@
 
 
 import { expect, test } from 'vitest'
-import { innerDebugLint, initializeLogger } from '../index.js'
+import { innerDebugLint, initializeLogger,innerLint, NaPiCategory } from '../index.js'
 
 
 test('adds 1 + 2 to equal 3', async () => {
@@ -133,6 +133,7 @@ test('adds 1 + 2 to equal 3', async () => {
     },
   )
 
+  
   expect(res).toBeDefined()
 
   expect(res.length).toBe(1)
