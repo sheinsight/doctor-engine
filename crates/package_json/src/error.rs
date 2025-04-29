@@ -42,10 +42,11 @@ define_errors! {
   }
 }
 
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug, thiserror::Error, Diagnostic)]
 pub enum PackageJsonValidatorErrorDemo {
-  #[error("private field should be true")]
-  MissingPrivateErrDemo(MissingPrivateErrDemo),
+  #[error(transparent)]
+  #[diagnostic(transparent)]
+  MissingPrivateErrDemo(#[from] MissingPrivateErrDemo),
 }
 
 #[derive(Debug, Diagnostic, thiserror::Error)]
@@ -128,7 +129,8 @@ mod tests {
           let span = SourceSpan::new(start_byte.into(), end_byte - start_byte);
           let src = NamedSource::new("package.json", source_code.to_string());
           let err = MissingPrivateErrDemo { src, bad_bit: span };
-          println!("{}", err);
+          // let err = PackageJsonValidatorErrorDemo::MissingPrivateErrDemo(err);
+          // println!("{}", err);
           return Err(err.into());
         }
       }
