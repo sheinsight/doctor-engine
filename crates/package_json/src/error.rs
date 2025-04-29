@@ -42,19 +42,25 @@ define_errors! {
   }
 }
 
+#[derive(Debug, thiserror::Error)]
+pub enum PackageJsonValidatorErrorDemo {
+  #[error("private field should be true")]
+  MissingPrivateErrDemo(MissingPrivateErrDemo),
+}
+
 #[derive(Debug, Diagnostic, thiserror::Error)]
-#[error("missing private field")]
+#[error("private field should be true")]
 #[diagnostic(
   code(package_json::missing_private_err),
   url(docsrs),
-  help("please add private field in package.json")
+  help("please make private field true")
 )]
 pub struct MissingPrivateErrDemo {
   #[source_code]
-  src: NamedSource<String>,
+  pub src: NamedSource<String>,
 
-  #[label("add private field like this")]
-  bad_bit: SourceSpan,
+  #[label("private field should be true")]
+  pub bad_bit: SourceSpan,
 }
 
 #[cfg(test)]
@@ -83,6 +89,7 @@ mod tests {
       "name": "doctor",
       "version": "0.0.1",
       "packageManager": "pnpm@10.8.1",
+      "private": false,
       "scripts": {
         "lint": "eslint .",
         "lint:fix": "eslint . --fix"
@@ -90,7 +97,7 @@ mod tests {
     }"#;
 
     let mut p: PackageJsonParser = serde_json::from_str(source_code).unwrap();
-    p.private = Some(true);
+    // p.private = Some(true);
     let source_code = serde_json::to_string_pretty(&p).unwrap();
 
     let parse = parse_json(source_code.as_str(), JsonParserOptions::default());
@@ -115,7 +122,7 @@ mod tests {
 
           let value_range = value_token.text_trimmed_range();
 
-          let start_byte: usize = name_range.start().into();
+          let start_byte: usize = value_range.start().into();
           let end_byte: usize = value_range.end().into();
 
           let span = SourceSpan::new(start_byte.into(), end_byte - start_byte);
