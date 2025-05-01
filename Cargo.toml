@@ -53,12 +53,23 @@ oxc_semantic    = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlin
 oxc_span        = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v0.16.7", package = "oxc_span" }
 
 
-biome_json_parser = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_parser/v0.5.7", package = "biome_json_parser" }
-biome_json_syntax = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_json_syntax" }
+# biome_json_parser = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_parser/v0.5.7", package = "biome_json_parser" }
+# biome_json_syntax = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_json_syntax" }
+# biome_rowan       = { git = "https://github.com/biomejs/biome.git", tag = "biome_rowan/v0.5.7", package = "biome_rowan" }
+
+# biome_console       = "=0.5.7"
+# biome_diagnostics   = "=0.5.7"
+# biome_json_parser   = "=0.5.7"
+# biome_json_syntax   = "=0.5.7"
+# biome_parser        = "=0.5.7"
+# biome_rowan         = "=0.5.7"
+# biome_text_edit     = "=0.5.7"
+# biome_unicode_table = "=0.5.7"
+
 
 # glob
 ignore              = "0.4.23"
-package_json_parser = "0.0.2"
+package_json_parser = "0.0.6"
 
 anyhow     = { version = "^1.0.98" }
 env_logger = "0.11.8"
@@ -103,6 +114,7 @@ doctor_walk_parallel = { path = "crates/walk_parallel" }
 # doctor_npmrc         = { path = "crates/npmrc" }
 # doctor_package_json  = { path = "crates/package_json" }
 # doctor_walk_parallel = { path = "crates/walk_parallel" }
+
 
 [profile.release]
 # 发布构建优化

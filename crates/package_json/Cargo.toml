@@ -27,7 +27,13 @@ typed-builder       = { workspace = true }
 # biome_deserialize_macros = { workspace = true }
 # biome_json_parser        = { workspace = true }
 # biome_json_syntax        = { workspace = true }
-biome_json_parser = { workspace = true }
-biome_json_syntax = { workspace = true }
+biome_console       = "=0.5.7"
+biome_diagnostics   = "=0.5.7"
+biome_json_parser   = "=0.5.7"
+biome_json_syntax   = "=0.5.7"
+biome_parser        = "=0.5.7"
+biome_rowan         = "=0.5.7"
+biome_text_edit     = "=0.5.7"
+biome_unicode_table = "=0.5.7"
 
 doctor_ext = { workspace = true }

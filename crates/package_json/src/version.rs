@@ -1,4 +1,4 @@
-use crate::error::{AliasParserErr, VersionError};
+use crate::error::VersionError;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SemverOperator {
