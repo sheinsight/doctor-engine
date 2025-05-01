@@ -1,20 +1,34 @@
 
 
-import { innerDebugLint, initializeLogger,innerLint, NaPiCategory } from './index.js'
+import { innerDebugLint, initializeLogger,innerLint, NaPiCategory,doctor,LogLevel } from './index.js'
 
 (async () => {
 
-  // initializeLogger(LogLevel.Error);
-  initializeLogger();
+  // initializeLogger(LogLevel.Silent);
+  initializeLogger(LogLevel.Error);
   console.log('start')
-  
-  const res = await innerLint({
-    cwd: '/Users/10015448/Git/drawio_ui',
-    verbose: TRUE,
+
+  doctor('/Users/ityuany/GitRepository/csp-new',{
+    verbose: true,
     globals: {
       CKEDITOR: 'readonly',
     },
-  }, NaPiCategory.V20250601Inner)
+    ignore: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/build/**',
+      '**/coverage/**',
+      '**/logs/**',
+    ],
+  });
+  
+  // const res = await innerLint({
+  //   cwd: '/Users/10015448/Git/drawio_ui',
+  //   verbose: TRUE,
+  //   globals: {
+  //     CKEDITOR: 'readonly',
+  //   },
+  // }, NaPiCategory.V20250601Inner)
 
   // const res = await innerDebugLint(JSON.stringify({
   //   env: {

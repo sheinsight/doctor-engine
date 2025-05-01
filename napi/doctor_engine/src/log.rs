@@ -6,7 +6,7 @@ use napi_derive::napi;
 use strum_macros::Display;
 static INIT: Once = Once::new();
 
-#[derive(Debug, Clone, Copy, Display)]
+#[derive(Debug, Clone, Copy, Display, PartialEq, Eq)]
 #[strum(serialize_all = "lowercase")]
 #[napi]
 pub enum LogLevel {
