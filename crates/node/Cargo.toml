@@ -9,10 +9,10 @@ rust-version.workspace = true
 version                = "0.1.0"
 
 [dependencies]
+doctor_ext    = { workspace = true }
 lazy-regex    = { workspace = true }
+miette        = { workspace = true }
 node-semver   = { workspace = true }
 thiserror     = { workspace = true }
 tokio         = { workspace = true }
 typed-builder = { workspace = true }
-
-doctor_ext = { workspace = true }
