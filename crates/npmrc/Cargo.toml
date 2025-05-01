@@ -10,8 +10,10 @@ version                = "0.1.0"
 
 [dependencies]
 config        = { workspace = true }
+doctor_ext    = { workspace = true }
+miette        = { workspace = true }
 rustc-hash    = { workspace = true }
+serde         = { workspace = true }
+serde_ini     = { workspace = true }
 thiserror     = { workspace = true }
 typed-builder = { workspace = true }
-
-doctor_ext = { workspace = true }

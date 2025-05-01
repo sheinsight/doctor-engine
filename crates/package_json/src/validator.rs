@@ -244,8 +244,6 @@ where
 #[cfg(test)]
 mod tests {
 
-  use miette::Diagnostic;
-
   use super::*;
 
   #[test]

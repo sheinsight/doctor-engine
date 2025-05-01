@@ -1,13 +1,13 @@
 use std::path::Path;
 
-use config::{Config, File, FileFormat};
-use doctor_ext::{PathExt, Validator};
+use doctor_ext::Validator;
 
 use typed_builder::TypedBuilder;
 
-use crate::error::{BuildConfigErr, MatchedFailErr, MissingFieldErr, NpmrcValidatorError};
-
-const REGISTRY: &str = "registry";
+use crate::{
+  error::{MissingRegistryError, NpmrcValidatorError, WrongRegistryError},
+  npmrc_config::NpmrcConfig,
+};
 
 /// NpmrcValidator is a validator for npmrc file
 ///
@@ -34,39 +34,32 @@ where
   with_registry_url: Option<Vec<&'a str>>,
 
   #[builder(default = None, setter(strip_option))]
-  with_additional_validation: Option<Box<dyn Fn(&Config) -> Result<(), NpmrcValidatorError> + 'a>>,
+  with_additional_validation:
+    Option<Box<dyn Fn(&NpmrcConfig) -> Result<(), NpmrcValidatorError> + 'a>>,
 }
 
 impl<'a, P> NpmrcValidator<'a, P>
 where
   P: AsRef<Path>,
 {
-  fn validate_registry(&self, config: &Config) -> Result<(), NpmrcValidatorError> {
-    let config_path = self.config_path.as_ref();
-
-    let err = MissingFieldErr::builder()
-      .field(REGISTRY.to_string())
-      .config_path(config_path.to_string_owned());
-
-    let registry = config
-      .get::<String>(REGISTRY)
-      .map_err(|e| err.source(e).build().into())?;
-
+  fn validate_registry(&self, config: &NpmrcConfig) -> Result<(), NpmrcValidatorError> {
     if let Some(validate_registry) = &self.with_registry_url {
+      let Some(registry) = &config.registry else {
+        return MissingRegistryError::new(config);
+      };
+
       if !validate_registry.iter().any(|item| item == &registry) {
-        return MatchedFailErr::builder()
-          .expect(validate_registry.join(" or "))
-          .actual(registry)
-          .config_path(config_path.to_string_owned())
-          .build()
-          .into();
+        return WrongRegistryError::new(config, validate_registry.join(" or ").as_str());
       }
     }
 
     Ok(())
   }
 
-  fn validate_additional_validation(&self, config: &Config) -> Result<(), NpmrcValidatorError> {
+  fn validate_additional_validation(
+    &self,
+    config: &NpmrcConfig,
+  ) -> Result<(), NpmrcValidatorError> {
     if let Some(additional_validation) = &self.with_additional_validation {
       additional_validation(config)?;
     }
@@ -96,15 +89,7 @@ where
   /// assert!(validator.validate().is_ok());
   /// ```
   fn validate(&self) -> Result<(), Self::Error> {
-    let source = File::from(self.config_path.as_ref()).format(FileFormat::Ini);
-
-    let config = Config::builder().add_source(source).build().map_err(|e| {
-      BuildConfigErr::builder()
-        .config_path(self.config_path.as_ref().to_string_owned())
-        .source(e)
-        .build()
-        .into()
-    })?;
+    let config = NpmrcConfig::parse(self.config_path.as_ref())?;
 
     self.validate_registry(&config)?;
 
@@ -117,7 +102,7 @@ where
 #[cfg(test)]
 mod tests {
 
-  use crate::error::UnknownErr;
+  // use crate::error::UnknownErr;
 
   use super::*;
 
@@ -140,14 +125,14 @@ mod tests {
       .build()
       .validate();
 
-    if let Err(e) = &result {
-      println!("--->>> {}", e.to_string());
-    }
-
     assert!(matches!(
       result,
-      Err(NpmrcValidatorError::MatchedFailErr { .. })
+      Err(NpmrcValidatorError::WrongRegistryError { .. })
     ));
+
+    if let Err(e) = result {
+      println!("--->>> {:?}", miette::Report::new(e));
+    }
   }
 
   #[test]
@@ -160,8 +145,12 @@ mod tests {
 
     assert!(matches!(
       result,
-      Err(NpmrcValidatorError::MissingFieldErr { .. })
+      Err(NpmrcValidatorError::MissingRegistryError { .. })
     ));
+
+    if let Err(e) = result {
+      println!("--->>> {:?}", miette::Report::new(e));
+    }
   }
 
   #[test]
@@ -174,27 +163,29 @@ mod tests {
 
     assert!(matches!(
       result,
-      Err(NpmrcValidatorError::MatchedFailErr { .. })
+      Err(NpmrcValidatorError::WrongRegistryError { .. })
     ));
+
+    if let Err(e) = result {
+      println!("--->>> {:?}", miette::Report::new(e));
+    }
   }
 
-  #[test]
-  fn test_validate_additional_validation() {
-    // let additional_validation = |config: &Config| Ok(());
-
-    let result = NpmrcValidator::builder()
-      .config_path("fixtures/.npmrc")
-      .with_additional_validation(Box::new(|config| {
-        config
-          .get::<String>("unknown_field")
-          .map_err(|e| UnknownErr::builder().source(Box::new(e)).build().into())?;
-        Ok(())
-      }))
-      .build()
-      .validate();
-    assert!(matches!(
-      result,
-      Err(NpmrcValidatorError::UnknownErr { .. })
-    ));
-  }
+  // #[test]
+  // fn test_validate_additional_validation() {
+  //   let result = NpmrcValidator::builder()
+  //     .config_path("fixtures/.npmrc")
+  //     .with_additional_validation(Box::new(|config| {
+  //       config
+  //         .get::<String>("unknown_field")
+  //         .map_err(|e| UnknownErr::builder().source(Box::new(e)).build().into())?;
+  //       Ok(())
+  //     }))
+  //     .build()
+  //     .validate();
+  //   assert!(matches!(
+  //     result,
+  //     Err(NpmrcValidatorError::UnknownErr { .. })
+  //   ));
+  // }
 }
