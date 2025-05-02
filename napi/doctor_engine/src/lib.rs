@@ -23,7 +23,7 @@ use napi_derive::napi;
 // edition 2021
 #[napi(object)]
 pub struct DoctorOptions {
-  pub verbose: bool,
+  pub verbose: Option<bool>,
   pub globals: Option<HashMap<String, String>>,
   pub ignore: Option<Vec<String>>,
 }
