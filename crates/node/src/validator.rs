@@ -105,6 +105,21 @@ where
     if let Some(version) = &node_version.version {
       let r = regex!(r#"^\d+\.\d+\.\d+$"#);
       if !r.is_match(&version) {
+        // let diagnostic =
+        //   MietteDiagnostic::new(r#"Only support version numbers that meet '^\d+\.\d+\.\d+$'."#)
+        //     .with_label(LabeledSpan::at(
+        //       0..version.len(),
+        //       r#"Wrong version number format"#,
+        //     ))
+        //     .with_help(r#"Please modify your version number to meet the format '^\d+\.\d+\.\d+$'."#)
+        //     .with_code("shined_doctor/invalid_node_version")
+        //     .with_severity(miette::Severity::Error);
+
+        // let report = miette::Report::new(diagnostic)
+        //   .with_source_code(node_version.__raw_source.clone().unwrap());
+
+        // println!("{:?}", report);
+
         return Err(InvalidNodeVersion::new(&node_version))?;
       }
     } else {

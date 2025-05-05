@@ -72,7 +72,7 @@ mod tests {
 
     let report = miette::Report::new(diagnostic).with_source_code(source_code);
 
-    println!("{:?}", report.severity());
+    println!("{:?}", report);
 
     // println!("{:?}", report);
   }
