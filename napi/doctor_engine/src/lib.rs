@@ -122,7 +122,7 @@ pub fn doctor(cwd: String, options: DoctorOptions) {
   let linter_runner = LinterRunner::builder()
     .cwd(cwd)
     .ignore(ignore)
-    .with_show_report(false)
+    .with_show_report(true)
     .oxlintrc(rc)
     .build();
 

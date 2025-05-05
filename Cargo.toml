@@ -54,20 +54,6 @@ oxc_semantic    = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlin
 oxc_span        = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v0.16.7", package = "oxc_span" }
 
 
-# biome_json_parser = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_parser/v0.5.7", package = "biome_json_parser" }
-# biome_json_syntax = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_json_syntax" }
-# biome_rowan       = { git = "https://github.com/biomejs/biome.git", tag = "biome_rowan/v0.5.7", package = "biome_rowan" }
-
-# biome_console       = "=0.5.7"
-# biome_diagnostics   = "=0.5.7"
-# biome_json_parser   = "=0.5.7"
-# biome_json_syntax   = "=0.5.7"
-# biome_parser        = "=0.5.7"
-# biome_rowan         = "=0.5.7"
-# biome_text_edit     = "=0.5.7"
-# biome_unicode_table = "=0.5.7"
-
-
 # glob
 ignore              = "0.4.23"
 package_json_parser = "0.0.6"
@@ -89,34 +75,6 @@ doctor_node          = { path = "crates/node" }
 doctor_npmrc         = { path = "crates/npmrc" }
 doctor_package_json  = { path = "crates/package_json" }
 doctor_walk_parallel = { path = "crates/walk_parallel" }
-
-
-# biome
-# biome_console            = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_console" }
-# biome_deserialize        = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_deserialize" }
-# biome_deserialize_macros = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_deserialize_macros" }
-# biome_diagnostics        = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_diagnostics" }
-# biome_formatter          = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_formatter" }
-# biome_json_formatter     = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_json_formatter" }
-# biome_json_parser        = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_json_parser" }
-# biome_json_syntax        = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_json_syntax" }
-# biome_parser             = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_parser" }
-# biome_rowan              = { git = "https://github.com/biomejs/biome.git", tag = "biome_json_syntax/v0.5.7", package = "biome_rowan" }
-
-# biome_deserialize = { version = "0.5.7", features = ["derive"] }
-# biome_json_parser = { version = "0.5.7" }
-# biome_json_syntax = { version = "0.5.7" }
-
-
-# doctor               = { path = "crates/doctor" }
-# doctor_engine        = { path = "napi/doctor_engine" }
-# doctor_ext           = { path = "crates/ext" }
-# doctor_lint          = { path = "crates/lint" }
-# doctor_node          = { path = "crates/node" }
-# doctor_npmrc         = { path = "crates/npmrc" }
-# doctor_package_json  = { path = "crates/package_json" }
-# doctor_walk_parallel = { path = "crates/walk_parallel" }
-
 
 [profile.release]
 # 发布构建优化
