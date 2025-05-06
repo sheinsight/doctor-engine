@@ -21,16 +21,6 @@ pub enum NpmrcValidatorError {
   WrongRegistryError(#[from] WrongRegistryError),
 }
 
-impl doctor_ext::ValidatorErrorExt for NpmrcValidatorError {
-  fn to_name(&self) -> String {
-    "NpmrcValidatorError".to_string()
-  }
-
-  fn to_description(&self) -> String {
-    "npmrc validator error".to_string()
-  }
-}
-
 #[derive(Debug, thiserror::Error, Diagnostic)]
 #[error("serde ini error {0}")]
 #[diagnostic(

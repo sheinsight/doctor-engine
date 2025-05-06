@@ -29,16 +29,6 @@ pub enum NodeVersionValidatorError {
   SemverError(#[from] SemverErrorWrapper),
 }
 
-impl doctor_ext::ValidatorErrorExt for NodeVersionValidatorError {
-  fn to_name(&self) -> String {
-    "NodeVersionValidatorError".to_string()
-  }
-
-  fn to_description(&self) -> String {
-    "NodeVersionValidatorError".to_string()
-  }
-}
-
 #[derive(Debug, Diagnostic, thiserror::Error)]
 #[error("semver error {0}")]
 #[diagnostic(

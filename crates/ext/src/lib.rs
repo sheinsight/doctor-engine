@@ -14,44 +14,34 @@ impl PathExt for Path {
   }
 }
 
-pub trait ValidatorErrorExt {
-  fn to_name(&self) -> String;
-  fn to_description(&self) -> String;
-}
-
 /// A trait for types that can validate configuration files or other resources
 ///
 /// # Examples
 ///
 /// ```rust
 /// use doctor_ext::Validator;
-/// use doctor_ext::ValidatorErrorExt;
+/// use doctor_ext::Messages;
 ///
 /// struct MyValidator;
 ///
-/// struct MyError;
-///
-/// impl ValidatorErrorExt for MyError {
-///     fn to_name(&self) -> String {
-///         "MyError".to_string()
-///     }
-///
-///     fn to_description(&self) -> String {
-///         "MyError description".to_string()
-///     }
+/// #[derive(Debug, thiserror::Error)]
+/// pub enum MyError {
+///     #[error("MyError")]
+///     MyError,
 /// }
 ///
 /// impl Validator for MyValidator {
 ///     type Error = MyError;
 ///
-///     fn validate(&self) -> Result<(), Self::Error> {
+///     fn validate(&self) -> Result<Vec<Messages>, Self::Error> {
 ///         // Validation logic here
-///         Ok(())
+///         Ok(vec![])
 ///     }
+///
 /// }
 /// ```
 pub trait Validator {
-  type Error: ValidatorErrorExt;
+  type Error: std::error::Error + Send + Sync + 'static;
   fn validate(&self) -> Result<Vec<Messages>, Self::Error>;
 }
 

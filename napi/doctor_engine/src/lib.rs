@@ -33,6 +33,23 @@ fn decode_to_str(encoded: &str) -> String {
   String::from_utf8(decoded).unwrap()
 }
 
+fn hello() -> anyhow::Result<()> {
+  let cwd = PathBuf::from(".");
+
+  let npmrc_validator = NpmrcValidator::builder()
+    .config_path(cwd.join(".npmrc"))
+    .with_registry_url(vec!["https://registry.npmjs.org/"])
+    .build();
+
+  let result = npmrc_validator.validate()?;
+  Ok(())
+}
+
+fn vvv<V: Validator>(v: V) -> anyhow::Result<()> {
+  v.validate()?;
+  Ok(())
+}
+
 #[napi]
 pub async fn doctor(cwd: String, options: DoctorOptions) -> Result<()> {
   miette::set_hook(Box::new(|_| {

@@ -42,16 +42,6 @@ impl From<biome_rowan::SyntaxError> for PackageJsonValidatorError {
   }
 }
 
-impl doctor_ext::ValidatorErrorExt for PackageJsonValidatorError {
-  fn to_name(&self) -> String {
-    "PackageJsonValidatorError".to_string()
-  }
-
-  fn to_description(&self) -> String {
-    "PackageJsonValidatorError description".to_string()
-  }
-}
-
 #[derive(Debug, Diagnostic, thiserror::Error)]
 #[error("missing name field")]
 #[diagnostic(

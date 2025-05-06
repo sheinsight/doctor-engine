@@ -45,7 +45,10 @@ pub enum ValidatePrivate {
 ///
 /// let result = validator.validate().unwrap();
 ///
-/// assert!(!result.has_error());
+/// for msg in result {
+///   assert!(!msg.has_error());
+/// }
+///
 /// ```
 ///
 /// # Validate name
@@ -63,7 +66,11 @@ pub enum ValidatePrivate {
 ///
 /// let result = validator.validate().unwrap();
 ///
-/// assert!(result.has_error());
+/// for msg in result {
+///   assert!(msg.has_error());
+/// }
+///
+///
 /// ```
 ///
 /// # Validate private
@@ -81,7 +88,10 @@ pub enum ValidatePrivate {
 ///
 /// let result = validator.validate().unwrap();
 ///
-/// assert!(result.has_error());
+/// for msg in result {
+///   assert!(msg.has_error());
+/// }
+///
 /// ```
 ///
 /// # Validate package manager
@@ -99,7 +109,9 @@ pub enum ValidatePrivate {
 ///
 /// let result = validator.validate().unwrap();
 ///
-/// assert!(result.has_error());
+/// for msg in result {
+///   assert!(msg.has_error());
+/// }
 ///
 /// ```
 #[derive(TypedBuilder)]
