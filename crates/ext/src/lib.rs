@@ -1,5 +1,8 @@
 use std::path::Path;
 mod doctor_diagnostic;
+mod message;
+
+pub use message::*;
 
 pub trait PathExt {
   fn to_string_owned(&self) -> String;

@@ -9,5 +9,6 @@ rust-version.workspace = true
 version                = "0.1.0"
 
 [dependencies]
-miette    = { workspace = true, features = ["fancy"] }
-thiserror = { workspace = true }
+miette        = { workspace = true, features = ["fancy"] }
+thiserror     = { workspace = true }
+typed-builder = { workspace = true }
