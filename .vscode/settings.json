@@ -19,6 +19,7 @@
     "deque",
     "docsrs",
     "embertest",
+    "insta",
     "isnan",
     "jquery",
     "libgcc",

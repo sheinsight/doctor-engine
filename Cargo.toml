@@ -67,6 +67,7 @@ strum        = "0.27.1"
 strum_macros = "0.27.1"
 
 base64 = "0.22.1"
+insta  = "1.36.1"
 
 doctor               = { path = "crates/doctor" }
 doctor_ext           = { path = "crates/ext" }

@@ -16,3 +16,7 @@ node-semver   = { workspace = true }
 thiserror     = { workspace = true }
 tokio         = { workspace = true }
 typed-builder = { workspace = true }
+
+
+[dev-dependencies]
+insta = { workspace = true }

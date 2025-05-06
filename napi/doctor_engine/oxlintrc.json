@@ -141,7 +141,9 @@
     "worker": true,
     "serviceworker": true
   },
-  "globals": {},
+  "globals": {
+    "CKEDITOR": "readonly"
+  },
   "overrides": [
     {
       "files": [

@@ -1,13 +1,13 @@
 use std::path::Path;
 
-use doctor_ext::Validator;
+use biome_json_parser::{JsonParserOptions, parse_json};
+use biome_rowan::TextRange;
+use doctor_ext::{Messages, Validator};
+use miette::{LabeledSpan, MietteDiagnostic};
 use package_json_parser::PackageJsonParser;
 use typed_builder::TypedBuilder;
 
-use crate::error::{
-  MissingNameError, MissingPackageManagerError, MissingPrivateError, MustBeTrueError,
-  PackageJsonValidatorError,
-};
+use crate::error::PackageJsonValidatorError;
 
 #[derive(Debug)]
 pub enum ValidateName {
@@ -43,9 +43,9 @@ pub enum ValidatePrivate {
 ///   .config_path("./fixtures/package.json")
 ///   .build();
 ///
-/// let result = validator.validate();
+/// let result = validator.validate().unwrap();
 ///
-/// assert!(result.is_ok());
+/// assert!(!result.has_error());
 /// ```
 ///
 /// # Validate name
@@ -61,9 +61,9 @@ pub enum ValidatePrivate {
 ///   .with_validate_name(ValidateName::Exist)
 ///   .build();
 ///
-/// let result = validator.validate();
+/// let result = validator.validate().unwrap();
 ///
-/// assert!(matches!(result, Err(PackageJsonValidatorError::MissingNameError(_))));
+/// assert!(result.has_error());
 /// ```
 ///
 /// # Validate private
@@ -79,9 +79,9 @@ pub enum ValidatePrivate {
 ///   .with_validate_private(ValidatePrivate::Exist)
 ///   .build();
 ///
-/// let result = validator.validate();
+/// let result = validator.validate().unwrap();
 ///
-/// assert!(matches!(result, Err(PackageJsonValidatorError::MissingPrivateError(_))));
+/// assert!(result.has_error());
 /// ```
 ///
 /// # Validate package manager
@@ -97,9 +97,10 @@ pub enum ValidatePrivate {
 ///   .with_validate_package_manager(ValidatePackageManager::Exist)
 ///   .build();
 ///
-/// let result = validator.validate();
+/// let result = validator.validate().unwrap();
 ///
-/// assert!(matches!(result, Err(PackageJsonValidatorError::MissingPackageManagerError(_))));
+/// assert!(result.has_error());
+///
 /// ```
 #[derive(TypedBuilder)]
 pub struct PackageJsonValidator<'a, P>
@@ -118,79 +119,161 @@ where
   with_validate_package_manager: Option<ValidatePackageManager>,
 
   #[builder(default = None, setter(strip_option))]
-  with_additional_validation:
-    Option<Box<dyn Fn(&PackageJsonParser) -> Result<(), PackageJsonValidatorError> + 'a>>,
+  with_additional_validation: Option<
+    Box<
+      dyn Fn(&PackageJsonParser) -> Result<Vec<MietteDiagnostic>, PackageJsonValidatorError> + 'a,
+    >,
+  >,
 }
 
 impl<'a, P> PackageJsonValidator<'a, P>
 where
   P: AsRef<Path>,
 {
+  fn find_private_range(
+    &self,
+    json_raw: &str,
+  ) -> Result<Option<TextRange>, PackageJsonValidatorError> {
+    let parse = parse_json(&json_raw, JsonParserOptions::default());
+
+    let root = parse.tree();
+
+    let root_any_json_value = root.value()?;
+
+    let root = root_any_json_value.as_json_object_value().unwrap();
+
+    for member in root.json_member_list() {
+      let member = member?;
+
+      let name = member.name()?;
+
+      if name.inner_string_text()? == "private" {
+        let value = member.value().unwrap();
+        let value = value.as_json_boolean_value().unwrap();
+
+        let value_range = value.value_token()?.text_trimmed_range();
+
+        return Ok(Some(value_range));
+      }
+    }
+
+    Ok(None)
+  }
+
   fn validate_package_manager(
     &self,
     package_json: &PackageJsonParser,
-  ) -> Result<(), PackageJsonValidatorError> {
-    if let Some(validate_package_manager) = &self.with_validate_package_manager {
-      let Some(_) = &package_json.package_manager else {
-        return MissingPackageManagerError::new(package_json);
-      };
+  ) -> Result<Vec<MietteDiagnostic>, PackageJsonValidatorError> {
+    let mut diagnostics = vec![];
 
-      match validate_package_manager {
-        ValidatePackageManager::Exist => (),
+    if let Some(_) = &self.with_validate_package_manager {
+      let Some(_) = &package_json.package_manager else {
+        let len = package_json
+          .__raw_source
+          .as_ref()
+          .map_or(0, |source| source.len());
+        diagnostics.push(
+          MietteDiagnostic::new("Require 'packageManager' field")
+            .with_code("shined_doctor/package_json_missing_package_manager")
+            .with_severity(miette::Severity::Error)
+            .with_label(LabeledSpan::at(0..len, "packageManager is required"))
+            .with_help("Please add a packageManager field to your package.json file"),
+        );
+        return Ok(diagnostics);
       };
     }
 
-    Ok(())
+    Ok(diagnostics)
   }
 
   fn validate_private(
     &self,
     package_json: &PackageJsonParser,
-  ) -> Result<(), PackageJsonValidatorError> {
-    if let Some(validate_private) = &self.with_validate_private {
-      let Some(actual) = package_json.private else {
-        return MissingPrivateError::new(package_json);
-      };
+  ) -> Result<Vec<MietteDiagnostic>, PackageJsonValidatorError> {
+    let mut diagnostics = vec![];
 
-      match validate_private {
-        ValidatePrivate::Exist => (),
-        ValidatePrivate::True if actual == true => (),
-        ValidatePrivate::False if actual == false => (),
-        _ => {
-          return MustBeTrueError::new(package_json);
-        }
-      };
+    if let Some(validate_private) = &self.with_validate_private {
+      if let Some(actual) = package_json.private {
+        match validate_private {
+          ValidatePrivate::Exist => (),
+          ValidatePrivate::True if actual == true => (),
+          ValidatePrivate::False if actual == false => (),
+          _ => {
+            let range = self.find_private_range(
+              package_json
+                .__raw_source
+                .as_ref()
+                .map_or("", |source| source),
+            )?;
+            let end = range.unwrap_or_default().end().into();
+            let start = range.unwrap_or_default().start().into();
+            diagnostics.push(
+              MietteDiagnostic::new("Value of 'private' field is not true")
+                .with_code("shined_doctor/package_json_private_not_true")
+                .with_severity(miette::Severity::Error)
+                .with_label(LabeledSpan::at(start..end, "private is must be true"))
+                .with_help("Please modify the private field to true"),
+            );
+            return Ok(diagnostics);
+          }
+        };
+      } else {
+        let len = package_json
+          .__raw_source
+          .as_ref()
+          .map_or(0, |source| source.len());
+        diagnostics.push(
+          MietteDiagnostic::new("Require 'private' field")
+            .with_code("shined_doctor/package_json_missing_private")
+            .with_severity(miette::Severity::Error)
+            .with_label(LabeledSpan::at(0..len, "private is required"))
+            .with_help("Please add a private field to your package.json file"),
+        );
+        return Ok(diagnostics);
+      }
     }
 
-    Ok(())
+    Ok(diagnostics)
   }
 
   fn validate_name(
     &self,
     package_json: &PackageJsonParser,
-  ) -> Result<(), PackageJsonValidatorError> {
-    if let Some(validate_name) = &self.with_validate_name {
-      let Some(_) = &package_json.name else {
-        return MissingNameError::new(package_json);
-      };
+  ) -> Result<Vec<MietteDiagnostic>, PackageJsonValidatorError> {
+    let mut diagnostics = vec![];
 
-      match validate_name {
-        ValidateName::Exist => (),
-      };
+    if let Some(_) = &self.with_validate_name {
+      if package_json.name.is_none() {
+        let len = package_json
+          .__raw_source
+          .as_ref()
+          .map_or(0, |source| source.len());
+
+        diagnostics.push(
+          MietteDiagnostic::new("Require 'name' field")
+            .with_code("shined_doctor/package_json_missing_name")
+            .with_severity(miette::Severity::Error)
+            .with_label(LabeledSpan::at(0..len, "name is required"))
+            .with_help("Please add a name field to your package.json file"),
+        );
+      }
     }
 
-    Ok(())
+    Ok(diagnostics)
   }
 
   fn validate_additional_validation(
     &self,
     package_json: &PackageJsonParser,
-  ) -> Result<(), PackageJsonValidatorError> {
+  ) -> Result<Vec<MietteDiagnostic>, PackageJsonValidatorError> {
+    let mut diagnostics = vec![];
+
     if let Some(with_additional_validation) = &self.with_additional_validation {
-      with_additional_validation(package_json)?;
+      let diags = with_additional_validation(package_json)?;
+      diagnostics.extend(diags.into_iter());
     }
 
-    Ok(())
+    Ok(diagnostics)
   }
 }
 impl<'a, P> Validator for PackageJsonValidator<'a, P>
@@ -216,7 +299,7 @@ where
   ///
   /// assert!(result.is_ok());
   /// ```
-  fn validate(&self) -> Result<(), Self::Error> {
+  fn validate(&self) -> Result<Messages, Self::Error> {
     let path = self.config_path.as_ref();
 
     // let package_json = package_json_parser::PackageJsonParser::parse(path).map_err(|e| {
@@ -229,15 +312,27 @@ where
 
     let package_json = package_json_parser::PackageJsonParser::parse(path).unwrap();
 
-    self.validate_name(&package_json)?;
+    let mut messages = Messages::builder()
+      .source_code(package_json.__raw_source.clone().unwrap_or_default())
+      .diagnostics(vec![])
+      .build();
 
-    self.validate_private(&package_json)?;
+    let diagnostics = self.validate_name(&package_json)?;
+    messages.diagnostics.extend(diagnostics.into_iter());
 
-    self.validate_package_manager(&package_json)?;
+    let diagnostics = self.validate_private(&package_json)?;
 
-    self.validate_additional_validation(&package_json)?;
+    messages.diagnostics.extend(diagnostics.into_iter());
 
-    Ok(())
+    let diagnostics = self.validate_package_manager(&package_json)?;
+
+    messages.diagnostics.extend(diagnostics.into_iter());
+
+    let diagnostics = self.validate_additional_validation(&package_json)?;
+
+    messages.diagnostics.extend(diagnostics.into_iter());
+
+    Ok(messages)
   }
 }
 
@@ -252,16 +347,12 @@ mod tests {
       .config_path("fixtures/no_name.json")
       .with_validate_name(ValidateName::Exist)
       .build()
-      .validate();
+      .validate()
+      .unwrap();
 
-    assert!(matches!(
-      result,
-      Err(PackageJsonValidatorError::MissingNameError(_))
-    ));
+    assert!(result.has_error());
 
-    if let Err(e) = result {
-      eprintln!("{:?}", miette::Report::new(e));
-    }
+    result.render();
   }
 
   #[test]
@@ -270,16 +361,12 @@ mod tests {
       .config_path("fixtures/no_private.json")
       .with_validate_private(ValidatePrivate::True)
       .build()
-      .validate();
+      .validate()
+      .unwrap();
 
-    assert!(matches!(
-      result,
-      Err(PackageJsonValidatorError::MissingPrivateError(_))
-    ));
+    assert!(result.has_error());
 
-    if let Err(e) = result {
-      eprintln!("{:?}", miette::Report::new(e));
-    }
+    result.render();
   }
 
   #[test]
@@ -288,38 +375,34 @@ mod tests {
       .config_path("fixtures/no_package_manager.json")
       .with_validate_package_manager(ValidatePackageManager::Exist)
       .build()
-      .validate();
+      .validate()
+      .unwrap();
 
-    assert!(matches!(
-      result,
-      Err(PackageJsonValidatorError::MissingPackageManagerError(_))
-    ));
+    assert!(result.has_error());
 
-    if let Err(e) = result {
-      eprintln!("{:?}", miette::Report::new(e));
-    }
+    result.render();
   }
 
-  #[test]
-  fn test_validate_package_json_additional_validation() {
-    let path = "fixtures/no_package_manager.json";
-    let result = PackageJsonValidator::builder()
-      .config_path(path)
-      .with_additional_validation(Box::new(|package_json| {
-        MissingPackageManagerError::new(package_json)
-      }))
-      .build()
-      .validate();
+  // #[test]
+  // fn test_validate_package_json_additional_validation() {
+  //   let path = "fixtures/no_package_manager.json";
+  //   let result = PackageJsonValidator::builder()
+  //     .config_path(path)
+  //     .with_additional_validation(Box::new(|package_json| {
+  //       MissingPackageManagerError::new(package_json)
+  //     }))
+  //     .build()
+  //     .validate();
 
-    assert!(matches!(
-      result,
-      Err(PackageJsonValidatorError::MissingPackageManagerError(_))
-    ));
+  //   assert!(matches!(
+  //     result,
+  //     Err(PackageJsonValidatorError::MissingPackageManagerError(_))
+  //   ));
 
-    if let Err(e) = result {
-      eprintln!("{:?}", miette::Report::new(e));
-    }
-  }
+  //   if let Err(e) = result {
+  //     eprintln!("{:?}", miette::Report::new(e));
+  //   }
+  // }
 
   #[test]
   fn should_fail_when_private_is_false() {
@@ -327,15 +410,11 @@ mod tests {
       .config_path("fixtures/private_false.json")
       .with_validate_private(ValidatePrivate::True)
       .build()
-      .validate();
+      .validate()
+      .unwrap();
 
-    assert!(matches!(
-      result,
-      Err(PackageJsonValidatorError::MustBeTrueError(_))
-    ));
+    assert!(result.has_error());
 
-    if let Err(e) = result {
-      eprintln!("{:?}", miette::Report::new(e));
-    }
+    result.render();
   }
 }

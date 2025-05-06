@@ -1,13 +1,12 @@
 use std::path::Path;
 
-use doctor_ext::Validator;
+use doctor_ext::{Messages, Validator};
 use lazy_regex::regex;
+use miette::{LabeledSpan, MietteDiagnostic};
 use typed_builder::TypedBuilder;
 
 use crate::{
-  error::{
-    EmptyNodeVersionError, InvalidNodeVersion, NodeVersionValidatorError, VersionRequirementNotMet,
-  },
+  error::{NodeVersionValidatorError, VersionRequirementNotMet},
   node_version::NodeVersion,
 };
 
@@ -39,8 +38,9 @@ where
   with_valid_range: Option<Vec<String>>,
 
   #[builder(default = None, setter(strip_option))]
-  with_additional_validation:
-    Option<Box<dyn Fn(&NodeVersion) -> Result<(), NodeVersionValidatorError> + 'a>>,
+  with_additional_validation: Option<
+    Box<dyn Fn(&NodeVersion) -> Result<Vec<MietteDiagnostic>, NodeVersionValidatorError> + 'a>,
+  >,
 }
 
 impl<'a, P> NodeVersionValidator<'a, P>
@@ -97,38 +97,68 @@ where
   ///
   /// assert!(result.is_ok());
   /// ```
-  fn validate(&self) -> Result<(), Self::Error> {
+  fn validate(&self) -> Result<Messages, Self::Error> {
     let path = self.config_path.as_ref();
 
+    if !path.exists() {
+      let diagnostic =
+        MietteDiagnostic::new(r#"The .node-version configuration file was not found."#)
+          .with_code("shined_doctor/node_version_file_not_found")
+          .with_severity(miette::Severity::Error)
+          .with_help(format!(
+            r#"Please create a new .node-version file under {config_path}, and correctly declare the version number of the node you are using, which needs to meet the format '^\d+\.\d+\.\d+$'."#,
+            config_path = path.display().to_string()
+          ));
+
+      return Ok(Messages::builder().diagnostics(vec![diagnostic]).build());
+    }
+
     let node_version = NodeVersion::parse(path)?;
+
+    let mut messages = Messages::builder()
+      .source_code(node_version.__raw_source.clone().unwrap_or_default())
+      .diagnostics(vec![])
+      .build();
 
     if let Some(version) = &node_version.version {
       let r = regex!(r#"^\d+\.\d+\.\d+$"#);
       if !r.is_match(&version) {
-        // let diagnostic =
-        //   MietteDiagnostic::new(r#"Only support version numbers that meet '^\d+\.\d+\.\d+$'."#)
-        //     .with_label(LabeledSpan::at(
-        //       0..version.len(),
-        //       r#"Wrong version number format"#,
-        //     ))
-        //     .with_help(r#"Please modify your version number to meet the format '^\d+\.\d+\.\d+$'."#)
-        //     .with_code("shined_doctor/invalid_node_version")
-        //     .with_severity(miette::Severity::Error);
+        let diagnostic =
+          MietteDiagnostic::new(r#"Only support version numbers that meet '^\d+\.\d+\.\d+$'."#)
+            .with_label(LabeledSpan::at(
+              0..version.len(),
+              r#"Wrong version number format"#,
+            ))
+            .with_help(r#"Please modify your version number to meet the format '^\d+\.\d+\.\d+$'."#)
+            .with_code("shined_doctor/invalid_node_version")
+            .with_severity(miette::Severity::Error);
 
-        // let report = miette::Report::new(diagnostic)
-        //   .with_source_code(node_version.__raw_source.clone().unwrap());
+        messages.push(diagnostic);
 
-        // println!("{:?}", report);
-
-        return Err(InvalidNodeVersion::new(&node_version))?;
+        return Ok(messages);
       }
-    } else {
-      return Err(EmptyNodeVersionError::new(&node_version))?;
+    }
+
+    if let Some(raw_source) = &node_version.__raw_source {
+      if raw_source.trim().is_empty() {
+        let diagnostic = MietteDiagnostic::new(r#"Empty node version"#)
+          .with_code("shined_doctor/empty_node_version")
+          .with_severity(miette::Severity::Error)
+          .with_label(LabeledSpan::at(
+            0..raw_source.len(),
+            r#"Empty node version"#,
+          ))
+          .with_help(r#"Please add a node version to your .node-version file."#);
+
+        messages.push(diagnostic);
+
+        return Ok(messages);
+      }
     }
 
     self.validate_additional_validation(&node_version)?;
 
-    Ok(())
+    Ok(messages)
   }
 }
 
@@ -143,14 +173,9 @@ mod tests {
       .build()
       .validate();
 
-    assert!(matches!(
-      res,
-      Err(NodeVersionValidatorError::InvalidNodeVersionError(_))
-    ));
+    let res = res.unwrap();
 
-    if let Err(e) = res {
-      println!("--->>> {:?}", miette::Report::new(e));
-    }
+    assert!(res.has_error());
   }
 
   #[test]
@@ -160,14 +185,11 @@ mod tests {
       .build()
       .validate();
 
-    assert!(matches!(
-      res,
-      Err(NodeVersionValidatorError::NotFoundConfigFileError(_))
-    ));
+    let res = res.unwrap();
 
-    if let Err(e) = res {
-      println!("--->>> {:?}", miette::Report::new(e));
-    }
+    assert!(res.has_error());
+
+    res.render();
   }
 
   #[test]
@@ -177,14 +199,11 @@ mod tests {
       .build()
       .validate();
 
-    assert!(matches!(
-      res,
-      Err(NodeVersionValidatorError::EmptyNodeVersionError(_))
-    ));
+    let res = res.unwrap();
 
-    if let Err(e) = res {
-      println!("--->>> {:?}", miette::Report::new(e));
-    }
+    assert!(res.has_error());
+
+    res.render();
   }
 
   #[test]

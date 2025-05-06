@@ -1,13 +1,11 @@
 use std::path::Path;
 
-use doctor_ext::Validator;
+use doctor_ext::{Messages, Validator};
 
+use miette::{LabeledSpan, MietteDiagnostic};
 use typed_builder::TypedBuilder;
 
-use crate::{
-  error::{MissingRegistryError, NpmrcValidatorError, WrongRegistryError},
-  npmrc_config::NpmrcConfig,
-};
+use crate::{error::NpmrcValidatorError, npmrc_config::NpmrcConfig};
 
 /// NpmrcValidator is a validator for npmrc file
 ///
@@ -35,36 +33,85 @@ where
 
   #[builder(default = None, setter(strip_option))]
   with_additional_validation:
-    Option<Box<dyn Fn(&NpmrcConfig) -> Result<(), NpmrcValidatorError> + 'a>>,
+    Option<Box<dyn Fn(&NpmrcConfig) -> Result<Vec<MietteDiagnostic>, NpmrcValidatorError> + 'a>>,
 }
 
 impl<'a, P> NpmrcValidator<'a, P>
 where
   P: AsRef<Path>,
 {
-  fn validate_registry(&self, config: &NpmrcConfig) -> Result<(), NpmrcValidatorError> {
-    if let Some(validate_registry) = &self.with_registry_url {
-      let Some(registry) = &config.registry else {
-        return MissingRegistryError::new(config);
-      };
+  fn validate_registry(
+    &self,
+    config: &NpmrcConfig,
+  ) -> Result<Vec<MietteDiagnostic>, NpmrcValidatorError> {
+    let mut diagnostics = vec![];
 
-      if !validate_registry.iter().any(|item| item == &registry) {
-        return WrongRegistryError::new(config, validate_registry.join(" or ").as_str());
+    if let Some(validate_registry) = &self.with_registry_url {
+      if let Some(registry) = &config.registry {
+        if !validate_registry.iter().any(|item| item == &registry) {
+          let (offset, length) = self
+            .find_registry_position(&config.__raw_source)
+            .unwrap_or((0, 0));
+          diagnostics.push(
+            MietteDiagnostic::new("Wrong registry")
+              .with_code("shined_doctor/npmrc_wrong_registry")
+              .with_severity(miette::Severity::Error)
+              .with_label(LabeledSpan::at(
+                offset..offset + length,
+                format!(
+                  r#"Wrong registry , Only support registry: {}"#,
+                  validate_registry.join(", ")
+                ),
+              ))
+              .with_help("Please add a registry field to your .npmrc file"),
+          );
+          return Ok(diagnostics);
+        }
+      } else {
+        diagnostics.push(
+          MietteDiagnostic::new("No registry field found")
+            .with_code("shined_doctor/npmrc_missing_registry")
+            .with_severity(miette::Severity::Error)
+            .with_label(LabeledSpan::at(
+              0..config.__raw_source.len(),
+              "No registry field found",
+            ))
+            .with_help("Please add a registry field to your .npmrc file"),
+        );
+
+        return Ok(diagnostics);
       }
     }
-
-    Ok(())
+    Ok(diagnostics)
   }
 
   fn validate_additional_validation(
     &self,
     config: &NpmrcConfig,
-  ) -> Result<(), NpmrcValidatorError> {
+  ) -> Result<Vec<MietteDiagnostic>, NpmrcValidatorError> {
+    let diagnostics = vec![];
+
     if let Some(additional_validation) = &self.with_additional_validation {
       additional_validation(config)?;
     }
 
-    Ok(())
+    Ok(diagnostics)
+  }
+
+  fn find_registry_position(&self, content: &str) -> Option<(usize, usize)> {
+    for line in content.lines() {
+      if let Some(key_pos) = line.find("registry=") {
+        let equals_pos = key_pos + "registry".len();
+        let value_start = equals_pos + 1;
+        let value_length = line.len() - value_start;
+
+        let line_offset = content.find(line).unwrap();
+        let absolute_offset = line_offset + value_start;
+
+        return Some((absolute_offset, value_length));
+      }
+    }
+    None
   }
 }
 
@@ -88,21 +135,28 @@ where
   ///   .build();
   /// assert!(validator.validate().is_ok());
   /// ```
-  fn validate(&self) -> Result<(), Self::Error> {
+  fn validate(&self) -> Result<Messages, Self::Error> {
     let config = NpmrcConfig::parse(self.config_path.as_ref())?;
 
-    self.validate_registry(&config)?;
+    let mut messages = Messages::builder()
+      .source_code(config.__raw_source.clone())
+      .diagnostics(vec![])
+      .build();
 
-    self.validate_additional_validation(&config)?;
+    let diagnostics = self.validate_registry(&config)?;
 
-    Ok(())
+    messages.extend(diagnostics.into_iter());
+
+    let diagnostics = self.validate_additional_validation(&config)?;
+
+    messages.extend(diagnostics.into_iter());
+
+    Ok(messages)
   }
 }
 
 #[cfg(test)]
 mod tests {
-
-  // use crate::error::UnknownErr;
 
   use super::*;
 
@@ -125,14 +179,11 @@ mod tests {
       .build()
       .validate();
 
-    assert!(matches!(
-      result,
-      Err(NpmrcValidatorError::WrongRegistryError { .. })
-    ));
+    let result = result.unwrap();
 
-    if let Err(e) = result {
-      println!("--->>> {:?}", miette::Report::new(e));
-    }
+    assert!(result.has_error());
+
+    result.render();
   }
 
   #[test]
@@ -143,14 +194,11 @@ mod tests {
       .build()
       .validate();
 
-    assert!(matches!(
-      result,
-      Err(NpmrcValidatorError::MissingRegistryError { .. })
-    ));
+    let result = result.unwrap();
 
-    if let Err(e) = result {
-      println!("--->>> {:?}", miette::Report::new(e));
-    }
+    assert!(result.has_error());
+
+    result.render();
   }
 
   #[test]
@@ -161,14 +209,11 @@ mod tests {
       .build()
       .validate();
 
-    assert!(matches!(
-      result,
-      Err(NpmrcValidatorError::WrongRegistryError { .. })
-    ));
+    let result = result.unwrap();
 
-    if let Err(e) = result {
-      println!("--->>> {:?}", miette::Report::new(e));
-    }
+    assert!(result.has_error());
+
+    result.render();
   }
 
   // #[test]

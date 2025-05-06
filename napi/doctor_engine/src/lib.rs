@@ -65,8 +65,10 @@ pub fn doctor(cwd: String, options: DoctorOptions) {
 
   let result = npmrc_validator.validate();
 
-  if let Err(e) = result {
-    eprintln!("{:?}", miette::Report::new(e));
+  if let Ok(messages) = result {
+    if messages.has_error() {
+      messages.render();
+    }
   }
 
   let node_version_validator = NodeVersionValidator::builder()
@@ -75,8 +77,10 @@ pub fn doctor(cwd: String, options: DoctorOptions) {
 
   let result = node_version_validator.validate();
 
-  if let Err(e) = result {
-    eprintln!("{:?}", miette::Report::new(e));
+  if let Ok(messages) = result {
+    if messages.has_error() {
+      messages.render();
+    }
   }
 
   let package_json_validator = PackageJsonValidator::builder()
@@ -86,8 +90,10 @@ pub fn doctor(cwd: String, options: DoctorOptions) {
 
   let result = package_json_validator.validate();
 
-  if let Err(e) = result {
-    eprintln!("{:?}", miette::Report::new(e));
+  if let Ok(messages) = result {
+    if messages.has_error() {
+      messages.render();
+    }
   }
 
   let category = Category::V20250601Inner(Category20250601Inner::default());
@@ -122,7 +128,7 @@ pub fn doctor(cwd: String, options: DoctorOptions) {
   let linter_runner = LinterRunner::builder()
     .cwd(cwd)
     .ignore(ignore)
-    .with_show_report(true)
+    .with_show_report(false)
     .oxlintrc(rc)
     .build();
 
