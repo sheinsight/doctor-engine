@@ -4,7 +4,9 @@ use std::{
   sync::Arc,
 };
 
+use doctor_ext::{Messages, Validator};
 use doctor_walk_parallel::{WalkError, WalkIgnore, WalkParallelJs};
+use miette::MietteDiagnostic;
 use oxc_allocator::Allocator;
 use oxc_linter::{ConfigStoreBuilder, Oxlintrc};
 use oxc_parser::Parser;
@@ -26,6 +28,137 @@ pub struct LinterRunner {
 
   #[builder(default = WalkIgnore::default())]
   pub ignore: WalkIgnore,
+}
+
+impl Validator for LinterRunner {
+  type Error = LintError;
+
+  fn validate(&self) -> Result<Vec<Messages>, Self::Error> {
+    let config = ConfigStoreBuilder::from_oxlintrc(true, self.oxlintrc.clone())?.build()?;
+
+    let lint = oxc_linter::Linter::new(
+      oxc_linter::LintOptions {
+        fix: oxc_linter::FixKind::None,
+        framework_hints: oxc_linter::FrameworkFlags::empty(),
+        // report_unused_directive: Some(AllowWarnDeny::Deny),
+        report_unused_directive: Some(oxc_linter::AllowWarnDeny::Allow),
+      },
+      config,
+    );
+
+    let parallel = WalkParallelJs::builder()
+      .cwd(self.cwd.clone())
+      .ignore(self.ignore.clone())
+      .build();
+
+    let res: Vec<Result<Messages, WalkError>> = parallel
+      .walk(|path| -> Result<Messages, WalkError> {
+        let path = path.clone();
+
+        let named_source = named_source::PathWithSource::try_from(path.clone())?;
+
+        let mut messages = Messages::builder()
+          .diagnostics(vec![])
+          .source_code(named_source.source_code.clone())
+          .build();
+
+        let source_type =
+          oxc_span::SourceType::from_path(path).map_err(|e| WalkError::Unknown(e.to_string()))?;
+
+        let allocator = Allocator::default();
+
+        let parser = Parser::new(&allocator, &named_source.source_code, source_type);
+
+        let parser_return = parser.parse();
+
+        if !parser_return.panicked {
+          let program = allocator.alloc(&parser_return.program);
+
+          let semantic_builder_return = SemanticBuilder::new()
+            .with_check_syntax_error(true)
+            .with_cfg(true)
+            .build(program);
+
+          let semantic = semantic_builder_return.semantic;
+
+          let semantic = Rc::new(semantic);
+
+          let module_record = Arc::new(oxc_linter::ModuleRecord::new(
+            Path::new(&named_source.file_path),
+            &parser_return.module_record,
+            &semantic,
+          ));
+
+          let res = lint.run(Path::new(&named_source.file_path), semantic, module_record);
+
+          for msg in res {
+            let error = msg.error;
+            let mut diagnostic = MietteDiagnostic::new(error.message.clone());
+
+            if let Some(help) = &error.help {
+              diagnostic = diagnostic.with_help(help.to_string());
+            }
+
+            let code = error
+              .code
+              .scope
+              .as_ref()
+              .map_or(String::new(), |s| s.to_string());
+
+            let number = error
+              .code
+              .number
+              .as_ref()
+              .map_or(String::new(), |s| s.to_string());
+
+            diagnostic = diagnostic.with_code(format!("{code}({number})"));
+
+            match error.severity {
+              oxc_diagnostics::Severity::Error => {
+                diagnostic = diagnostic.with_severity(miette::Severity::Error)
+              }
+              oxc_diagnostics::Severity::Warning => {
+                diagnostic = diagnostic.with_severity(miette::Severity::Warning)
+              }
+              oxc_diagnostics::Severity::Advice => {
+                diagnostic = diagnostic.with_severity(miette::Severity::Advice)
+              }
+            }
+
+            let labels = error.labels.as_ref().map(|labels| {
+              labels
+                .iter()
+                .map(|label| {
+                  let label_text = label.label().map(|s| s.to_string());
+                  let miette_label =
+                    miette::LabeledSpan::new(label_text, label.offset(), label.len());
+                  miette_label
+                })
+                .collect::<Vec<_>>()
+            });
+
+            if let Some(labels) = labels {
+              diagnostic = diagnostic.with_labels(labels);
+            }
+
+            if let Some(url) = &error.url {
+              diagnostic = diagnostic.with_url(url.to_string());
+            }
+
+            messages.push(diagnostic);
+          }
+
+          Ok(messages)
+        } else {
+          Ok(messages)
+        }
+      })
+      .map_err(|e| LintError::Unknown(e.to_string()))?;
+
+    let res = res.into_iter().filter_map(|r| r.ok()).collect::<Vec<_>>();
+
+    Ok(res)
+  }
 }
 
 impl LinterRunner {

@@ -14,13 +14,13 @@ use doctor::lint::{
 use doctor::validator::{
   NodeVersionValidator, NpmrcValidator, PackageJsonValidator, ValidatePrivate,
 };
+use napi::Result;
 
 use doctor::walk_parallel::WalkIgnore;
 pub use lint::*;
 pub use log::*;
 use napi_derive::napi;
 
-// edition 2021
 #[napi(object)]
 pub struct DoctorOptions {
   pub verbose: Option<bool>,
@@ -34,7 +34,7 @@ fn decode_to_str(encoded: &str) -> String {
 }
 
 #[napi]
-pub fn doctor(cwd: String, options: DoctorOptions) {
+pub fn doctor(cwd: String, options: DoctorOptions) -> Result<()> {
   miette::set_hook(Box::new(|_| {
     Box::new(
       miette::MietteHandlerOpts::new()
@@ -63,11 +63,13 @@ pub fn doctor(cwd: String, options: DoctorOptions) {
     .with_registry_url(vec![text.as_str()])
     .build();
 
-  let result = npmrc_validator.validate();
+  let result = npmrc_validator
+    .validate()
+    .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
 
-  if let Ok(messages) = result {
-    if messages.has_error() {
-      messages.render();
+  for msg in result {
+    if msg.has_error() {
+      msg.render();
     }
   }
 
@@ -75,11 +77,13 @@ pub fn doctor(cwd: String, options: DoctorOptions) {
     .config_path(cwd.join(".node-version"))
     .build();
 
-  let result = node_version_validator.validate();
+  let result = node_version_validator
+    .validate()
+    .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
 
-  if let Ok(messages) = result {
-    if messages.has_error() {
-      messages.render();
+  for msg in result {
+    if msg.has_error() {
+      msg.render();
     }
   }
 
@@ -88,11 +92,13 @@ pub fn doctor(cwd: String, options: DoctorOptions) {
     .with_validate_private(ValidatePrivate::True)
     .build();
 
-  let result = package_json_validator.validate();
+  let result = package_json_validator
+    .validate()
+    .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
 
-  if let Ok(messages) = result {
-    if messages.has_error() {
-      messages.render();
+  for msg in result {
+    if msg.has_error() {
+      msg.render();
     }
   }
 
@@ -132,9 +138,15 @@ pub fn doctor(cwd: String, options: DoctorOptions) {
     .oxlintrc(rc)
     .build();
 
-  let res = linter_runner.run();
+  let res = linter_runner
+    .validate()
+    .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
 
-  if let Err(e) = res {
-    println!("{:?}", e);
+  for msg in res {
+    if msg.has_error() {
+      msg.render();
+    }
   }
+
+  Ok(())
 }

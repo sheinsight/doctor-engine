@@ -52,7 +52,7 @@ pub trait ValidatorErrorExt {
 /// ```
 pub trait Validator {
   type Error: ValidatorErrorExt;
-  fn validate(&self) -> Result<Messages, Self::Error>;
+  fn validate(&self) -> Result<Vec<Messages>, Self::Error>;
 }
 
 #[macro_export]

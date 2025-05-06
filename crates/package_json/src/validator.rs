@@ -299,7 +299,7 @@ where
   ///
   /// assert!(result.is_ok());
   /// ```
-  fn validate(&self) -> Result<Messages, Self::Error> {
+  fn validate(&self) -> Result<Vec<Messages>, Self::Error> {
     let path = self.config_path.as_ref();
 
     // let package_json = package_json_parser::PackageJsonParser::parse(path).map_err(|e| {
@@ -332,7 +332,7 @@ where
 
     messages.diagnostics.extend(diagnostics.into_iter());
 
-    Ok(messages)
+    Ok(vec![messages])
   }
 }
 
@@ -350,9 +350,10 @@ mod tests {
       .validate()
       .unwrap();
 
-    assert!(result.has_error());
-
-    result.render();
+    for msg in result {
+      assert!(msg.has_error());
+      msg.render();
+    }
   }
 
   #[test]
@@ -364,9 +365,10 @@ mod tests {
       .validate()
       .unwrap();
 
-    assert!(result.has_error());
-
-    result.render();
+    for msg in result {
+      assert!(msg.has_error());
+      msg.render();
+    }
   }
 
   #[test]
@@ -378,9 +380,10 @@ mod tests {
       .validate()
       .unwrap();
 
-    assert!(result.has_error());
-
-    result.render();
+    for msg in result {
+      assert!(msg.has_error());
+      msg.render();
+    }
   }
 
   // #[test]
@@ -413,8 +416,9 @@ mod tests {
       .validate()
       .unwrap();
 
-    assert!(result.has_error());
-
-    result.render();
+    for msg in result {
+      assert!(msg.has_error());
+      msg.render();
+    }
   }
 }

@@ -97,7 +97,7 @@ where
   ///
   /// assert!(result.is_ok());
   /// ```
-  fn validate(&self) -> Result<Messages, Self::Error> {
+  fn validate(&self) -> Result<Vec<Messages>, Self::Error> {
     let path = self.config_path.as_ref();
 
     if !path.exists() {
@@ -110,7 +110,9 @@ where
             config_path = path.display().to_string()
           ));
 
-      return Ok(Messages::builder().diagnostics(vec![diagnostic]).build());
+      return Ok(vec![
+        Messages::builder().diagnostics(vec![diagnostic]).build(),
+      ]);
     }
 
     let node_version = NodeVersion::parse(path)?;
@@ -135,7 +137,7 @@ where
 
         messages.push(diagnostic);
 
-        return Ok(messages);
+        return Ok(vec![messages]);
       }
     }
 
@@ -152,13 +154,13 @@ where
 
         messages.push(diagnostic);
 
-        return Ok(messages);
+        return Ok(vec![messages]);
       }
     }
 
     self.validate_additional_validation(&node_version)?;
 
-    Ok(messages)
+    Ok(vec![messages])
   }
 }
 
@@ -175,7 +177,10 @@ mod tests {
 
     let res = res.unwrap();
 
-    assert!(res.has_error());
+    for msg in res {
+      assert!(msg.has_error());
+      msg.render();
+    }
   }
 
   #[test]
@@ -187,9 +192,10 @@ mod tests {
 
     let res = res.unwrap();
 
-    assert!(res.has_error());
-
-    res.render();
+    for msg in res {
+      assert!(msg.has_error());
+      msg.render();
+    }
   }
 
   #[test]
@@ -201,9 +207,10 @@ mod tests {
 
     let res = res.unwrap();
 
-    assert!(res.has_error());
-
-    res.render();
+    for msg in res {
+      assert!(msg.has_error());
+      msg.render();
+    }
   }
 
   #[test]
