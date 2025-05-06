@@ -5,10 +5,7 @@ use lazy_regex::regex;
 use miette::{LabeledSpan, MietteDiagnostic};
 use typed_builder::TypedBuilder;
 
-use crate::{
-  error::{NodeVersionValidatorError, VersionRequirementNotMet},
-  node_version::NodeVersion,
-};
+use crate::{error::NodeVersionValidatorError, node_version::NodeVersion};
 
 /// validate node version file
 ///
@@ -47,30 +44,62 @@ impl<'a, P> NodeVersionValidator<'a, P>
 where
   P: AsRef<Path>,
 {
+  fn validate_valid_range(
+    &self,
+    node_version: &NodeVersion,
+  ) -> Result<Vec<MietteDiagnostic>, NodeVersionValidatorError> {
+    let mut diagnostics = vec![];
+
+    if let Some(with_valid_range) = &self.with_valid_range {
+      let version = node_version.version.clone().unwrap();
+      let len = node_version.__raw_source.as_ref().map_or(0, |s| s.len());
+      let version = node_semver::Version::parse(&version)?;
+
+      let mut ranges = vec![];
+
+      for range_str in with_valid_range {
+        let range = node_semver::Range::parse(range_str)?;
+        ranges.push(range);
+      }
+
+      let is_in_range = ranges.iter().any(|range| range.satisfies(&version));
+
+      if is_in_range {
+        return Ok(diagnostics);
+      }
+
+      let diagnostic = MietteDiagnostic::new(r#"The node version is not in the valid range."#)
+        .with_code("shined_doctor/node_version_not_in_valid_range")
+        .with_label(LabeledSpan::at(
+          0..len,
+          format!(
+            r#"Wrong version number format , Only support version range in {}"#,
+            ranges
+              .iter()
+              .map(|r| r.to_string())
+              .collect::<Vec<String>>()
+              .join(", ")
+          ),
+        ))
+        .with_severity(miette::Severity::Error);
+
+      diagnostics.push(diagnostic);
+    }
+
+    Ok(diagnostics)
+  }
+
   fn validate_additional_validation(
     &self,
     node_version: &NodeVersion,
-  ) -> Result<(), NodeVersionValidatorError> {
+  ) -> Result<Vec<MietteDiagnostic>, NodeVersionValidatorError> {
+    let mut diagnostics = vec![];
+
     if let Some(with_additional_validation) = &self.with_additional_validation {
-      with_additional_validation(node_version)?;
+      diagnostics.extend(with_additional_validation(node_version)?);
     }
 
-    let version = node_version.version.clone().unwrap();
-    let version = node_semver::Version::parse(&version)?;
-
-    if let Some(with_valid_range) = &self.with_valid_range {
-      for range in with_valid_range {
-        if let Ok(range) = node_semver::Range::parse(range) {
-          if range.satisfies(&version) {
-            return Ok(());
-          } else {
-            return Err(VersionRequirementNotMet::new(node_version))?;
-          }
-        }
-      }
-    }
-
-    Ok(())
+    Ok(diagnostics)
   }
 }
 
@@ -157,6 +186,9 @@ where
         return Ok(vec![messages]);
       }
     }
+
+    let diagnostics = self.validate_valid_range(&node_version)?;
+    messages.diagnostics.extend(diagnostics);
 
     self.validate_additional_validation(&node_version)?;
 
@@ -257,5 +289,21 @@ mod tests {
       .validate();
 
     assert!(res.is_ok());
+  }
+
+  #[test]
+  fn test_validate_node_version_file_valid_range_error() {
+    let res = NodeVersionValidator::builder()
+      .config_path("./fixtures/.range")
+      .with_valid_range(vec!["^14.0.0".to_string(), "^15.0.0".to_string()])
+      .build()
+      .validate();
+
+    let res = res.unwrap();
+
+    for msg in res {
+      assert!(msg.has_error());
+      msg.render();
+    }
   }
 }
