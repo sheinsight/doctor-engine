@@ -34,7 +34,7 @@ fn decode_to_str(encoded: &str) -> String {
 }
 
 #[napi]
-pub fn doctor(cwd: String, options: DoctorOptions) -> Result<()> {
+pub async fn doctor(cwd: String, options: DoctorOptions) -> Result<()> {
   miette::set_hook(Box::new(|_| {
     Box::new(
       miette::MietteHandlerOpts::new()

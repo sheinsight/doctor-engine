@@ -8,7 +8,7 @@ import { innerDebugLint, initializeLogger,innerLint, NaPiCategory,doctor,LogLeve
   initializeLogger(LogLevel.Error);
   console.log('start')
 
-  doctor('/Users/10015448/Git/csp-new',{
+  await doctor('/Users/10015448/Git/csp-new',{
     verbose: true,
     globals: {
       CKEDITOR: 'readonly',
