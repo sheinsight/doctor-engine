@@ -53,7 +53,7 @@ oxc_parser      = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlin
 oxc_semantic    = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v0.16.7", package = "oxc_semantic" }
 oxc_span        = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v0.16.7", package = "oxc_span" }
 
-
+tabled = "0.19.0"
 # glob
 ignore              = "0.4.23"
 package_json_parser = "0.0.6"

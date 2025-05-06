@@ -20,6 +20,7 @@ use doctor::walk_parallel::WalkIgnore;
 pub use lint::*;
 pub use log::*;
 use napi_derive::napi;
+use tabled::{Table, Tabled};
 
 #[napi(object)]
 pub struct DoctorOptions {
@@ -31,6 +32,13 @@ pub struct DoctorOptions {
 fn decode_to_str(encoded: &str) -> String {
   let decoded = STANDARD.decode(encoded).unwrap();
   String::from_utf8(decoded).unwrap()
+}
+
+#[derive(Tabled)]
+struct Row<'a> {
+  name: &'a str,
+  designed: &'a str,
+  error_count: usize,
 }
 
 #[napi]
@@ -48,6 +56,8 @@ pub async fn doctor(cwd: String, options: DoctorOptions) -> Result<()> {
     )
   }))
   .unwrap();
+
+  let mut ts = vec![];
 
   let cwd = PathBuf::from(cwd);
 
@@ -67,11 +77,17 @@ pub async fn doctor(cwd: String, options: DoctorOptions) -> Result<()> {
     .validate()
     .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
 
-  for msg in result {
+  for msg in &result {
     if msg.has_error() {
       msg.render();
     }
   }
+
+  ts.push(Row {
+    name: "npmrc",
+    designed: "Dennis Ritchie",
+    error_count: result.len(),
+  });
 
   let node_version_validator = NodeVersionValidator::builder()
     .config_path(cwd.join(".node-version"))
@@ -81,11 +97,17 @@ pub async fn doctor(cwd: String, options: DoctorOptions) -> Result<()> {
     .validate()
     .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
 
-  for msg in result {
+  for msg in &result {
     if msg.has_error() {
       msg.render();
     }
   }
+
+  ts.push(Row {
+    name: "node-version",
+    designed: "Dennis Ritchie",
+    error_count: result.len(),
+  });
 
   let package_json_validator = PackageJsonValidator::builder()
     .config_path(cwd.join("package.json"))
@@ -96,11 +118,17 @@ pub async fn doctor(cwd: String, options: DoctorOptions) -> Result<()> {
     .validate()
     .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
 
-  for msg in result {
+  for msg in &result {
     if msg.has_error() {
       msg.render();
     }
   }
+
+  ts.push(Row {
+    name: "package.json",
+    designed: "Dennis Ritchie",
+    error_count: result.len(),
+  });
 
   let category = Category::V20250601Inner(Category20250601Inner::default());
 
@@ -142,11 +170,21 @@ pub async fn doctor(cwd: String, options: DoctorOptions) -> Result<()> {
     .validate()
     .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
 
-  for msg in res {
+  for msg in &res {
     if msg.has_error() {
       msg.render();
     }
   }
+
+  ts.push(Row {
+    name: "lint",
+    designed: "Dennis Ritchie",
+    error_count: res.len(),
+  });
+
+  let table = Table::new(ts);
+
+  println!("{}", table);
 
   Ok(())
 }
