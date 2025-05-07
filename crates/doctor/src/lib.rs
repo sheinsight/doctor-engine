@@ -104,10 +104,15 @@ pub fn doctor<T: AsRef<Path>>(
 
   let messages = scheduler
     .validator()
-    .map_err(|e| ValidatorError::Unknown(Box::new(e)))?;
+    .map_err(|e| ValidatorError::Unknown(Box::new(e)))?
+    .into_iter()
+    .filter(|message| message.diagnostics.len() > 0)
+    .collect::<Vec<_>>();
 
   if let Some(max_render_count) = options.max_render_count {
-    let render_messages = messages.iter().take(max_render_count);
+    let end = max_render_count.min(messages.len());
+    let render_messages = messages.get(0..end).unwrap_or(&messages);
+
     for message in render_messages {
       message.render();
     }

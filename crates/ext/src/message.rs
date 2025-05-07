@@ -3,7 +3,7 @@ use std::ops::{Deref, DerefMut};
 use miette::MietteDiagnostic;
 use typed_builder::TypedBuilder;
 
-#[derive(TypedBuilder, Clone)]
+#[derive(TypedBuilder, Clone, Debug)]
 pub struct Messages {
   #[builder(default = String::new())]
   pub source_code: String,
