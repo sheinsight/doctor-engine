@@ -41,7 +41,10 @@ impl<'a> MessagesDashboard<'a> {
       });
     }
     let table = Table::new(ts);
-    println!("{}", table);
+
+    if !table.is_empty() {
+      println!("{}", table);
+    }
   }
 }
 
