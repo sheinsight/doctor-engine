@@ -1,21 +1,10 @@
 #!/usr/bin/env node
 
 import { cac } from "cac";
-import { innerLint,NaPiCategory,initializeLogger,doctor } from "../index.js"
+import { initializeLogger,doctor } from "../index.js"
 import { performance } from "node:perf_hooks"
 const cli = cac("doctor");
 
-
-
-// cli.command("lint", "Lint the project").alias('').action(async () => {
-//   console.log("lint");
-  
-//   const res = await innerLint({
-//     cwd: process.cwd(),
-//     verbose: true,
-//   }, NaPiCategory.V20250601Inner)
-
-// });
 
 cli.command('','check project health')
   .option('-v, --verbose', 'Verbose output')
@@ -26,7 +15,9 @@ cli.command('','check project health')
 
     initializeLogger();
 
-    const res = await doctor(options.cwd || process.cwd(),{
+    const cwd = options.cwd || process.cwd();
+
+    const res = await doctor(cwd,{
       // verbose: true,
     });
 
