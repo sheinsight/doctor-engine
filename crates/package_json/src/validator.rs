@@ -3,11 +3,14 @@ use std::path::Path;
 use biome_json_parser::{JsonParserOptions, parse_json};
 use biome_rowan::TextRange;
 use doctor_ext::{Messages, PathExt, Validator, ValidatorError};
-use miette::{LabeledSpan, MietteDiagnostic};
+use miette::MietteDiagnostic;
 use package_json_parser::PackageJsonParser;
 use typed_builder::TypedBuilder;
 
-use crate::diagnostics::{MissingPackageManagerDiagnostic, PrivateNotTrueDiagnostic};
+use crate::diagnostics::{
+  MissingNameFieldDiagnostic, MissingPackageManagerDiagnostic, MissingPrivateFieldDiagnostic,
+  PrivateNotTrueDiagnostic,
+};
 
 #[derive(Debug)]
 pub enum ValidateName {
@@ -178,6 +181,7 @@ where
           .__raw_source
           .as_ref()
           .map_or(0, |source| source.len());
+
         diagnostics.push(MissingPackageManagerDiagnostic::at(0..len));
         return Ok(diagnostics);
       };
@@ -216,13 +220,7 @@ where
           .__raw_source
           .as_ref()
           .map_or(0, |source| source.len());
-        diagnostics.push(
-          MietteDiagnostic::new("Require 'private' field")
-            .with_code("shined(package-json-missing-private)")
-            .with_severity(miette::Severity::Error)
-            .with_label(LabeledSpan::at(0..len, "private is required"))
-            .with_help("Please add a private field to your package.json file"),
-        );
+        diagnostics.push(MissingPrivateFieldDiagnostic::at(0..len));
         return Ok(diagnostics);
       }
     }
@@ -243,13 +241,7 @@ where
           .as_ref()
           .map_or(0, |source| source.len());
 
-        diagnostics.push(
-          MietteDiagnostic::new("Require 'name' field")
-            .with_code("shined(package-json-missing-name)")
-            .with_severity(miette::Severity::Error)
-            .with_label(LabeledSpan::at(0..len, "name is required"))
-            .with_help("Please add a name field to your package.json file"),
-        );
+        diagnostics.push(MissingNameFieldDiagnostic::at(0..len));
       }
     }
 
@@ -314,15 +306,12 @@ where
     messages.diagnostics.extend(diagnostics.into_iter());
 
     let diagnostics = self.validate_private(&package_json)?;
-
     messages.diagnostics.extend(diagnostics.into_iter());
 
     let diagnostics = self.validate_package_manager(&package_json)?;
-
     messages.diagnostics.extend(diagnostics.into_iter());
 
     let diagnostics = self.validate_additional_validation(&package_json)?;
-
     messages.diagnostics.extend(diagnostics.into_iter());
 
     Ok(vec![messages])
