@@ -7,8 +7,6 @@ pub mod lint {
 }
 
 pub mod validator {
-
-  pub use doctor_node::error::NodeVersionValidatorError;
   pub use doctor_node::validator::*;
 
   pub use doctor_npmrc::validator::*;
