@@ -1,6 +1,6 @@
 {
 	"name": "@shined/doctor",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"napi": {
@@ -39,7 +39,8 @@
 	},
 	"files": [
 		"index.js",
-		"index.d.ts"
+		"index.d.ts",
+		"bin/index.mjs"
 	],
 	"license": "MIT",
 	"devDependencies": {
