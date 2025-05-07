@@ -55,7 +55,10 @@ where
         .collect::<Vec<String>>();
 
       if let Some(registry) = &config.registry {
-        if !validate_registry.iter().any(|item| item == registry) {
+        if !validate_registry
+          .iter()
+          .any(|item| item.trim_end_matches("/") == registry.trim_end_matches("/"))
+        {
           let (offset, length) = self
             .find_registry_position(&config.__raw_source)
             .unwrap_or((0, 0));
@@ -222,6 +225,22 @@ mod tests {
 
     for msg in result {
       assert!(msg.has_error());
+      msg.render();
+    }
+  }
+
+  #[test]
+  fn test_validate_registry_trim_end_matches() {
+    let result = NpmrcValidator::builder()
+      .config_path("fixtures/.has_end")
+      .with_registry_url(vec!["https://test.npmjs.org"])
+      .build()
+      .validate();
+
+    let result = result.unwrap();
+
+    for msg in result {
+      assert!(!msg.has_error());
       msg.render();
     }
   }
