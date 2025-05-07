@@ -106,7 +106,7 @@ pub fn doctor<T: AsRef<Path>>(
     .validator()
     .map_err(|e| ValidatorError::Unknown(Box::new(e)))?
     .into_iter()
-    .filter(|message| message.diagnostics.len() > 0)
+    .filter(|message| !message.diagnostics.is_empty())
     .collect::<Vec<_>>();
 
   if let Some(max_render_count) = options.max_render_count {
