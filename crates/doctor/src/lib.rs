@@ -1,6 +1,6 @@
 mod scheduler;
 
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use base64::{Engine, engine::general_purpose::STANDARD};
 use doctor_ext::{Messages, ValidatorError};
@@ -35,7 +35,10 @@ pub struct DoctorOptions {
   with_dashboard: bool,
 }
 
-pub fn doctor(cwd: String, options: DoctorOptions) -> Result<Vec<Messages>, ValidatorError> {
+pub fn doctor<T: AsRef<Path>>(
+  cwd: T,
+  options: DoctorOptions,
+) -> Result<Vec<Messages>, ValidatorError> {
   miette::set_hook(Box::new(|_| {
     Box::new(
       miette::MietteHandlerOpts::new()
@@ -51,7 +54,7 @@ pub fn doctor(cwd: String, options: DoctorOptions) -> Result<Vec<Messages>, Vali
 
   let mut scheduler = ValidatorScheduler::default();
 
-  let cwd = PathBuf::from(cwd);
+  let cwd = PathBuf::from(cwd.as_ref());
 
   let text = decode_to_str(ENCODED.join("").as_str());
 
