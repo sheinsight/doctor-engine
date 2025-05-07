@@ -35,11 +35,16 @@ fn decode_to_str(encoded: &str) -> String {
 }
 
 #[derive(Tabled)]
-struct Row<'a> {
-  name: &'a str,
-  designed: &'a str,
+struct Row {
+  name: String,
+  description: String,
   error_count: usize,
 }
+
+const ENCODED: [&str; 36] = [
+  "a", "H", "R", "0", "c", "H", "M", "6", "L", "y", "9", "u", "c", "G", "1", "q", "c", "y", "5",
+  "z", "a", "G", "V", "p", "b", "m", "N", "v", "c", "n", "A", "u", "Y", "2", "4", "=",
+];
 
 #[napi]
 pub async fn doctor(cwd: String, options: DoctorOptions) -> Result<()> {
@@ -61,12 +66,7 @@ pub async fn doctor(cwd: String, options: DoctorOptions) -> Result<()> {
 
   let cwd = PathBuf::from(cwd);
 
-  let encoded = vec![
-    "a", "H", "R", "0", "c", "H", "M", "6", "L", "y", "9", "u", "c", "G", "1", "q", "c", "y", "5",
-    "z", "a", "G", "V", "p", "b", "m", "N", "v", "c", "n", "A", "u", "Y", "2", "4", "=",
-  ];
-
-  let text = decode_to_str(encoded.join("").as_str());
+  let text = decode_to_str(ENCODED.join("").as_str());
 
   let npmrc_validator = NpmrcValidator::builder()
     .config_path(cwd.join(".npmrc"))
@@ -84,8 +84,8 @@ pub async fn doctor(cwd: String, options: DoctorOptions) -> Result<()> {
   }
 
   ts.push(Row {
-    name: "npmrc",
-    designed: "Dennis Ritchie",
+    name: "npmrc".to_string(),
+    description: "Dennis Ritchie".to_string(),
     error_count: result.len(),
   });
 
@@ -104,8 +104,8 @@ pub async fn doctor(cwd: String, options: DoctorOptions) -> Result<()> {
   }
 
   ts.push(Row {
-    name: "node-version",
-    designed: "Dennis Ritchie",
+    name: "node-version".to_string(),
+    description: "Dennis Ritchie".to_string(),
     error_count: result.len(),
   });
 
@@ -125,8 +125,8 @@ pub async fn doctor(cwd: String, options: DoctorOptions) -> Result<()> {
   }
 
   ts.push(Row {
-    name: "package.json",
-    designed: "Dennis Ritchie",
+    name: "package.json".to_string(),
+    description: "Dennis Ritchie".to_string(),
     error_count: result.len(),
   });
 
@@ -176,11 +176,34 @@ pub async fn doctor(cwd: String, options: DoctorOptions) -> Result<()> {
     }
   }
 
-  ts.push(Row {
-    name: "lint",
-    designed: "Dennis Ritchie",
-    error_count: res.len(),
-  });
+  let res = res
+    .into_iter()
+    .map(|item| item.diagnostics)
+    .flatten()
+    .map(|item| {
+      item
+        .code
+        .map_or("unknown".to_string(), |code| code.to_string())
+    })
+    .collect::<Vec<_>>();
+
+  let mut map: HashMap<String, usize> = HashMap::new();
+
+  for item in res {
+    if map.contains_key(&item) {
+      *map.entry(item).or_insert(0) += 1;
+    } else {
+      map.insert(item, 1);
+    }
+  }
+
+  for (key, value) in map {
+    ts.push(Row {
+      name: key.to_string(),
+      description: "Dennis Ritchie".to_string(),
+      error_count: value,
+    });
+  }
 
   let table = Table::new(ts);
 

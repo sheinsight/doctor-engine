@@ -1,11 +1,11 @@
 use std::path::Path;
 
-use doctor_ext::{Messages, Validator};
+use doctor_ext::{Messages, Validator, ValidatorError};
 use lazy_regex::regex;
 use miette::{LabeledSpan, MietteDiagnostic};
 use typed_builder::TypedBuilder;
 
-use crate::{error::NodeVersionValidatorError, node_version::NodeVersion};
+use crate::node_version::NodeVersion;
 
 /// validate node version file
 ///
@@ -35,9 +35,8 @@ where
   with_valid_range: Option<Vec<String>>,
 
   #[builder(default = None, setter(strip_option))]
-  with_additional_validation: Option<
-    Box<dyn Fn(&NodeVersion) -> Result<Vec<MietteDiagnostic>, NodeVersionValidatorError> + 'a>,
-  >,
+  with_additional_validation:
+    Option<Box<dyn Fn(&NodeVersion) -> Result<Vec<MietteDiagnostic>, ValidatorError> + 'a>>,
 }
 
 impl<'a, P> NodeVersionValidator<'a, P>
@@ -47,7 +46,7 @@ where
   fn validate_valid_range(
     &self,
     node_version: &NodeVersion,
-  ) -> Result<Vec<MietteDiagnostic>, NodeVersionValidatorError> {
+  ) -> Result<Vec<MietteDiagnostic>, ValidatorError> {
     let mut diagnostics = vec![];
 
     if let Some(with_valid_range) = &self.with_valid_range {
@@ -92,7 +91,7 @@ where
   fn validate_additional_validation(
     &self,
     node_version: &NodeVersion,
-  ) -> Result<Vec<MietteDiagnostic>, NodeVersionValidatorError> {
+  ) -> Result<Vec<MietteDiagnostic>, ValidatorError> {
     let mut diagnostics = vec![];
 
     if let Some(with_additional_validation) = &self.with_additional_validation {
@@ -107,8 +106,6 @@ impl<'a, P> Validator for NodeVersionValidator<'a, P>
 where
   P: AsRef<Path>,
 {
-  type Error = NodeVersionValidatorError;
-
   /// validate node version file
   ///
   /// # Example
@@ -126,7 +123,7 @@ where
   ///
   /// assert!(result.is_ok());
   /// ```
-  fn validate(&self) -> Result<Vec<Messages>, Self::Error> {
+  fn validate(&self) -> Result<Vec<Messages>, ValidatorError> {
     let path = self.config_path.as_ref();
 
     if !path.exists() {

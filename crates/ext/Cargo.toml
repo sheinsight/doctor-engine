@@ -9,6 +9,11 @@ rust-version.workspace = true
 version                = "0.1.0"
 
 [dependencies]
-miette        = { workspace = true, features = ["fancy"] }
-thiserror     = { workspace = true }
-typed-builder = { workspace = true }
+biome_rowan     = "=0.5.7"
+miette          = { workspace = true, features = ["fancy"] }
+node-semver     = { workspace = true }
+oxc_diagnostics = { workspace = true }
+oxc_linter      = { workspace = true }
+serde_ini       = { workspace = true }
+thiserror       = { workspace = true }
+typed-builder   = { workspace = true }

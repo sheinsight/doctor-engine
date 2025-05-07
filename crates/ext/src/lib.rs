@@ -1,7 +1,9 @@
 use std::path::Path;
 mod doctor_diagnostic;
+mod error;
 mod message;
 
+pub use error::*;
 pub use message::*;
 
 pub trait PathExt {
@@ -41,8 +43,7 @@ impl PathExt for Path {
 /// }
 /// ```
 pub trait Validator {
-  type Error: std::error::Error + Send + Sync + 'static;
-  fn validate(&self) -> Result<Vec<Messages>, Self::Error>;
+  fn validate(&self) -> Result<Vec<Messages>, ValidatorError>;
 }
 
 #[macro_export]

@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use crate::error::{NodeVersionValidatorError, NotFoundConfigFile};
+use doctor_ext::ValidatorError;
 
 pub struct NodeVersion {
   pub version: Option<String>,
@@ -9,16 +9,8 @@ pub struct NodeVersion {
 }
 
 impl NodeVersion {
-  pub fn parse<P: AsRef<Path>>(path: P) -> Result<Self, NodeVersionValidatorError> {
+  pub fn parse<P: AsRef<Path>>(path: P) -> Result<Self, ValidatorError> {
     let path = path.as_ref();
-
-    if !path.exists() {
-      return Err(NotFoundConfigFile::new(&Self {
-        version: None,
-        __raw_source: None,
-        __config_path: path.display().to_string(),
-      }))?;
-    }
 
     let raw_source = std::fs::read_to_string(path)?;
     let version = raw_source.trim().to_string();

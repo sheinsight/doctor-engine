@@ -4,7 +4,7 @@ use std::{
   sync::Arc,
 };
 
-use doctor_ext::{Messages, Validator};
+use doctor_ext::{Messages, Validator, ValidatorError};
 use doctor_walk_parallel::{WalkError, WalkIgnore, WalkParallelJs};
 use miette::MietteDiagnostic;
 use oxc_allocator::Allocator;
@@ -31,10 +31,10 @@ pub struct LinterRunner {
 }
 
 impl Validator for LinterRunner {
-  type Error = LintError;
-
-  fn validate(&self) -> Result<Vec<Messages>, Self::Error> {
-    let config = ConfigStoreBuilder::from_oxlintrc(true, self.oxlintrc.clone())?.build()?;
+  fn validate(&self) -> Result<Vec<Messages>, ValidatorError> {
+    let config = ConfigStoreBuilder::from_oxlintrc(true, self.oxlintrc.clone())?
+      .build()
+      .unwrap();
 
     let lint = oxc_linter::Linter::new(
       oxc_linter::LintOptions {
@@ -153,7 +153,7 @@ impl Validator for LinterRunner {
           Ok(messages)
         }
       })
-      .map_err(|e| LintError::Unknown(e.to_string()))?;
+      .map_err(|_| ValidatorError::Unknown)?;
 
     let res = res.into_iter().filter_map(|r| r.ok()).collect::<Vec<_>>();
 

@@ -4,22 +4,18 @@ use crate::node_version::NodeVersion;
 
 #[derive(Debug, thiserror::Error, Diagnostic)]
 pub enum NodeVersionValidatorError {
-  #[error(transparent)]
-  #[diagnostic(transparent)]
-  NotFoundConfigFileError(#[from] NotFoundConfigFile),
-
-  #[error(transparent)]
-  #[diagnostic(transparent)]
-  InvalidNodeVersionError(#[from] InvalidNodeVersion),
-
-  #[error(transparent)]
-  #[diagnostic(transparent)]
-  EmptyNodeVersionError(#[from] EmptyNodeVersionError),
-
-  #[error(transparent)]
-  #[diagnostic(transparent)]
-  VersionRequirementNotMetError(#[from] VersionRequirementNotMet),
-
+  // #[error(transparent)]
+  // #[diagnostic(transparent)]
+  // NotFoundConfigFileError(#[from] NotFoundConfigFile),
+  // #[error(transparent)]
+  // #[diagnostic(transparent)]
+  // InvalidNodeVersionError(#[from] InvalidNodeVersion),
+  // #[error(transparent)]
+  // #[diagnostic(transparent)]
+  // EmptyNodeVersionError(#[from] EmptyNodeVersionError),
+  // #[error(transparent)]
+  // #[diagnostic(transparent)]
+  // VersionRequirementNotMetError(#[from] VersionRequirementNotMet),
   #[error(transparent)]
   #[diagnostic(transparent)]
   IoError(#[from] IoErrorWrapper),

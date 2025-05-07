@@ -2,12 +2,10 @@ use std::path::Path;
 
 use biome_json_parser::{JsonParserOptions, parse_json};
 use biome_rowan::TextRange;
-use doctor_ext::{Messages, Validator};
+use doctor_ext::{Messages, Validator, ValidatorError};
 use miette::{LabeledSpan, MietteDiagnostic};
 use package_json_parser::PackageJsonParser;
 use typed_builder::TypedBuilder;
-
-use crate::error::PackageJsonValidatorError;
 
 #[derive(Debug)]
 pub enum ValidateName {
@@ -131,21 +129,15 @@ where
   with_validate_package_manager: Option<ValidatePackageManager>,
 
   #[builder(default = None, setter(strip_option))]
-  with_additional_validation: Option<
-    Box<
-      dyn Fn(&PackageJsonParser) -> Result<Vec<MietteDiagnostic>, PackageJsonValidatorError> + 'a,
-    >,
-  >,
+  with_additional_validation:
+    Option<Box<dyn Fn(&PackageJsonParser) -> Result<Vec<MietteDiagnostic>, ValidatorError> + 'a>>,
 }
 
 impl<'a, P> PackageJsonValidator<'a, P>
 where
   P: AsRef<Path>,
 {
-  fn find_private_range(
-    &self,
-    json_raw: &str,
-  ) -> Result<Option<TextRange>, PackageJsonValidatorError> {
+  fn find_private_range(&self, json_raw: &str) -> Result<Option<TextRange>, ValidatorError> {
     let parse = parse_json(&json_raw, JsonParserOptions::default());
 
     let root = parse.tree();
@@ -175,7 +167,7 @@ where
   fn validate_package_manager(
     &self,
     package_json: &PackageJsonParser,
-  ) -> Result<Vec<MietteDiagnostic>, PackageJsonValidatorError> {
+  ) -> Result<Vec<MietteDiagnostic>, ValidatorError> {
     let mut diagnostics = vec![];
 
     if let Some(_) = &self.with_validate_package_manager {
@@ -201,7 +193,7 @@ where
   fn validate_private(
     &self,
     package_json: &PackageJsonParser,
-  ) -> Result<Vec<MietteDiagnostic>, PackageJsonValidatorError> {
+  ) -> Result<Vec<MietteDiagnostic>, ValidatorError> {
     let mut diagnostics = vec![];
 
     if let Some(validate_private) = &self.with_validate_private {
@@ -251,7 +243,7 @@ where
   fn validate_name(
     &self,
     package_json: &PackageJsonParser,
-  ) -> Result<Vec<MietteDiagnostic>, PackageJsonValidatorError> {
+  ) -> Result<Vec<MietteDiagnostic>, ValidatorError> {
     let mut diagnostics = vec![];
 
     if let Some(_) = &self.with_validate_name {
@@ -277,7 +269,7 @@ where
   fn validate_additional_validation(
     &self,
     package_json: &PackageJsonParser,
-  ) -> Result<Vec<MietteDiagnostic>, PackageJsonValidatorError> {
+  ) -> Result<Vec<MietteDiagnostic>, ValidatorError> {
     let mut diagnostics = vec![];
 
     if let Some(with_additional_validation) = &self.with_additional_validation {
@@ -292,8 +284,6 @@ impl<'a, P> Validator for PackageJsonValidator<'a, P>
 where
   P: AsRef<Path>,
 {
-  type Error = PackageJsonValidatorError;
-
   /// validate package.json file
   ///
   /// # Example
@@ -311,7 +301,7 @@ where
   ///
   /// assert!(result.is_ok());
   /// ```
-  fn validate(&self) -> Result<Vec<Messages>, Self::Error> {
+  fn validate(&self) -> Result<Vec<Messages>, ValidatorError> {
     let path = self.config_path.as_ref();
 
     // let package_json = package_json_parser::PackageJsonParser::parse(path).map_err(|e| {

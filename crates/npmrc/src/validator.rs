@@ -1,11 +1,11 @@
 use std::path::Path;
 
-use doctor_ext::{Messages, Validator};
+use doctor_ext::{Messages, Validator, ValidatorError};
 
 use miette::{LabeledSpan, MietteDiagnostic};
 use typed_builder::TypedBuilder;
 
-use crate::{error::NpmrcValidatorError, npmrc_config::NpmrcConfig};
+use crate::npmrc_config::NpmrcConfig;
 
 /// NpmrcValidator is a validator for npmrc file
 ///
@@ -33,7 +33,7 @@ where
 
   #[builder(default = None, setter(strip_option))]
   with_additional_validation:
-    Option<Box<dyn Fn(&NpmrcConfig) -> Result<Vec<MietteDiagnostic>, NpmrcValidatorError> + 'a>>,
+    Option<Box<dyn Fn(&NpmrcConfig) -> Result<Vec<MietteDiagnostic>, ValidatorError> + 'a>>,
 }
 
 impl<'a, P> NpmrcValidator<'a, P>
@@ -43,7 +43,7 @@ where
   fn validate_registry(
     &self,
     config: &NpmrcConfig,
-  ) -> Result<Vec<MietteDiagnostic>, NpmrcValidatorError> {
+  ) -> Result<Vec<MietteDiagnostic>, ValidatorError> {
     let mut diagnostics = vec![];
 
     if let Some(validate_registry) = &self.with_registry_url {
@@ -88,7 +88,7 @@ where
   fn validate_additional_validation(
     &self,
     config: &NpmrcConfig,
-  ) -> Result<Vec<MietteDiagnostic>, NpmrcValidatorError> {
+  ) -> Result<Vec<MietteDiagnostic>, ValidatorError> {
     let diagnostics = vec![];
 
     if let Some(additional_validation) = &self.with_additional_validation {
@@ -119,8 +119,6 @@ impl<'a, P> Validator for NpmrcValidator<'a, P>
 where
   P: AsRef<Path>,
 {
-  type Error = NpmrcValidatorError;
-
   /// Validate npmrc file
   ///
   /// # Example
@@ -135,7 +133,7 @@ where
   ///   .build();
   /// assert!(validator.validate().is_ok());
   /// ```
-  fn validate(&self) -> Result<Vec<Messages>, Self::Error> {
+  fn validate(&self) -> Result<Vec<Messages>, ValidatorError> {
     let config = NpmrcConfig::parse(self.config_path.as_ref())?;
 
     let mut messages = Messages::builder()

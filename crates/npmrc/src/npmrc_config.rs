@@ -1,8 +1,7 @@
 use std::path::Path;
 
+use doctor_ext::ValidatorError;
 use serde::{Deserialize, Serialize};
-
-use crate::error::NpmrcValidatorError;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct NpmrcConfig {
@@ -16,7 +15,7 @@ pub struct NpmrcConfig {
 }
 
 impl NpmrcConfig {
-  pub fn parse<P: AsRef<Path>>(path: P) -> Result<Self, NpmrcValidatorError> {
+  pub fn parse<P: AsRef<Path>>(path: P) -> Result<Self, ValidatorError> {
     let raw_source = std::fs::read_to_string(path.as_ref())?;
 
     let mut config: NpmrcConfig = serde_ini::from_str(&raw_source)?;
