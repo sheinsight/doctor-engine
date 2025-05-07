@@ -18,7 +18,11 @@ pub struct DoctorOptions {
 
 #[napi]
 pub async fn doctor(cwd: String, options: DoctorOptions) -> Result<()> {
+  let options = doctor::DoctorOptions::builder()
+    .max_render_count(100)
+    .with_dashboard(true)
+    .build();
   let messages =
-    doctor::doctor(cwd).map_err(|e| napi::Error::new(napi::Status::GenericFailure, e))?;
+    doctor::doctor(cwd, options).map_err(|e| napi::Error::new(napi::Status::GenericFailure, e))?;
   Ok(())
 }

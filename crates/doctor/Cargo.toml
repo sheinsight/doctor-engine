@@ -18,3 +18,4 @@ doctor_package_json  = { workspace = true }
 doctor_walk_parallel = { workspace = true }
 miette               = { workspace = true }
 tabled               = { workspace = true }
+typed-builder        = { workspace = true }

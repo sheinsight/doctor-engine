@@ -7,9 +7,42 @@ use doctor_ext::{Messages, Validator, ValidatorError};
 use tabled::{Table, Tabled};
 
 #[derive(Tabled)]
-struct Row {
-  name: String,
-  count: usize,
+pub struct Row {
+  #[tabled(rename = "name")]
+  pub name: String,
+  #[tabled(rename = "count")]
+  pub count: usize,
+}
+
+pub struct MessagesDashboard<'a>(&'a Vec<Messages>);
+
+impl<'a> MessagesDashboard<'a> {
+  pub fn new(messages: &'a Vec<Messages>) -> Self {
+    Self(messages)
+  }
+
+  pub fn render(&self) {
+    let mut count_map = HashMap::new();
+    for msg in self.0 {
+      if msg.has_error() {
+        for item in &msg.diagnostics {
+          *count_map
+            .entry(item.code.clone().unwrap_or("unknown".to_string()))
+            .or_insert(0) += 1;
+        }
+      }
+    }
+    let mut ts = vec![];
+
+    for (key, value) in count_map {
+      ts.push(Row {
+        name: key,
+        count: value,
+      });
+    }
+    let table = Table::new(ts);
+    println!("{}", table);
+  }
 }
 
 pub struct ValidatorScheduler(Vec<Box<dyn Validator>>);
@@ -42,32 +75,6 @@ impl ValidatorScheduler {
       let result = validator.validate()?;
       messages.extend(result.into_iter());
     }
-
-    let mut count_map = HashMap::new();
-
-    for msg in &messages {
-      if msg.has_error() {
-        msg.render();
-        for item in &msg.diagnostics {
-          *count_map
-            .entry(item.code.clone().unwrap_or("unknown".to_string()))
-            .or_insert(0) += 1;
-        }
-      }
-    }
-
-    let mut ts = vec![];
-
-    for (key, value) in count_map {
-      ts.push(Row {
-        name: key,
-        count: value,
-      });
-    }
-
-    let table = Table::new(ts);
-
-    println!("{}", table);
 
     Ok(messages)
   }

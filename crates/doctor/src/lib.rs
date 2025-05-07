@@ -15,6 +15,7 @@ use doctor_package_json::validator::{
 };
 
 pub use scheduler::*;
+use typed_builder::TypedBuilder;
 
 const ENCODED: [&str; 36] = [
   "a", "H", "R", "0", "c", "H", "M", "6", "L", "y", "9", "u", "c", "G", "1", "q", "c", "y", "5",
@@ -26,7 +27,15 @@ fn decode_to_str(encoded: &str) -> String {
   String::from_utf8(decoded).unwrap()
 }
 
-pub fn doctor(cwd: String) -> Result<Vec<Messages>, ValidatorError> {
+#[derive(Debug, Clone, TypedBuilder)]
+pub struct DoctorOptions {
+  #[builder(default = None, setter(strip_option))]
+  max_render_count: Option<usize>,
+  #[builder(default = true)]
+  with_dashboard: bool,
+}
+
+pub fn doctor(cwd: String, options: DoctorOptions) -> Result<Vec<Messages>, ValidatorError> {
   miette::set_hook(Box::new(|_| {
     Box::new(
       miette::MietteHandlerOpts::new()
@@ -93,6 +102,22 @@ pub fn doctor(cwd: String) -> Result<Vec<Messages>, ValidatorError> {
   let messages = scheduler
     .validator()
     .map_err(|e| ValidatorError::Unknown(Box::new(e)))?;
+
+  if let Some(max_render_count) = options.max_render_count {
+    let render_messages = messages.iter().take(max_render_count);
+    for message in render_messages {
+      message.render();
+    }
+  } else {
+    for message in messages.iter() {
+      message.render();
+    }
+  }
+
+  if options.with_dashboard {
+    let dashboard = MessagesDashboard::new(&messages);
+    dashboard.render();
+  }
 
   Ok(messages)
 }
