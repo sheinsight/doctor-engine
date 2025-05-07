@@ -10,7 +10,7 @@ pub use diagnostic::Diagnostic;
 use doctor::{
   ext::PathExt,
   lint::{
-    Category, EnvironmentFlags, GlobalValue, Globals, LintMode, LinterRunner,
+    Category, EnvironmentFlags, GlobalValue, Globals, LintMode, LintValidator,
     config::OxlintrcBuilder, inner::Category20250601Inner,
   },
   walk_parallel::WalkIgnore,
@@ -62,7 +62,7 @@ pub async fn inner_debug_lint(
     ignore.extend(ignore_patterns);
   }
 
-  let linter_runner = LinterRunner::builder()
+  let linter_runner = LintValidator::builder()
     .cwd(glob_js_args.cwd.clone().into())
     .ignore(ignore)
     .with_show_report(glob_js_args.verbose.unwrap_or(false))
@@ -131,7 +131,7 @@ pub async fn inner_lint(
     .build()
     .map_err(to_napi_error)?;
 
-  let linter_runner = LinterRunner::builder()
+  let linter_runner = LintValidator::builder()
     .cwd(glob_js_args.cwd.clone().into())
     .ignore(ignore)
     .with_show_report(glob_js_args.verbose.unwrap_or(false))

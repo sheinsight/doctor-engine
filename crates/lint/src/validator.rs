@@ -19,7 +19,7 @@ use crate::{
 };
 
 #[derive(Debug, Clone, TypedBuilder)]
-pub struct LinterRunner {
+pub struct LintValidator {
   cwd: PathBuf,
   oxlintrc: Oxlintrc,
 
@@ -30,7 +30,7 @@ pub struct LinterRunner {
   pub ignore: WalkIgnore,
 }
 
-impl Validator for LinterRunner {
+impl Validator for LintValidator {
   fn validate(&self) -> Result<Vec<Messages>, ValidatorError> {
     let config = ConfigStoreBuilder::from_oxlintrc(true, self.oxlintrc.clone())?
       .build()
@@ -162,7 +162,7 @@ impl Validator for LinterRunner {
   }
 }
 
-impl LinterRunner {
+impl LintValidator {
   pub fn run(&self) -> Result<Vec<Result<FileDiagnostic, WalkError>>, LintError> {
     let config = ConfigStoreBuilder::from_oxlintrc(true, self.oxlintrc.clone())?.build()?;
 

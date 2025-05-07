@@ -22,23 +22,25 @@ use crate::npmrc_config::NpmrcConfig;
 /// assert!(validator.validate().is_ok());
 /// ```
 #[derive(TypedBuilder)]
-pub struct NpmrcValidator<'a, P>
+pub struct NpmrcValidator<'a, P, S>
 where
   P: AsRef<Path>,
+  S: Into<String> + AsRef<str>,
 {
   config_path: P,
 
   #[builder(default = None,setter(strip_option))]
-  with_registry_url: Option<Vec<&'a str>>,
+  with_registry_url: Option<Vec<S>>,
 
   #[builder(default = None, setter(strip_option))]
   with_additional_validation:
     Option<Box<dyn Fn(&NpmrcConfig) -> Result<Vec<MietteDiagnostic>, ValidatorError> + 'a>>,
 }
 
-impl<'a, P> NpmrcValidator<'a, P>
+impl<'a, P, S> NpmrcValidator<'a, P, S>
 where
   P: AsRef<Path>,
+  S: Into<String> + AsRef<str>,
 {
   fn validate_registry(
     &self,
@@ -47,8 +49,13 @@ where
     let mut diagnostics = vec![];
 
     if let Some(validate_registry) = &self.with_registry_url {
+      let validate_registry = validate_registry
+        .into_iter()
+        .map(|item| item.as_ref().to_string())
+        .collect::<Vec<String>>();
+
       if let Some(registry) = &config.registry {
-        if !validate_registry.iter().any(|item| item == &registry) {
+        if !validate_registry.iter().any(|item| item == registry) {
           let (offset, length) = self
             .find_registry_position(&config.__raw_source)
             .unwrap_or((0, 0));
@@ -115,9 +122,10 @@ where
   }
 }
 
-impl<'a, P> Validator for NpmrcValidator<'a, P>
+impl<'a, P, S> Validator for NpmrcValidator<'a, P, S>
 where
   P: AsRef<Path>,
+  S: Into<String> + AsRef<str>,
 {
   /// Validate npmrc file
   ///

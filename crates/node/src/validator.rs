@@ -25,23 +25,25 @@ use crate::node_version::NodeVersion;
 /// assert!(result.is_ok());
 /// ```
 #[derive(TypedBuilder)]
-pub struct NodeVersionValidator<'a, P>
+pub struct NodeVersionValidator<'a, P, S = String>
 where
   P: AsRef<Path>,
+  S: Into<String> + AsRef<str>,
 {
   config_path: P,
 
   #[builder(default = None, setter(strip_option))]
-  with_valid_range: Option<Vec<String>>,
+  with_valid_range: Option<Vec<S>>,
 
   #[builder(default = None, setter(strip_option))]
   with_additional_validation:
     Option<Box<dyn Fn(&NodeVersion) -> Result<Vec<MietteDiagnostic>, ValidatorError> + 'a>>,
 }
 
-impl<'a, P> NodeVersionValidator<'a, P>
+impl<'a, P, S> NodeVersionValidator<'a, P, S>
 where
   P: AsRef<Path>,
+  S: Into<String> + AsRef<str>,
 {
   fn validate_valid_range(
     &self,
@@ -102,9 +104,10 @@ where
   }
 }
 
-impl<'a, P> Validator for NodeVersionValidator<'a, P>
+impl<'a, P, S> Validator for NodeVersionValidator<'a, P, S>
 where
   P: AsRef<Path>,
+  S: Into<String> + AsRef<str>,
 {
   /// validate node version file
   ///
@@ -202,6 +205,7 @@ mod tests {
   fn test_validate_node_version_file_invalid() {
     let res = NodeVersionValidator::builder()
       .config_path("./fixtures/.invalid")
+      .with_valid_range(vec!["^18.0.0".to_string()])
       .build()
       .validate();
 
@@ -217,6 +221,7 @@ mod tests {
   fn test_validate_node_version_file_not_found() {
     let res = NodeVersionValidator::builder()
       .config_path("./fixtures/.not-found")
+      .with_valid_range(vec!["^18.0.0".to_string()])
       .build()
       .validate();
 
@@ -232,6 +237,7 @@ mod tests {
   fn test_validate_node_version_file_empty() {
     let res = NodeVersionValidator::builder()
       .config_path("./fixtures/.empty")
+      .with_valid_range(vec!["^18.0.0".to_string()])
       .build()
       .validate();
 
@@ -247,6 +253,7 @@ mod tests {
   fn test_validate_node_version_file_success() {
     let res = NodeVersionValidator::builder()
       .config_path("./fixtures/.success")
+      .with_valid_range(vec!["^18.0.0".to_string()])
       .build()
       .validate();
 

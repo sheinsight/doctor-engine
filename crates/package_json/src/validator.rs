@@ -178,7 +178,7 @@ where
           .map_or(0, |source| source.len());
         diagnostics.push(
           MietteDiagnostic::new("Require 'packageManager' field")
-            .with_code("shined_doctor/package_json_missing_package_manager")
+            .with_code("shined(package-json-missing-package-manager)")
             .with_severity(miette::Severity::Error)
             .with_label(LabeledSpan::at(0..len, "packageManager is required"))
             .with_help("Please add a packageManager field to your package.json file"),
@@ -213,7 +213,7 @@ where
             let start = range.unwrap_or_default().start().into();
             diagnostics.push(
               MietteDiagnostic::new("Value of 'private' field is not true")
-                .with_code("shined_doctor/package_json_private_not_true")
+                .with_code("shined(package-json-private-not-true)")
                 .with_severity(miette::Severity::Error)
                 .with_label(LabeledSpan::at(start..end, "private is must be true"))
                 .with_help("Please modify the private field to true"),
@@ -228,7 +228,7 @@ where
           .map_or(0, |source| source.len());
         diagnostics.push(
           MietteDiagnostic::new("Require 'private' field")
-            .with_code("shined_doctor/package_json_missing_private")
+            .with_code("shined(package-json-missing-private)")
             .with_severity(miette::Severity::Error)
             .with_label(LabeledSpan::at(0..len, "private is required"))
             .with_help("Please add a private field to your package.json file"),
@@ -255,7 +255,7 @@ where
 
         diagnostics.push(
           MietteDiagnostic::new("Require 'name' field")
-            .with_code("shined_doctor/package_json_missing_name")
+            .with_code("shined(package-json-missing-name)")
             .with_severity(miette::Severity::Error)
             .with_label(LabeledSpan::at(0..len, "name is required"))
             .with_help("Please add a name field to your package.json file"),

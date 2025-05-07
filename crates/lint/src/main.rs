@@ -1,5 +1,5 @@
 use doctor_lint::{
-  Category, EnvironmentFlags, GlobalValue, Globals, LintMode, LinterRunner,
+  Category, EnvironmentFlags, GlobalValue, Globals, LintMode, LintValidator,
   config::OxlintrcBuilder, inner::Category20250601Inner,
 };
 use doctor_walk_parallel::WalkIgnore;
@@ -33,7 +33,7 @@ fn main() -> anyhow::Result<()> {
 
   let ignore = WalkIgnore(vec!["**/node_modules/**".to_string()]);
 
-  let linter_runner = LinterRunner::builder()
+  let linter_runner = LintValidator::builder()
     .cwd(cwd.to_string().into())
     .ignore(ignore)
     .with_show_report(false)

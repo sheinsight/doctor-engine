@@ -1,18 +1,19 @@
 mod lint;
 mod log;
+mod scheduler;
 
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::str::FromStr;
 
 use base64::{Engine, engine::general_purpose::STANDARD};
-use doctor::ext::*;
 use doctor::lint::inner::Category20250601Inner;
 use doctor::lint::{
-  Category, EnvironmentFlags, GlobalValue, Globals, LintMode, LinterRunner, OxlintrcBuilder,
+  Category, EnvironmentFlags, GlobalValue, Globals, LintMode, LintValidator, OxlintrcBuilder,
 };
 use doctor::validator::{
-  NodeVersionValidator, NpmrcValidator, PackageJsonValidator, ValidatePrivate,
+  NodeVersionValidator, NpmrcValidator, PackageJsonValidator, ValidateName, ValidatePackageManager,
+  ValidatePrivate,
 };
 use napi::Result;
 
@@ -20,7 +21,7 @@ use doctor::walk_parallel::WalkIgnore;
 pub use lint::*;
 pub use log::*;
 use napi_derive::napi;
-use tabled::{Table, Tabled};
+use scheduler::ValidatorScheduler;
 
 #[napi(object)]
 pub struct DoctorOptions {
@@ -32,13 +33,6 @@ pub struct DoctorOptions {
 fn decode_to_str(encoded: &str) -> String {
   let decoded = STANDARD.decode(encoded).unwrap();
   String::from_utf8(decoded).unwrap()
-}
-
-#[derive(Tabled)]
-struct Row {
-  name: String,
-  description: String,
-  error_count: usize,
 }
 
 const ENCODED: [&str; 36] = [
@@ -62,76 +56,34 @@ pub async fn doctor(cwd: String, options: DoctorOptions) -> Result<()> {
   }))
   .unwrap();
 
-  let mut ts = vec![];
-
   let cwd = PathBuf::from(cwd);
 
   let text = decode_to_str(ENCODED.join("").as_str());
 
-  let npmrc_validator = NpmrcValidator::builder()
-    .config_path(cwd.join(".npmrc"))
-    .with_registry_url(vec![text.as_str()])
-    .build();
+  let mut handler = ValidatorScheduler::default();
 
-  let result = npmrc_validator
-    .validate()
-    .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
+  handler.push(Box::new(
+    NpmrcValidator::builder()
+      .config_path(cwd.join(".npmrc"))
+      .with_registry_url(vec![text])
+      .build(),
+  ));
 
-  for msg in &result {
-    if msg.has_error() {
-      msg.render();
-      for item in &msg.diagnostics {
-        ts.push(Row {
-          name: item.code.clone().unwrap_or("unknown".to_string()),
-          description: item.message.clone(),
-          error_count: 1,
-        });
-      }
-    }
-  }
+  handler.push(Box::new(
+    NodeVersionValidator::builder()
+      .config_path(cwd.join(".node-version"))
+      .with_valid_range(vec!["^16.13.0", "^18.12.0", "^20.9.0", "^22.11.0"])
+      .build(),
+  ));
 
-  let node_version_validator = NodeVersionValidator::builder()
-    .config_path(cwd.join(".node-version"))
-    .build();
-
-  let result = node_version_validator
-    .validate()
-    .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-
-  for msg in &result {
-    if msg.has_error() {
-      msg.render();
-      for item in &msg.diagnostics {
-        ts.push(Row {
-          name: item.code.clone().unwrap_or("unknown".to_string()),
-          description: item.message.clone(),
-          error_count: 1,
-        });
-      }
-    }
-  }
-
-  let package_json_validator = PackageJsonValidator::builder()
-    .config_path(cwd.join("package.json"))
-    .with_validate_private(ValidatePrivate::True)
-    .build();
-
-  let result = package_json_validator
-    .validate()
-    .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-
-  for msg in &result {
-    if msg.has_error() {
-      msg.render();
-      for item in &msg.diagnostics {
-        ts.push(Row {
-          name: item.code.clone().unwrap_or("unknown".to_string()),
-          description: item.message.clone(),
-          error_count: 1,
-        });
-      }
-    }
-  }
+  handler.push(Box::new(
+    PackageJsonValidator::builder()
+      .config_path(cwd.join("package.json"))
+      .with_validate_name(ValidateName::Exist)
+      .with_validate_private(ValidatePrivate::True)
+      .with_validate_package_manager(ValidatePackageManager::Exist)
+      .build(),
+  ));
 
   let category = Category::V20250601Inner(Category20250601Inner::default());
 
@@ -162,55 +114,18 @@ pub async fn doctor(cwd: String, options: DoctorOptions) -> Result<()> {
     ignore.extend(opt_ignore.into_iter());
   }
 
-  let linter_runner = LinterRunner::builder()
-    .cwd(cwd)
-    .ignore(ignore)
-    .with_show_report(false)
-    .oxlintrc(rc)
-    .build();
+  handler.push(Box::new(
+    LintValidator::builder()
+      .cwd(cwd)
+      .ignore(ignore)
+      .with_show_report(false)
+      .oxlintrc(rc)
+      .build(),
+  ));
 
-  let res = linter_runner
-    .validate()
+  handler
+    .validator()
     .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-
-  for msg in &res {
-    if msg.has_error() {
-      msg.render();
-    }
-  }
-
-  let res = res
-    .into_iter()
-    .map(|item| item.diagnostics)
-    .flatten()
-    .map(|item| {
-      item
-        .code
-        .map_or("unknown".to_string(), |code| code.to_string())
-    })
-    .collect::<Vec<_>>();
-
-  let mut map: HashMap<String, usize> = HashMap::new();
-
-  for item in res {
-    if map.contains_key(&item) {
-      *map.entry(item).or_insert(0) += 1;
-    } else {
-      map.insert(item, 1);
-    }
-  }
-
-  for (key, value) in map {
-    ts.push(Row {
-      name: key.to_string(),
-      description: "Dennis Ritchie".to_string(),
-      error_count: value,
-    });
-  }
-
-  let table = Table::new(ts);
-
-  println!("{}", table);
 
   Ok(())
 }

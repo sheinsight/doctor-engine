@@ -11,8 +11,8 @@ pub use common::{
 pub mod config;
 pub mod ext;
 pub mod inner;
-mod linter_runner;
+mod validator;
 
-pub use linter_runner::*;
+pub use validator::*;
 
 pub use config::*;
