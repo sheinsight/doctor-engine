@@ -15,3 +15,4 @@ doctor_node          = { workspace = true }
 doctor_npmrc         = { workspace = true }
 doctor_package_json  = { workspace = true }
 doctor_walk_parallel = { workspace = true }
+tabled               = { workspace = true }

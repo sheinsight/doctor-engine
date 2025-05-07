@@ -1,12 +1,12 @@
 mod lint;
 mod log;
-mod scheduler;
 
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::str::FromStr;
 
 use base64::{Engine, engine::general_purpose::STANDARD};
+use doctor::ValidatorScheduler;
 use doctor::lint::inner::Category20250601Inner;
 use doctor::lint::{
   Category, EnvironmentFlags, GlobalValue, Globals, LintMode, LintValidator, OxlintrcBuilder,
@@ -21,7 +21,6 @@ use doctor::walk_parallel::WalkIgnore;
 pub use lint::*;
 pub use log::*;
 use napi_derive::napi;
-use scheduler::ValidatorScheduler;
 
 #[napi(object)]
 pub struct DoctorOptions {
