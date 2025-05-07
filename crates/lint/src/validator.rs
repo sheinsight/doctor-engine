@@ -154,7 +154,7 @@ impl Validator for LintValidator {
           Ok(messages)
         }
       })
-      .map_err(|_| ValidatorError::Unknown)?;
+      .map_err(|e| ValidatorError::Unknown(Box::new(e)))?;
 
     let res = res.into_iter().filter_map(|r| r.ok()).collect::<Vec<_>>();
 

@@ -1,23 +1,98 @@
-pub mod ext {
-  pub use doctor_ext::*;
-}
-
-pub mod lint {
-  pub use doctor_lint::*;
-}
-
-pub mod validator {
-  pub use doctor_node::validator::*;
-
-  pub use doctor_npmrc::validator::*;
-
-  pub use doctor_package_json::validator::*;
-}
-
-pub mod walk_parallel {
-  pub use doctor_walk_parallel::*;
-}
-
 mod scheduler;
 
+use std::path::PathBuf;
+
+use base64::{Engine, engine::general_purpose::STANDARD};
+use doctor_ext::{Messages, ValidatorError};
+use doctor_lint::{
+  Category, EnvironmentFlags, LintMode, LintValidator, OxlintrcBuilder, Sfconfig,
+  inner::Category20250601Inner,
+};
+use doctor_node::validator::NodeVersionValidator;
+use doctor_npmrc::validator::NpmrcValidator;
+use doctor_package_json::validator::{
+  PackageJsonValidator, ValidateName, ValidatePackageManager, ValidatePrivate,
+};
+
 pub use scheduler::*;
+
+const ENCODED: [&str; 36] = [
+  "a", "H", "R", "0", "c", "H", "M", "6", "L", "y", "9", "u", "c", "G", "1", "q", "c", "y", "5",
+  "z", "a", "G", "V", "p", "b", "m", "N", "v", "c", "n", "A", "u", "Y", "2", "4", "=",
+];
+
+fn decode_to_str(encoded: &str) -> String {
+  let decoded = STANDARD.decode(encoded).unwrap();
+  String::from_utf8(decoded).unwrap()
+}
+
+pub fn doctor(cwd: String) -> Result<Vec<Messages>, ValidatorError> {
+  miette::set_hook(Box::new(|_| {
+    Box::new(
+      miette::MietteHandlerOpts::new()
+        .terminal_links(true)
+        .unicode(true)
+        .force_graphical(true)
+        .context_lines(3)
+        .tab_width(4)
+        .break_words(true)
+        .build(),
+    )
+  }))?;
+
+  let mut scheduler = ValidatorScheduler::default();
+
+  let cwd = PathBuf::from(cwd);
+
+  let text = decode_to_str(ENCODED.join("").as_str());
+
+  scheduler.push(Box::new(
+    NpmrcValidator::builder()
+      .config_path(cwd.join(".npmrc"))
+      .with_registry_url(vec![text])
+      .build(),
+  ));
+
+  scheduler.push(Box::new(
+    NodeVersionValidator::builder()
+      .config_path(cwd.join(".node-version"))
+      .with_valid_range(vec!["^16.13.0", "^18.12.0", "^20.9.0", "^22.11.0"])
+      .build(),
+  ));
+
+  scheduler.push(Box::new(
+    PackageJsonValidator::builder()
+      .config_path(cwd.join("package.json"))
+      .with_validate_name(ValidateName::Exist)
+      .with_validate_private(ValidatePrivate::True)
+      .with_validate_package_manager(ValidatePackageManager::Exist)
+      .build(),
+  ));
+
+  let category = Category::V20250601Inner(Category20250601Inner::default());
+
+  let sfconfig = Sfconfig::parse(cwd.join(".sfconfig").join("spec.json"))?;
+
+  let rc = OxlintrcBuilder::default()
+    .with_category(category)
+    .with_globals(sfconfig.globals)
+    .with_mode(LintMode::Production)
+    .with_envs(EnvironmentFlags::default())
+    .build()
+    .unwrap();
+
+  scheduler.push(Box::new(
+    LintValidator::builder()
+      .cwd(cwd)
+      .ignore(sfconfig.ignore)
+      .with_show_report(false)
+      .oxlintrc(rc)
+      .build(),
+  ));
+
+  let messages = scheduler
+    .validator()
+    .map_err(|e| ValidatorError::Unknown(Box::new(e)))?;
+
+  Ok(messages)
+}

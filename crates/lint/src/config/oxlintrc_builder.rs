@@ -44,7 +44,7 @@ pub enum GlobalValue {
   Readonly,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Globals(pub FxHashMap<String, GlobalValue>);
 
 impl Default for Globals {

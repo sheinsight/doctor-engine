@@ -3,7 +3,7 @@ use std::{
   ops::{Deref, DerefMut},
 };
 
-use doctor_ext::{Validator, ValidatorError};
+use doctor_ext::{Messages, Validator, ValidatorError};
 use tabled::{Table, Tabled};
 
 #[derive(Tabled)]
@@ -35,7 +35,7 @@ impl DerefMut for ValidatorScheduler {
 }
 
 impl ValidatorScheduler {
-  pub fn validator(&self) -> Result<(), ValidatorError> {
+  pub fn validator(&self) -> Result<Vec<Messages>, ValidatorError> {
     let mut messages = vec![];
 
     for validator in self.iter() {
@@ -45,7 +45,7 @@ impl ValidatorScheduler {
 
     let mut count_map = HashMap::new();
 
-    for msg in messages {
+    for msg in &messages {
       if msg.has_error() {
         msg.render();
         for item in &msg.diagnostics {
@@ -69,6 +69,6 @@ impl ValidatorScheduler {
 
     println!("{}", table);
 
-    Ok(())
+    Ok(messages)
   }
 }
