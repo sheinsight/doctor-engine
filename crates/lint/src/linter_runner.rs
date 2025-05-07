@@ -60,6 +60,7 @@ impl Validator for LinterRunner {
         let mut messages = Messages::builder()
           .diagnostics(vec![])
           .source_code(named_source.source_code.clone())
+          .source_path(named_source.file_path.clone())
           .build();
 
         let source_type =

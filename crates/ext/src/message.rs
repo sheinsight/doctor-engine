@@ -7,6 +7,8 @@ use typed_builder::TypedBuilder;
 pub struct Messages {
   #[builder(default = String::new())]
   pub source_code: String,
+  #[builder(default = String::new())]
+  pub source_path: String,
   #[builder(default = Vec::new())]
   pub diagnostics: Vec<MietteDiagnostic>,
 }
@@ -28,8 +30,8 @@ impl DerefMut for Messages {
 impl Messages {
   pub fn render(&self) {
     for diagnostic in &self.diagnostics {
-      let report =
-        miette::Report::new(diagnostic.to_owned()).with_source_code(self.source_code.clone());
+      let source = miette::NamedSource::new(self.source_path.clone(), self.source_code.clone());
+      let report = miette::Report::new(diagnostic.to_owned()).with_source_code(source);
       eprintln!("{:?}", report);
     }
   }

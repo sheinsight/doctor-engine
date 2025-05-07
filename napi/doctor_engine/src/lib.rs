@@ -80,14 +80,15 @@ pub async fn doctor(cwd: String, options: DoctorOptions) -> Result<()> {
   for msg in &result {
     if msg.has_error() {
       msg.render();
+      for item in &msg.diagnostics {
+        ts.push(Row {
+          name: item.code.clone().unwrap_or("unknown".to_string()),
+          description: item.message.clone(),
+          error_count: 1,
+        });
+      }
     }
   }
-
-  ts.push(Row {
-    name: "npmrc".to_string(),
-    description: "Dennis Ritchie".to_string(),
-    error_count: result.len(),
-  });
 
   let node_version_validator = NodeVersionValidator::builder()
     .config_path(cwd.join(".node-version"))
@@ -100,14 +101,15 @@ pub async fn doctor(cwd: String, options: DoctorOptions) -> Result<()> {
   for msg in &result {
     if msg.has_error() {
       msg.render();
+      for item in &msg.diagnostics {
+        ts.push(Row {
+          name: item.code.clone().unwrap_or("unknown".to_string()),
+          description: item.message.clone(),
+          error_count: 1,
+        });
+      }
     }
   }
-
-  ts.push(Row {
-    name: "node-version".to_string(),
-    description: "Dennis Ritchie".to_string(),
-    error_count: result.len(),
-  });
 
   let package_json_validator = PackageJsonValidator::builder()
     .config_path(cwd.join("package.json"))
@@ -121,14 +123,15 @@ pub async fn doctor(cwd: String, options: DoctorOptions) -> Result<()> {
   for msg in &result {
     if msg.has_error() {
       msg.render();
+      for item in &msg.diagnostics {
+        ts.push(Row {
+          name: item.code.clone().unwrap_or("unknown".to_string()),
+          description: item.message.clone(),
+          error_count: 1,
+        });
+      }
     }
   }
-
-  ts.push(Row {
-    name: "package.json".to_string(),
-    description: "Dennis Ritchie".to_string(),
-    error_count: result.len(),
-  });
 
   let category = Category::V20250601Inner(Category20250601Inner::default());
 

@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use doctor_ext::{Messages, Validator, ValidatorError};
+use doctor_ext::{Messages, PathExt, Validator, ValidatorError};
 use lazy_regex::regex;
 use miette::{LabeledSpan, MietteDiagnostic};
 use typed_builder::TypedBuilder;
@@ -145,6 +145,7 @@ where
 
     let mut messages = Messages::builder()
       .source_code(node_version.__raw_source.clone().unwrap_or_default())
+      .source_path(path.to_string_owned())
       .diagnostics(vec![])
       .build();
 

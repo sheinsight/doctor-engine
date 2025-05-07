@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use doctor_ext::{Messages, Validator, ValidatorError};
+use doctor_ext::{Messages, PathExt, Validator, ValidatorError};
 
 use miette::{LabeledSpan, MietteDiagnostic};
 use typed_builder::TypedBuilder;
@@ -138,6 +138,7 @@ where
 
     let mut messages = Messages::builder()
       .source_code(config.__raw_source.clone())
+      .source_path(self.config_path.as_ref().to_string_owned())
       .diagnostics(vec![])
       .build();
 
