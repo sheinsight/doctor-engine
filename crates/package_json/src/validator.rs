@@ -58,9 +58,8 @@ pub enum ValidatePrivate {
 ///
 /// ```rust
 /// use doctor_package_json::validator::{PackageJsonValidator,ValidateName};
-/// use doctor_package_json::error::PackageJsonValidatorError;
 /// use std::path::Path;
-/// use doctor_ext::Validator;
+/// use doctor_ext::{Validator, Messages, ValidatorError};
 ///
 /// let validator = PackageJsonValidator::builder()
 ///   .config_path("./fixtures/no_name.json")
@@ -80,9 +79,8 @@ pub enum ValidatePrivate {
 ///
 /// ```rust
 /// use doctor_package_json::validator::{PackageJsonValidator,ValidatePrivate};
-/// use doctor_package_json::error::PackageJsonValidatorError;
 /// use std::path::Path;
-/// use doctor_ext::Validator;
+/// use doctor_ext::{Validator, Messages, ValidatorError};
 ///
 /// let validator = PackageJsonValidator::builder()
 ///   .config_path("./fixtures/no_private.json")
@@ -101,9 +99,8 @@ pub enum ValidatePrivate {
 ///
 /// ```rust
 /// use doctor_package_json::validator::{PackageJsonValidator,ValidatePackageManager};
-/// use doctor_package_json::error::PackageJsonValidatorError;
-/// use std::path::Path;
-/// use doctor_ext::Validator;
+/// use std::path::Path;  
+/// use doctor_ext::{Validator, Messages, ValidatorError};
 ///
 /// let validator = PackageJsonValidator::builder()
 ///   .config_path("./fixtures/no_package_manager.json")

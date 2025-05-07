@@ -14,10 +14,11 @@ use crate::node_version::NodeVersion;
 /// ```rust
 /// use doctor_node::validator::NodeVersionValidator;
 /// use std::path::Path;
-/// use doctor_ext::Validator;
+/// use doctor_ext::{Validator, Messages, ValidatorError};
 ///
 /// let validator = NodeVersionValidator::builder()
 ///   .config_path("./fixtures/.success")
+///   .with_valid_range(vec!["^18.0.0".to_string()])
 ///   .build();
 ///
 /// let result = validator.validate();
@@ -116,10 +117,11 @@ where
   /// ```rust
   /// use doctor_node::validator::NodeVersionValidator;
   /// use std::path::Path;
-  /// use doctor_ext::Validator;
+  /// use doctor_ext::{Validator, Messages, ValidatorError};
   ///
   /// let validator = NodeVersionValidator::builder()
   ///   .config_path("./fixtures/.success")
+  ///   .with_valid_range(vec!["^18.0.0".to_string()])
   ///   .build();
   ///
   /// let result = validator.validate();

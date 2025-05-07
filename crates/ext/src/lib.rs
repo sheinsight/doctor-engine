@@ -21,21 +21,12 @@ impl PathExt for Path {
 /// # Examples
 ///
 /// ```rust
-/// use doctor_ext::Validator;
-/// use doctor_ext::Messages;
+/// use doctor_ext::{Validator, Messages, ValidatorError};
 ///
 /// struct MyValidator;
 ///
-/// #[derive(Debug, thiserror::Error)]
-/// pub enum MyError {
-///     #[error("MyError")]
-///     MyError,
-/// }
-///
 /// impl Validator for MyValidator {
-///     type Error = MyError;
-///
-///     fn validate(&self) -> Result<Vec<Messages>, Self::Error> {
+///     fn validate(&self) -> Result<Vec<Messages>, ValidatorError> {
 ///         // Validation logic here
 ///         Ok(vec![])
 ///     }

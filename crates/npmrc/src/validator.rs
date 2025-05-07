@@ -2,10 +2,13 @@ use std::path::Path;
 
 use doctor_ext::{Messages, PathExt, Validator, ValidatorError};
 
-use miette::{LabeledSpan, MietteDiagnostic};
+use miette::MietteDiagnostic;
 use typed_builder::TypedBuilder;
 
-use crate::npmrc_config::NpmrcConfig;
+use crate::{
+  diagnostics::{NpmrcMissingRegistryDiagnostic, NpmrcWrongRegistryDiagnostic},
+  npmrc_config::NpmrcConfig,
+};
 
 /// NpmrcValidator is a validator for npmrc file
 ///
@@ -62,32 +65,18 @@ where
           let (offset, length) = self
             .find_registry_position(&config.__raw_source)
             .unwrap_or((0, 0));
-          diagnostics.push(
-            MietteDiagnostic::new("Wrong registry")
-              .with_code("shined_doctor/npmrc_wrong_registry")
-              .with_severity(miette::Severity::Error)
-              .with_label(LabeledSpan::at(
-                offset..offset + length,
-                format!(
-                  r#"Wrong registry , Only support registry: {}"#,
-                  validate_registry.join(", ")
-                ),
-              ))
-              .with_help("Please add a registry field to your .npmrc file"),
-          );
+
+          let diagnostic =
+            NpmrcWrongRegistryDiagnostic::at(offset..offset + length, &validate_registry);
+
+          diagnostics.push(diagnostic);
+
           return Ok(diagnostics);
         }
       } else {
-        diagnostics.push(
-          MietteDiagnostic::new("No registry field found")
-            .with_code("shined_doctor/npmrc_missing_registry")
-            .with_severity(miette::Severity::Error)
-            .with_label(LabeledSpan::at(
-              0..config.__raw_source.len(),
-              "No registry field found",
-            ))
-            .with_help("Please add a registry field to your .npmrc file"),
-        );
+        let diagnostic = NpmrcMissingRegistryDiagnostic::at(0..config.__raw_source.len());
+
+        diagnostics.push(diagnostic);
 
         return Ok(diagnostics);
       }
@@ -155,11 +144,11 @@ where
 
     let diagnostics = self.validate_registry(&config)?;
 
-    messages.extend(diagnostics.into_iter());
+    messages.diagnostics.extend(diagnostics.into_iter());
 
     let diagnostics = self.validate_additional_validation(&config)?;
 
-    messages.extend(diagnostics.into_iter());
+    messages.diagnostics.extend(diagnostics.into_iter());
 
     Ok(vec![messages])
   }
@@ -185,7 +174,7 @@ mod tests {
   fn test_validate_registry_error() {
     let result = NpmrcValidator::builder()
       .config_path("fixtures/.npmrc")
-      .with_registry_url(vec!["https://test.npmjs.org"])
+      .with_registry_url(vec!["https://test2.npmjs.org"])
       .build()
       .validate();
 

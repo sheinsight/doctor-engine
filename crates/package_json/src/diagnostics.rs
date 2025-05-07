@@ -1,24 +1,11 @@
 use miette::{LabeledSpan, MietteDiagnostic, SourceSpan};
 
-// #[derive(Debug, Diagnostic, thiserror::Error)]
-// #[error("Missing required 'packageManager' field in package.json")]
-// #[diagnostic(
-//   code = "shined(package-json:missing-package-manager)",
-//   severity = "error",
-//   // label = "Add packageManager field here",
-//   help = r#"Add the packageManager field to specify your package manager version, e.g.:  "packageManager": "npm@8.19.2""#
-// )]
-// pub struct MissingPackageManagerDiagnosticDemo {
-//   #[label(primary, "Add packageManager field here")]
-//   pub primary_span: SourceSpan,
-// }
-
 pub struct MissingPackageManagerDiagnostic;
 
 impl MissingPackageManagerDiagnostic {
   pub fn at(span: impl Into<SourceSpan>) -> MietteDiagnostic {
     MietteDiagnostic::new("Missing required 'packageManager' field in package.json")
-      .with_code("doctor:package-json:missing-package-manager")
+      .with_code("shined(package-json:missing-package-manager)")
       .with_severity(miette::Severity::Error)
       .with_label(LabeledSpan::at(span, "Add packageManager field here"))
       .with_help(
@@ -56,7 +43,7 @@ pub struct PrivateNotTrueDiagnostic;
 impl PrivateNotTrueDiagnostic {
   pub fn at(span: impl Into<SourceSpan>) -> MietteDiagnostic {
     MietteDiagnostic::new("The 'private' field in package.json must be set to true")
-      .with_code("doctor:package-json:private-not-true")
+      .with_code("shined(package-json-private-not-true)")
       .with_severity(miette::Severity::Error)
       .with_label(LabeledSpan::at(span, "Set private field to true"))
       .with_help(
