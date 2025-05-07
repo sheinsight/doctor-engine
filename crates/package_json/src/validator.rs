@@ -7,6 +7,8 @@ use miette::{LabeledSpan, MietteDiagnostic};
 use package_json_parser::PackageJsonParser;
 use typed_builder::TypedBuilder;
 
+use crate::diagnostics::{MissingPackageManagerDiagnostic, PrivateNotTrueDiagnostic};
+
 #[derive(Debug)]
 pub enum ValidateName {
   Exist,
@@ -176,13 +178,7 @@ where
           .__raw_source
           .as_ref()
           .map_or(0, |source| source.len());
-        diagnostics.push(
-          MietteDiagnostic::new("Require 'packageManager' field")
-            .with_code("shined(package-json-missing-package-manager)")
-            .with_severity(miette::Severity::Error)
-            .with_label(LabeledSpan::at(0..len, "packageManager is required"))
-            .with_help("Please add a packageManager field to your package.json file"),
-        );
+        diagnostics.push(MissingPackageManagerDiagnostic::at(0..len));
         return Ok(diagnostics);
       };
     }
@@ -211,13 +207,7 @@ where
             )?;
             let end = range.unwrap_or_default().end().into();
             let start = range.unwrap_or_default().start().into();
-            diagnostics.push(
-              MietteDiagnostic::new("Value of 'private' field is not true")
-                .with_code("shined(package-json-private-not-true)")
-                .with_severity(miette::Severity::Error)
-                .with_label(LabeledSpan::at(start..end, "private is must be true"))
-                .with_help("Please modify the private field to true"),
-            );
+            diagnostics.push(PrivateNotTrueDiagnostic::at(start..end));
             return Ok(diagnostics);
           }
         };
