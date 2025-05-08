@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::{borrow::Cow, path::Path};
 
 use doctor_ext::{Messages, PathExt, Validator, ValidatorError};
 
@@ -28,7 +28,7 @@ use crate::{
 pub struct NpmrcValidator<'a, P, S>
 where
   P: AsRef<Path>,
-  S: Into<String> + AsRef<str>,
+  S: Into<Cow<'static, str>> + AsRef<str>,
 {
   config_path: P,
 
@@ -43,7 +43,7 @@ where
 impl<'a, P, S> NpmrcValidator<'a, P, S>
 where
   P: AsRef<Path>,
-  S: Into<String> + AsRef<str>,
+  S: Into<Cow<'static, str>> + AsRef<str>,
 {
   fn validate_registry(
     &self,
@@ -117,7 +117,7 @@ where
 impl<'a, P, S> Validator for NpmrcValidator<'a, P, S>
 where
   P: AsRef<Path>,
-  S: Into<String> + AsRef<str>,
+  S: Into<Cow<'static, str>> + AsRef<str>,
 {
   /// Validate npmrc file
   ///
