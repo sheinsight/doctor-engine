@@ -68,7 +68,7 @@ pub fn doctor<T: AsRef<Path>>(
   scheduler.push(Box::new(
     NodeVersionValidator::builder()
       .config_path(cwd.join(".node-version"))
-      .with_valid_range(vec!["^16.13.0", "^18.12.0", "^20.9.0", "^22.11.0"])
+      .with_valid_range(vec!["^18.12.0", "^20.9.0", "^22.11.0"])
       .build(),
   ));
 
