@@ -40,9 +40,9 @@ impl<'a> MessagesDashboard<'a> {
         count: value,
       });
     }
-    let table = Table::new(ts);
 
-    if !table.is_empty() {
+    if !ts.is_empty() {
+      let table = Table::new(ts);
       println!("{}", table);
     }
   }
@@ -80,5 +80,18 @@ impl ValidatorScheduler {
     }
 
     Ok(messages)
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn should_render_empty_when_messages_is_empty() {
+    let scheduler = ValidatorScheduler::default();
+    let messages = scheduler.validator().unwrap();
+    let dashboard = MessagesDashboard::new(&messages);
+    dashboard.render();
   }
 }
