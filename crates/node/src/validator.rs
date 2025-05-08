@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::{borrow::Cow, path::Path};
 
 use doctor_ext::{Messages, PathExt, Validator, ValidatorError};
 use lazy_regex::regex;
@@ -26,25 +26,25 @@ use crate::node_version::NodeVersion;
 /// assert!(result.is_ok());
 /// ```
 #[derive(TypedBuilder)]
-pub struct NodeVersionValidator<'a, P, S = String>
+pub struct NodeVersionValidator<'a, P, T>
 where
   P: AsRef<Path>,
-  S: Into<String> + AsRef<str>,
+  T: Into<Cow<'static, str>> + AsRef<str>,
 {
   config_path: P,
 
   #[builder(default = None, setter(strip_option))]
-  with_valid_range: Option<Vec<S>>,
+  with_valid_range: Option<Vec<T>>,
 
   #[builder(default = None, setter(strip_option))]
   with_additional_validation:
     Option<Box<dyn Fn(&NodeVersion) -> Result<Vec<MietteDiagnostic>, ValidatorError> + 'a>>,
 }
 
-impl<'a, P, S> NodeVersionValidator<'a, P, S>
+impl<'a, P, T> NodeVersionValidator<'a, P, T>
 where
   P: AsRef<Path>,
-  S: Into<String> + AsRef<str>,
+  T: Into<Cow<'static, str>> + AsRef<str>,
 {
   fn validate_valid_range(
     &self,
@@ -60,7 +60,7 @@ where
       let mut ranges = vec![];
 
       for range_str in with_valid_range {
-        let range = node_semver::Range::parse(range_str)?;
+        let range = node_semver::Range::parse(range_str.as_ref())?;
         ranges.push(range);
       }
 
@@ -105,10 +105,10 @@ where
   }
 }
 
-impl<'a, P, S> Validator for NodeVersionValidator<'a, P, S>
+impl<'a, P, T> Validator for NodeVersionValidator<'a, P, T>
 where
   P: AsRef<Path>,
-  S: Into<String> + AsRef<str>,
+  T: Into<Cow<'static, str>> + AsRef<str>,
 {
   /// validate node version file
   ///
@@ -207,7 +207,7 @@ mod tests {
   fn test_validate_node_version_file_invalid() {
     let res = NodeVersionValidator::builder()
       .config_path("./fixtures/.invalid")
-      .with_valid_range(vec!["^18.0.0".to_string()])
+      .with_valid_range(vec!["^18.0.0"])
       .build()
       .validate();
 
@@ -223,7 +223,7 @@ mod tests {
   fn test_validate_node_version_file_not_found() {
     let res = NodeVersionValidator::builder()
       .config_path("./fixtures/.not-found")
-      .with_valid_range(vec!["^18.0.0".to_string()])
+      .with_valid_range(vec!["^18.0.0"])
       .build()
       .validate();
 
@@ -239,7 +239,7 @@ mod tests {
   fn test_validate_node_version_file_empty() {
     let res = NodeVersionValidator::builder()
       .config_path("./fixtures/.empty")
-      .with_valid_range(vec!["^18.0.0".to_string()])
+      .with_valid_range(vec!["^18.0.0"])
       .build()
       .validate();
 
@@ -255,7 +255,7 @@ mod tests {
   fn test_validate_node_version_file_success() {
     let res = NodeVersionValidator::builder()
       .config_path("./fixtures/.success")
-      .with_valid_range(vec!["^18.0.0".to_string()])
+      .with_valid_range(vec!["^18.0.0"])
       .build()
       .validate();
 
@@ -291,7 +291,7 @@ mod tests {
   fn test_validate_node_version_file_valid_range() {
     let res = NodeVersionValidator::builder()
       .config_path("./fixtures/.range")
-      .with_valid_range(vec!["^18.0.0".to_string(), "^2.0.0".to_string()])
+      .with_valid_range(vec!["^18.0.0", "^2.0.0"])
       .build()
       .validate();
 
@@ -302,7 +302,7 @@ mod tests {
   fn test_validate_node_version_file_valid_range_error() {
     let res = NodeVersionValidator::builder()
       .config_path("./fixtures/.range")
-      .with_valid_range(vec!["^14.0.0".to_string(), "^15.0.0".to_string()])
+      .with_valid_range(vec!["^14.0.0", "^15.0.0"])
       .build()
       .validate();
 

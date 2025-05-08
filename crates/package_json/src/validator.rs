@@ -291,7 +291,7 @@ where
     //     .into()
     // })?;
 
-    let package_json = package_json_parser::PackageJsonParser::parse(path).unwrap();
+    let package_json = package_json_parser::PackageJsonParser::parse(path)?;
 
     let mut messages = Messages::builder()
       .source_code(package_json.__raw_source.clone().unwrap_or_default())
@@ -399,5 +399,20 @@ mod tests {
       assert!(msg.has_error());
       msg.render();
     }
+  }
+
+  #[test]
+  fn test_validate_private_str() {
+    let result = PackageJsonValidator::builder()
+      .config_path("fixtures/str_private.json")
+      .with_validate_private(ValidatePrivate::True)
+      .build()
+      .validate();
+
+    println!("{:?}", result);
+
+    assert!(!result.is_ok());
+
+    assert!(matches!(result, Err(ValidatorError::IoError(_))));
   }
 }
