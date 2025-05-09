@@ -127,5 +127,9 @@ pub fn doctor<T: AsRef<Path>>(
     dashboard.render();
   }
 
+  if messages.is_empty() {
+    println!("🚀 Ship it! Everything looks perfect.");
+  }
+
   Ok(messages)
 }
