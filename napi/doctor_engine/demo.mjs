@@ -8,9 +8,12 @@ import { innerDebugLint, initializeLogger,innerLint, NaPiCategory,doctor,LogLeve
   initializeLogger(LogLevel.Error);
   // console.log('start')
 
-  const res = await doctor('/Users/10015448/Git/gtms/demo',{
+  const res = await doctor('/Users/10015448/Git/gtms',{
 
   });
+
+  console.log(res);
+  
   
   // const res = await innerLint({
   //   cwd: '/Users/10015448/Git/drawio_ui',
