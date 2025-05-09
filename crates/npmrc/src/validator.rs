@@ -6,7 +6,9 @@ use miette::MietteDiagnostic;
 use typed_builder::TypedBuilder;
 
 use crate::{
-  diagnostics::{NpmrcMissingRegistryDiagnostic, NpmrcWrongRegistryDiagnostic},
+  diagnostics::{
+    NpmrcConfigFileNotFoundDiagnostic, NpmrcMissingRegistryDiagnostic, NpmrcWrongRegistryDiagnostic,
+  },
   npmrc_config::NpmrcConfig,
 };
 
@@ -134,6 +136,17 @@ where
   /// assert!(validator.validate().is_ok());
   /// ```
   fn validate(&self) -> Result<Vec<Messages>, ValidatorError> {
+    let path = self.config_path.as_ref();
+
+    if !path.exists() {
+      return Ok(vec![
+        Messages::builder()
+          .source_code(String::new())
+          .source_path(path.to_string_owned())
+          .diagnostics(vec![NpmrcConfigFileNotFoundDiagnostic::at(path)])
+          .build(),
+      ]);
+    }
     let config = NpmrcConfig::parse(self.config_path.as_ref())?;
 
     let mut messages = Messages::builder()

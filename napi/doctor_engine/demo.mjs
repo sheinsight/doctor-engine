@@ -6,7 +6,7 @@ import { innerDebugLint, initializeLogger,innerLint, NaPiCategory,doctor,LogLeve
 
   // initializeLogger(LogLevel.Silent);
   initializeLogger(LogLevel.Error);
-  console.log('start')
+  // console.log('start')
 
   const res = await doctor('/Users/10015448/Git/gtms/demo',{
 
@@ -152,5 +152,5 @@ import { innerDebugLint, initializeLogger,innerLint, NaPiCategory,doctor,LogLeve
   // });
 
   // console.log(res);
-  console.log('end')
+  // console.log('end')
 })()

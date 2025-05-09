@@ -6,13 +6,14 @@ pub struct ConfigFileNotFoundDiagnostic;
 
 impl ConfigFileNotFoundDiagnostic {
   pub fn at<P: AsRef<Path>>(path: P) -> MietteDiagnostic {
-    MietteDiagnostic::new(format!(
-      "Config file {:?} not found",
-      path.as_ref().display()
-    ))
-    .with_code("shined(package-json:config-file-not-found)")
-    .with_severity(miette::Severity::Error)
-    .with_help("Please add a config file to your project")
+    let dir = path.as_ref().parent().map_or(Path::new(""), |p| p);
+    MietteDiagnostic::new(format!("Config file was not found."))
+      .with_code("shined(package-json:config-file-not-found)")
+      .with_severity(miette::Severity::Error)
+      .with_help(format!(
+        "Please add a package.json file to your project at {}",
+        dir.display().to_string()
+      ))
   }
 }
 
@@ -35,7 +36,7 @@ pub struct MissingPrivateFieldDiagnostic;
 impl MissingPrivateFieldDiagnostic {
   pub fn at(span: impl Into<SourceSpan>) -> MietteDiagnostic {
     MietteDiagnostic::new("Require 'private' field")
-      .with_code("shined(package-json-missing-private)")
+      .with_code("shined(package-json:missing-private)")
       .with_severity(miette::Severity::Error)
       .with_label(LabeledSpan::at(span, "private is required"))
       .with_help("Please add a private field to your package.json file")
@@ -47,7 +48,7 @@ pub struct MissingNameFieldDiagnostic;
 impl MissingNameFieldDiagnostic {
   pub fn at(span: impl Into<SourceSpan>) -> MietteDiagnostic {
     MietteDiagnostic::new("Require 'name' field")
-      .with_code("shined(package-json-missing-name)")
+      .with_code("shined(package-json:missing-name)")
       .with_severity(miette::Severity::Error)
       .with_label(LabeledSpan::at(span, "name is required"))
       .with_help("Please add a name field to your package.json file")
@@ -59,7 +60,7 @@ pub struct PrivateNotTrueDiagnostic;
 impl PrivateNotTrueDiagnostic {
   pub fn at(span: impl Into<SourceSpan>) -> MietteDiagnostic {
     MietteDiagnostic::new("The 'private' field in package.json must be set to true")
-      .with_code("shined(package-json-private-not-true)")
+      .with_code("shined(package-json:private-not-true)")
       .with_severity(miette::Severity::Error)
       .with_label(LabeledSpan::at(span, "Set private field to true"))
       .with_help(

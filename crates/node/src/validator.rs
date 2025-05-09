@@ -2,10 +2,16 @@ use std::{borrow::Cow, path::Path};
 
 use doctor_ext::{Messages, PathExt, Validator, ValidatorError};
 use lazy_regex::regex;
-use miette::{LabeledSpan, MietteDiagnostic};
+use miette::MietteDiagnostic;
 use typed_builder::TypedBuilder;
 
-use crate::node_version::NodeVersion;
+use crate::{
+  diagnostics::{
+    EmptyNodeVersionDiagnostic, InvalidVersionFormatDiagnostic, InvalidVersionRangeDiagnostic,
+    NodeVersionFileNotFoundDiagnostic,
+  },
+  node_version::NodeVersion,
+};
 
 /// validate node version file
 ///
@@ -70,20 +76,8 @@ where
         return Ok(diagnostics);
       }
 
-      let diagnostic = MietteDiagnostic::new(r#"The node version is not in the valid range."#)
-        .with_code("shined_doctor/node_version_not_in_valid_range")
-        .with_label(LabeledSpan::at(
-          0..len,
-          format!(
-            r#"Wrong version number format , Only support version range in {}"#,
-            ranges
-              .iter()
-              .map(|r| r.to_string())
-              .collect::<Vec<String>>()
-              .join(", ")
-          ),
-        ))
-        .with_severity(miette::Severity::Error);
+      let diagnostic =
+        InvalidVersionRangeDiagnostic::at(0..len, ranges.iter().map(|r| r.to_string()).collect());
 
       diagnostics.push(diagnostic);
     }
@@ -132,17 +126,10 @@ where
     let path = self.config_path.as_ref();
 
     if !path.exists() {
-      let diagnostic =
-        MietteDiagnostic::new(r#"The .node-version configuration file was not found."#)
-          .with_code("shined_doctor/node_version_file_not_found")
-          .with_severity(miette::Severity::Error)
-          .with_help(format!(
-            r#"Please create a new .node-version file under {config_path}, and correctly declare the version number of the node you are using, which needs to meet the format '^\d+\.\d+\.\d+$'."#,
-            config_path = path.display().to_string()
-          ));
-
       return Ok(vec![
-        Messages::builder().diagnostics(vec![diagnostic]).build(),
+        Messages::builder()
+          .diagnostics(vec![NodeVersionFileNotFoundDiagnostic::at(path)])
+          .build(),
       ]);
     }
 
@@ -157,15 +144,7 @@ where
     if let Some(version) = &node_version.version {
       let r = regex!(r#"^\d+\.\d+\.\d+$"#);
       if !r.is_match(&version) {
-        let diagnostic =
-          MietteDiagnostic::new(r#"Only support version numbers that meet '^\d+\.\d+\.\d+$'."#)
-            .with_label(LabeledSpan::at(
-              0..version.len(),
-              r#"Wrong version number format"#,
-            ))
-            .with_help(r#"Please modify your version number to meet the format '^\d+\.\d+\.\d+$'."#)
-            .with_code("shined_doctor/invalid_node_version")
-            .with_severity(miette::Severity::Error);
+        let diagnostic = InvalidVersionFormatDiagnostic::at(0..version.len());
 
         messages.push(diagnostic);
 
@@ -175,14 +154,7 @@ where
 
     if let Some(raw_source) = &node_version.__raw_source {
       if raw_source.trim().is_empty() {
-        let diagnostic = MietteDiagnostic::new(r#"Empty node version"#)
-          .with_code("shined_doctor/empty_node_version")
-          .with_severity(miette::Severity::Error)
-          .with_label(LabeledSpan::at(
-            0..raw_source.len(),
-            r#"Empty node version"#,
-          ))
-          .with_help(r#"Please add a node version to your .node-version file."#);
+        let diagnostic = EmptyNodeVersionDiagnostic::at(0..raw_source.len());
 
         messages.push(diagnostic);
 
