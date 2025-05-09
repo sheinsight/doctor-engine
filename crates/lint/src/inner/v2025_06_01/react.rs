@@ -48,7 +48,7 @@ impl RuleGetter for ReactRuleGetter {
         "react/jsx-no-target-blank":[2,{
           "enforceDynamicLinks": "always",
           "warnOnSpreadAttributes":true,
-          "allow_referrer":true,
+          "allowReferrer":true,
           "links":true,
           "forms":false
         }],
