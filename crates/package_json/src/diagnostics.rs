@@ -1,4 +1,20 @@
+use std::path::Path;
+
 use miette::{LabeledSpan, MietteDiagnostic, SourceSpan};
+
+pub struct ConfigFileNotFoundDiagnostic;
+
+impl ConfigFileNotFoundDiagnostic {
+  pub fn at<P: AsRef<Path>>(path: P) -> MietteDiagnostic {
+    MietteDiagnostic::new(format!(
+      "Config file {:?} not found",
+      path.as_ref().display()
+    ))
+    .with_code("shined(package-json:config-file-not-found)")
+    .with_severity(miette::Severity::Error)
+    .with_help("Please add a config file to your project")
+  }
+}
 
 pub struct MissingPackageManagerDiagnostic;
 

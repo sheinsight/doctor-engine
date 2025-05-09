@@ -8,8 +8,8 @@ use package_json_parser::PackageJsonParser;
 use typed_builder::TypedBuilder;
 
 use crate::diagnostics::{
-  MissingNameFieldDiagnostic, MissingPackageManagerDiagnostic, MissingPrivateFieldDiagnostic,
-  PrivateNotTrueDiagnostic,
+  ConfigFileNotFoundDiagnostic, MissingNameFieldDiagnostic, MissingPackageManagerDiagnostic,
+  MissingPrivateFieldDiagnostic, PrivateNotTrueDiagnostic,
 };
 
 #[derive(Debug)]
@@ -283,13 +283,15 @@ where
   fn validate(&self) -> Result<Vec<Messages>, ValidatorError> {
     let path = self.config_path.as_ref();
 
-    // let package_json = package_json_parser::PackageJsonParser::parse(path).map_err(|e| {
-    //   ParseErr::builder()
-    //     .path(path.to_string_owned())
-    //     .source(e)
-    //     .build()
-    //     .into()
-    // })?;
+    if !path.exists() {
+      return Ok(vec![
+        Messages::builder()
+          .source_code(String::new())
+          .source_path(path.to_string_owned())
+          .diagnostics(vec![ConfigFileNotFoundDiagnostic::at(path)])
+          .build(),
+      ]);
+    }
 
     let package_json = package_json_parser::PackageJsonParser::parse(path)?;
 

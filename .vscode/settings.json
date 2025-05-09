@@ -45,6 +45,7 @@
     "shelljs",
     "softprops",
     "taplo",
-    "thiserror"
+    "thiserror",
+    "tokei"
   ]
 }
