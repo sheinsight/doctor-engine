@@ -49,7 +49,7 @@ impl RuleGetter for EslintRuleGetter {
         "eslint/no-nonoctal-decimal-escape":[2],
         "eslint/no-obj-calls":[2],
         "eslint/no-prototype-builtins":[2],
-        "eslint/no-redeclare":[2],
+        "eslint/no-redeclare":[2,{ "builtinGlobals": false }],
         "eslint/no-regex-spaces":[2],
         "eslint/no-self-assign":[2],
         "eslint/no-setter-return":[2],

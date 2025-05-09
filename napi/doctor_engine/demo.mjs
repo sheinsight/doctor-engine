@@ -8,18 +8,8 @@ import { innerDebugLint, initializeLogger,innerLint, NaPiCategory,doctor,LogLeve
   initializeLogger(LogLevel.Error);
   console.log('start')
 
-  await doctor('/Users/10015448/Git/csp-new',{
-    verbose: true,
-    globals: {
-      CKEDITOR: 'readonly',
-    },
-    ignore: [
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/build/**',
-      '**/coverage/**',
-      '**/logs/**',
-    ],
+  const res = await doctor('/Users/10015448/Git/gtms/demo',{
+
   });
   
   // const res = await innerLint({
