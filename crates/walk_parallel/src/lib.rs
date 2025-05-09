@@ -128,7 +128,7 @@ fn is_minified_by_characteristics(path: &Path) -> bool {
     .iter()
     .any(|e| file_name.to_string_lossy().contains(e))
   {
-    return false;
+    return true;
   }
 
   if let Ok(content) = fs::read_to_string(path) {
@@ -157,5 +157,19 @@ fn is_minified_by_characteristics(path: &Path) -> bool {
     avg_line_length > 500.0 || (semicolon_packed && has_long_lines) || has_source_map
   } else {
     false
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn should_ignore_minified_js_file() {
+    let walk_parallel_js = WalkParallelJs::builder()
+      .cwd(PathBuf::from("./fixtures"))
+      .build();
+    let res = walk_parallel_js.walk(|path| Ok(path)).unwrap();
+    assert!(res.len() == 1);
   }
 }
