@@ -1,0 +1,12 @@
+[package]
+authors.workspace      = true
+edition.workspace      = true
+homepage.workspace     = true
+license.workspace      = true
+name                   = "doctor_cloc"
+repository.workspace   = true
+rust-version.workspace = true
+version                = "0.1.0"
+
+[dependencies]
+tokei = { workspace = true }

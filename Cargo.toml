@@ -1,5 +1,6 @@
 [workspace]
 members = [
+  "crates/cloc",
   "crates/doctor",
   "crates/ext",
   "crates/lint",
@@ -72,6 +73,7 @@ insta  = "1.36.1"
 tokei = "12.1.2"
 
 doctor               = { path = "crates/doctor" }
+doctor_cloc          = { path = "crates/cloc" }
 doctor_ext           = { path = "crates/ext" }
 doctor_lint          = { path = "crates/lint" }
 doctor_node          = { path = "crates/node" }

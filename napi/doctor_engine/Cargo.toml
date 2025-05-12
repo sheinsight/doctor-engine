@@ -34,7 +34,9 @@ strum_macros    = { workspace = true }
 
 anyhow = { workspace = true }
 tabled = { workspace = true }
+tokei  = { workspace = true }
 
+doctor_cloc          = { workspace = true }
 doctor_ext           = { workspace = true }
 doctor_lint          = { workspace = true }
 doctor_node          = { workspace = true }

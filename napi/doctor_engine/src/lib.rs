@@ -1,3 +1,4 @@
+mod cloc_binding;
 mod lint;
 mod log;
 

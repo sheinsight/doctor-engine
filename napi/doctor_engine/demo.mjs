@@ -1,6 +1,6 @@
 
 
-import { innerDebugLint, initializeLogger,innerLint, NaPiCategory,doctor,LogLevel } from './index.js'
+import { innerDebugLint, initializeLogger,innerLint, NaPiCategory,doctor,LogLevel,getLanguagesStatistics } from './index.js'
 
 (async () => {
 
@@ -8,11 +8,16 @@ import { innerDebugLint, initializeLogger,innerLint, NaPiCategory,doctor,LogLeve
   initializeLogger(LogLevel.Error);
   // console.log('start')
 
-  const res = await doctor('/Users/10015448/Git/gtms',{
+  const res1 = await doctor('/Users/10015448/Git/gtms',{
 
   });
 
-  console.log(res);
+  // const res2 = await getLanguagesStatistics(['/Users/10015448/Git/csp-new'])
+
+  // console.table(res2)
+ 
+
+  // console.log(res);
   
   
   // const res = await innerLint({
