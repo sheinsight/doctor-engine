@@ -9,8 +9,12 @@ import { innerDebugLint, initializeLogger,innerLint, NaPiCategory,doctor,LogLeve
   // console.log('start')
 
   const res1 = await doctor('/Users/10015448/Git/gtms',{
-
+    maxRenderCount:10,
+    withDashboard:false,
   });
+
+  // console.log(JSON.stringify(res1,null,2));
+  
 
   // const res2 = await getLanguagesStatistics(['/Users/10015448/Git/csp-new'])
 

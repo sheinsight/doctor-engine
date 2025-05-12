@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use doctor_ext::Messages;
 use miette::{LabeledSpan, MietteDiagnostic, Severity, SourceSpan};
 use napi::Result;
@@ -8,8 +6,8 @@ use napi_derive::napi;
 #[napi(object)]
 pub struct DoctorOptions {
   pub verbose: Option<bool>,
-  pub globals: Option<HashMap<String, String>>,
-  pub ignore: Option<Vec<String>>,
+  pub max_render_count: Option<u32>,
+  pub with_dashboard: Option<bool>,
 }
 
 #[napi(object)]
@@ -88,7 +86,7 @@ impl From<MietteDiagnostic> for NapiDiagnostics {
 
 #[napi(object)]
 pub struct NapiMessages {
-  pub source_code: String,
+  // pub source_code: String,
   pub source_path: String,
   pub diagnostics: Vec<NapiDiagnostics>,
 }
@@ -96,7 +94,7 @@ pub struct NapiMessages {
 impl From<Messages> for NapiMessages {
   fn from(messages: Messages) -> Self {
     NapiMessages {
-      source_code: messages.source_code,
+      // source_code: messages.source_code,
       source_path: messages.source_path,
       diagnostics: messages.diagnostics.into_iter().map(|d| d.into()).collect(),
     }
@@ -106,10 +104,12 @@ impl From<Messages> for NapiMessages {
 #[napi]
 pub async fn doctor(cwd: String, _options: DoctorOptions) -> Result<Vec<NapiMessages>> {
   let options = doctor::DoctorOptions::builder()
-    .max_render_count(100)
-    .with_dashboard(true)
+    .max_render_count(_options.max_render_count.unwrap_or(100) as usize)
+    .with_dashboard(_options.with_dashboard.unwrap_or(true))
     .build();
+
   let messages =
     doctor::doctor(cwd, options).map_err(|e| napi::Error::new(napi::Status::GenericFailure, e))?;
+
   Ok(messages.into_iter().map(|m| m.into()).collect())
 }
