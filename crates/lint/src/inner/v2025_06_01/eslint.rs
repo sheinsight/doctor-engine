@@ -15,7 +15,7 @@ impl RuleGetter for EslintRuleGetter {
     json!({
         "eslint/constructor-super": [2],
         "eslint/for-direction":[2],
-        "eslint/getter-return": [2, { "allowImplicit": false }],
+        "eslint/getter-return": [2, { "allowImplicit": true }],
         "eslint/no-async-promise-executor": [2],
         "eslint/no-case-declarations":[2],
         "eslint/no-class-assign": [2],
@@ -59,12 +59,12 @@ impl RuleGetter for EslintRuleGetter {
         "eslint/no-unexpected-multiline":[2],
         "eslint/no-unreachable":[2],
         "eslint/no-unsafe-finally":[2],
-        "eslint/no-unsafe-negation":[2],
+        "eslint/no-unsafe-negation":[2,{"enforceForOrderingRelations":true}],
         "eslint/no-unsafe-optional-chaining":[2],
         "eslint/no-unused-labels":[2],
         "eslint/no-useless-catch":[2],
         "eslint/no-useless-escape":[2],
-        "eslint/use-isnan":[2],
+        "eslint/use-isnan":[2,{"enforceForIndexOf": true}],
         "eslint/valid-typeof":[2]
     })
     .as_object()
