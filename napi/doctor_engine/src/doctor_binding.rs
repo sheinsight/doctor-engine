@@ -10,6 +10,25 @@ pub struct DoctorOptions {
   pub with_dashboard: Option<bool>,
 }
 
+impl Into<doctor::DoctorOptions> for DoctorOptions {
+  fn into(self) -> doctor::DoctorOptions {
+    doctor::DoctorOptions::builder()
+      .max_render_count(self.max_render_count.unwrap_or(100) as usize)
+      .with_dashboard(self.with_dashboard.unwrap_or(true))
+      .build()
+  }
+}
+
+impl Default for DoctorOptions {
+  fn default() -> Self {
+    Self {
+      verbose: None,
+      max_render_count: Some(100),
+      with_dashboard: Some(true),
+    }
+  }
+}
+
 #[napi(object)]
 pub struct NapiSourceSpan {
   pub offset: u32,
@@ -102,14 +121,11 @@ impl From<Messages> for NapiMessages {
 }
 
 #[napi]
-pub async fn doctor(cwd: String, opts: DoctorOptions) -> Result<Vec<NapiMessages>> {
-  let options = doctor::DoctorOptions::builder()
-    .max_render_count(opts.max_render_count.unwrap_or(100) as usize)
-    .with_dashboard(opts.with_dashboard.unwrap_or(true))
-    .build();
+pub async fn doctor(cwd: String, opts: Option<DoctorOptions>) -> Result<Vec<NapiMessages>> {
+  let opts = opts.unwrap_or_default();
 
-  let messages =
-    doctor::doctor(cwd, options).map_err(|e| napi::Error::new(napi::Status::GenericFailure, e))?;
+  let messages = doctor::doctor(cwd, opts.into())
+    .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e))?;
 
   Ok(messages.into_iter().map(|m| m.into()).collect())
 }

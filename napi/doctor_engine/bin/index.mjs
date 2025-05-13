@@ -17,8 +17,7 @@ cli.command('','check project health')
 
     const cwd = options.cwd || process.cwd();
 
-    const res = await doctor(cwd,{
-    });
+    const res = await doctor(cwd);
 
     if (res.length > 0) {
       process.exit(1);

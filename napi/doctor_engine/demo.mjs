@@ -8,7 +8,7 @@ import { innerDebugLint, initializeLogger,innerLint, NaPiCategory,doctor,LogLeve
   initializeLogger(LogLevel.Error);
   // console.log('start')
 
-  const res1 = await doctor('/Users/10015448/Git/gtms/demo',{
+  const res1 = await doctor('/Users/10015448/Git/gtms',{
     maxRenderCount:10,
     withDashboard:false,
   });
@@ -20,9 +20,9 @@ import { innerDebugLint, initializeLogger,innerLint, NaPiCategory,doctor,LogLeve
   // console.log(JSON.stringify(res1,null,2));
   
 
-  // const res2 = await getLanguagesStatistics(['/Users/10015448/Git/csp-new'])
+  const res2 = await getLanguagesStatistics(['/Users/10015448/Git/gtms'])
 
-  // console.table(res2)
+  console.table(res2)
  
 
   // console.log(res);
