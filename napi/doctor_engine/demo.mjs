@@ -8,10 +8,14 @@ import { innerDebugLint, initializeLogger,innerLint, NaPiCategory,doctor,LogLeve
   initializeLogger(LogLevel.Error);
   // console.log('start')
 
-  const res1 = await doctor('/Users/10015448/Git/gtms',{
+  const res1 = await doctor('/Users/10015448/Git/gtms/demo',{
     maxRenderCount:10,
     withDashboard:false,
   });
+
+
+
+  
 
   // console.log(JSON.stringify(res1,null,2));
   

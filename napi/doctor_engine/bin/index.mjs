@@ -18,8 +18,11 @@ cli.command('','check project health')
     const cwd = options.cwd || process.cwd();
 
     const res = await doctor(cwd,{
-      // verbose: true,
     });
+
+    if (res.length > 0) {
+      process.exit(1);
+    }
 
     const end = performance.now();
     console.log(`Time taken: ${end - start} milliseconds`);

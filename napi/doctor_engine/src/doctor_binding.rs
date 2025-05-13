@@ -102,10 +102,10 @@ impl From<Messages> for NapiMessages {
 }
 
 #[napi]
-pub async fn doctor(cwd: String, _options: DoctorOptions) -> Result<Vec<NapiMessages>> {
+pub async fn doctor(cwd: String, opts: DoctorOptions) -> Result<Vec<NapiMessages>> {
   let options = doctor::DoctorOptions::builder()
-    .max_render_count(_options.max_render_count.unwrap_or(100) as usize)
-    .with_dashboard(_options.with_dashboard.unwrap_or(true))
+    .max_render_count(opts.max_render_count.unwrap_or(100) as usize)
+    .with_dashboard(opts.with_dashboard.unwrap_or(true))
     .build();
 
   let messages =
