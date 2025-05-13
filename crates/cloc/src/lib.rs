@@ -29,12 +29,7 @@ pub fn get_languages_statistics<P: AsRef<Path>>(
 
   let languages_statistics = languages
     .into_iter()
-    .map(|(lang, stats)| LanguageStatistics {
-      language: lang.into(),
-      code: stats.code as u32,
-      comments: stats.comments as u32,
-      blanks: stats.blanks as u32,
-    })
+    .map(LanguageStatistics::from)
     .collect::<Vec<_>>();
 
   Ok(languages_statistics)
