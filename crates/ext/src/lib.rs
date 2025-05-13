@@ -1,9 +1,11 @@
 use std::path::Path;
 mod doctor_diagnostic;
 mod error;
+mod location;
 mod message;
 
 pub use error::*;
+pub use location::*;
 pub use message::*;
 
 pub trait PathExt {
