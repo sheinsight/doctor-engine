@@ -1,14 +1,12 @@
+mod language_statistics;
+mod language_type;
+
 use std::path::Path;
 
-use tokei::{Config, LanguageType, Languages};
+use tokei::{Config, Languages};
 
-#[derive(Debug)]
-pub struct LanguageStatistics {
-  pub language: LanguageType,
-  pub code: u32,
-  pub comments: u32,
-  pub blanks: u32,
-}
+pub use language_statistics::*;
+pub use language_type::*;
 
 pub fn get_languages_statistics<P: AsRef<Path>>(
   path: &[P],
@@ -32,7 +30,7 @@ pub fn get_languages_statistics<P: AsRef<Path>>(
   let languages_statistics = languages
     .into_iter()
     .map(|(lang, stats)| LanguageStatistics {
-      language: lang,
+      language: lang.into(),
       code: stats.code as u32,
       comments: stats.comments as u32,
       blanks: stats.blanks as u32,

@@ -8,5 +8,10 @@ repository.workspace   = true
 rust-version.workspace = true
 version                = "0.1.0"
 
+[features]
+napi = ["dep:napi", "dep:napi-derive"]
+
 [dependencies]
-tokei = { workspace = true }
+napi        = { workspace = true, optional = true }
+napi-derive = { workspace = true, optional = true }
+tokei       = { workspace = true }
