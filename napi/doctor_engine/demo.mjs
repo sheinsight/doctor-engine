@@ -10,7 +10,7 @@ import { innerDebugLint, initializeLogger,innerLint, NaPiCategory,doctor,LogLeve
 
   const res1 = await doctor('/Users/10015448/Git/gtms',{
     maxRenderCount:10,
-    withDashboard:false,
+    withDashboard:true,
   });
 
 

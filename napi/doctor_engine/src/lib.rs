@@ -1,8 +1,7 @@
 pub mod cloc;
-mod doctor_binding;
 mod lint;
 mod log;
+pub mod specification;
 
-pub use doctor_binding::*;
 pub use lint::*;
 pub use log::*;
