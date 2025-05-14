@@ -3,7 +3,7 @@ use std::{
   ops::{Deref, DerefMut},
 };
 
-use doctor_ext::{Messages, Validator, ValidatorError};
+use doctor_core::{Messages, ValidatorError, traits::Validator};
 use tabled::{Table, Tabled};
 
 #[derive(Tabled)]

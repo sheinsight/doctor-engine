@@ -10,7 +10,7 @@ version                = "0.1.0"
 
 [dependencies]
 config        = { workspace = true }
-doctor_ext    = { workspace = true }
+doctor_core   = { workspace = true }
 miette        = { workspace = true }
 rustc-hash    = { workspace = true }
 serde         = { workspace = true }

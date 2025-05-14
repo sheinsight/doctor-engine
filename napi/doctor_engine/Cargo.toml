@@ -37,7 +37,7 @@ tabled = { workspace = true }
 tokei  = { workspace = true }
 
 doctor_cloc          = { workspace = true, features = ["napi"] }
-doctor_ext           = { workspace = true }
+doctor_core          = { workspace = true }
 doctor_lint          = { workspace = true }
 doctor_node          = { workspace = true }
 doctor_npmrc         = { workspace = true }

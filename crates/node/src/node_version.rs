@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use doctor_ext::ValidatorError;
+use doctor_core::ValidatorError;
 
 pub struct NodeVersion {
   pub version: Option<String>,

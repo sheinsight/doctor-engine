@@ -24,7 +24,7 @@ pub fn initialize_logger(level: Option<LogLevel>) {
 
     let default_filter = [
       "doctor",
-      "doctor_ext",
+      "doctor_core",
       "doctor_lint",
       "doctor_node",
       "doctor_npmrc",

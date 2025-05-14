@@ -2,7 +2,10 @@ use std::path::Path;
 
 use biome_json_parser::{JsonParserOptions, parse_json};
 use biome_rowan::TextRange;
-use doctor_ext::{Messages, PathExt, Validator, ValidatorError};
+use doctor_core::{
+  Messages, ValidatorError,
+  traits::{PathExt, Validator},
+};
 use miette::MietteDiagnostic;
 use package_json_parser::PackageJsonParser;
 use typed_builder::TypedBuilder;
@@ -40,7 +43,7 @@ pub enum ValidatePrivate {
 /// ```rust
 /// use doctor_package_json::validator::PackageJsonValidator;
 /// use std::path::Path;
-/// use doctor_ext::Validator;
+/// use doctor_core::{ ValidatorError, traits::Validator};
 ///
 /// let validator = PackageJsonValidator::builder()
 ///   .config_path("./fixtures/package.json")
@@ -59,7 +62,7 @@ pub enum ValidatePrivate {
 /// ```rust
 /// use doctor_package_json::validator::{PackageJsonValidator,ValidateName};
 /// use std::path::Path;
-/// use doctor_ext::{Validator, Messages, ValidatorError};
+/// use doctor_core::{ ValidatorError, traits::Validator};
 ///
 /// let validator = PackageJsonValidator::builder()
 ///   .config_path("./fixtures/no_name.json")
@@ -80,7 +83,7 @@ pub enum ValidatePrivate {
 /// ```rust
 /// use doctor_package_json::validator::{PackageJsonValidator,ValidatePrivate};
 /// use std::path::Path;
-/// use doctor_ext::{Validator, Messages, ValidatorError};
+/// use doctor_core::{ ValidatorError, traits::Validator};
 ///
 /// let validator = PackageJsonValidator::builder()
 ///   .config_path("./fixtures/no_private.json")
@@ -100,7 +103,7 @@ pub enum ValidatePrivate {
 /// ```rust
 /// use doctor_package_json::validator::{PackageJsonValidator,ValidatePackageManager};
 /// use std::path::Path;  
-/// use doctor_ext::{Validator, Messages, ValidatorError};
+/// use doctor_core::{ ValidatorError, traits::Validator};
 ///
 /// let validator = PackageJsonValidator::builder()
 ///   .config_path("./fixtures/no_package_manager.json")
@@ -115,7 +118,7 @@ pub enum ValidatePrivate {
 ///
 /// ```
 #[derive(TypedBuilder)]
-pub struct PackageJsonValidator<'a, P>
+pub struct PackageJsonValidator<P>
 where
   P: AsRef<Path>,
 {
@@ -129,13 +132,9 @@ where
 
   #[builder(default = None, setter(strip_option))]
   with_validate_package_manager: Option<ValidatePackageManager>,
-
-  #[builder(default = None, setter(strip_option))]
-  with_additional_validation:
-    Option<Box<dyn Fn(&PackageJsonParser) -> Result<Vec<MietteDiagnostic>, ValidatorError> + 'a>>,
 }
 
-impl<'a, P> PackageJsonValidator<'a, P>
+impl<P> PackageJsonValidator<P>
 where
   P: AsRef<Path>,
 {
@@ -244,22 +243,8 @@ where
 
     Ok(diagnostics)
   }
-
-  fn validate_additional_validation(
-    &self,
-    package_json: &PackageJsonParser,
-  ) -> Result<Vec<MietteDiagnostic>, ValidatorError> {
-    let mut diagnostics = vec![];
-
-    if let Some(with_additional_validation) = &self.with_additional_validation {
-      let diags = with_additional_validation(package_json)?;
-      diagnostics.extend(diags.into_iter());
-    }
-
-    Ok(diagnostics)
-  }
 }
-impl<'a, P> Validator for PackageJsonValidator<'a, P>
+impl<P> Validator for PackageJsonValidator<P>
 where
   P: AsRef<Path>,
 {
@@ -270,7 +255,7 @@ where
   /// ```rust
   /// use doctor_package_json::validator::PackageJsonValidator;
   /// use std::path::Path;
-  /// use doctor_ext::Validator;
+  /// use doctor_core::{ Messages, ValidatorError, traits::Validator};
   ///
   /// let validator = PackageJsonValidator::builder()
   ///   .config_path("./fixtures/package.json")
@@ -308,9 +293,6 @@ where
     messages.diagnostics.extend(diagnostics.into_iter());
 
     let diagnostics = self.validate_package_manager(&package_json)?;
-    messages.diagnostics.extend(diagnostics.into_iter());
-
-    let diagnostics = self.validate_additional_validation(&package_json)?;
     messages.diagnostics.extend(diagnostics.into_iter());
 
     Ok(vec![messages])
@@ -366,27 +348,6 @@ mod tests {
       msg.render();
     }
   }
-
-  // #[test]
-  // fn test_validate_package_json_additional_validation() {
-  //   let path = "fixtures/no_package_manager.json";
-  //   let result = PackageJsonValidator::builder()
-  //     .config_path(path)
-  //     .with_additional_validation(Box::new(|package_json| {
-  //       MissingPackageManagerError::new(package_json)
-  //     }))
-  //     .build()
-  //     .validate();
-
-  //   assert!(matches!(
-  //     result,
-  //     Err(PackageJsonValidatorError::MissingPackageManagerError(_))
-  //   ));
-
-  //   if let Err(e) = result {
-  //     eprintln!("{:?}", miette::Report::new(e));
-  //   }
-  // }
 
   #[test]
   fn should_fail_when_private_is_false() {

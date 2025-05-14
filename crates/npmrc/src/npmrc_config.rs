@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use doctor_ext::ValidatorError;
+use doctor_core::ValidatorError;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]

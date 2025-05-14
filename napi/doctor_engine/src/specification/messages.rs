@@ -1,4 +1,4 @@
-use doctor_ext::Messages;
+use doctor_core::Messages;
 use napi_derive::napi;
 
 use super::diagnostics::NapiDiagnostics;

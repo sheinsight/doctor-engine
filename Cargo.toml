@@ -2,7 +2,7 @@
 members = [
   "crates/cloc",
   "crates/doctor",
-  "crates/ext",
+  "crates/core",
   "crates/lint",
   "crates/node",
   "crates/npmrc",
@@ -75,7 +75,7 @@ tokei = "12.1.2"
 
 doctor               = { path = "crates/doctor" }
 doctor_cloc          = { path = "crates/cloc" }
-doctor_ext           = { path = "crates/ext" }
+doctor_core          = { path = "crates/core" }
 doctor_lint          = { path = "crates/lint" }
 doctor_node          = { path = "crates/node" }
 doctor_npmrc         = { path = "crates/npmrc" }

@@ -7,7 +7,7 @@ mod span;
 use std::collections::HashMap;
 
 pub use diagnostic::Diagnostic;
-use doctor_ext::PathExt;
+use doctor_core::traits::PathExt;
 use doctor_lint::{
   Category, EnvironmentFlags, GlobalValue, Globals, LintMode, LintValidator, OxlintrcBuilder,
   inner::Category20250601Inner,

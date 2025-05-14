@@ -1,6 +1,9 @@
 use std::{borrow::Cow, path::Path};
 
-use doctor_ext::{Messages, PathExt, Validator, ValidatorError};
+use doctor_core::{
+  Messages, ValidatorError,
+  traits::{PathExt, Validator},
+};
 
 use miette::MietteDiagnostic;
 use typed_builder::TypedBuilder;
@@ -18,7 +21,7 @@ use crate::{
 ///
 /// ```rust
 /// use doctor_npmrc::validator::NpmrcValidator;
-/// use doctor_ext::Validator;
+/// use doctor_core::{ ValidatorError, traits::Validator};
 ///
 /// let validator = NpmrcValidator::builder()
 ///   .config_path("./fixtures/.npmrc")
@@ -27,7 +30,7 @@ use crate::{
 /// assert!(validator.validate().is_ok());
 /// ```
 #[derive(TypedBuilder)]
-pub struct NpmrcValidator<'a, P, S>
+pub struct NpmrcValidator<P, S>
 where
   P: AsRef<Path>,
   S: Into<Cow<'static, str>> + AsRef<str>,
@@ -36,13 +39,9 @@ where
 
   #[builder(default = None,setter(strip_option))]
   with_registry_url: Option<Vec<S>>,
-
-  #[builder(default = None, setter(strip_option))]
-  with_additional_validation:
-    Option<Box<dyn Fn(&NpmrcConfig) -> Result<Vec<MietteDiagnostic>, ValidatorError> + 'a>>,
 }
 
-impl<'a, P, S> NpmrcValidator<'a, P, S>
+impl<P, S> NpmrcValidator<P, S>
 where
   P: AsRef<Path>,
   S: Into<Cow<'static, str>> + AsRef<str>,
@@ -86,19 +85,6 @@ where
     Ok(diagnostics)
   }
 
-  fn validate_additional_validation(
-    &self,
-    config: &NpmrcConfig,
-  ) -> Result<Vec<MietteDiagnostic>, ValidatorError> {
-    let diagnostics = vec![];
-
-    if let Some(additional_validation) = &self.with_additional_validation {
-      additional_validation(config)?;
-    }
-
-    Ok(diagnostics)
-  }
-
   fn find_registry_position(&self, content: &str) -> Option<(usize, usize)> {
     for line in content.lines() {
       if let Some(key_pos) = line.find("registry=") {
@@ -116,7 +102,7 @@ where
   }
 }
 
-impl<'a, P, S> Validator for NpmrcValidator<'a, P, S>
+impl<P, S> Validator for NpmrcValidator<P, S>
 where
   P: AsRef<Path>,
   S: Into<Cow<'static, str>> + AsRef<str>,
@@ -127,7 +113,7 @@ where
   ///
   /// ```rust
   /// use doctor_npmrc::validator::NpmrcValidator;
-  /// use doctor_ext::Validator;
+  /// use doctor_core::{ ValidatorError, traits::Validator};
   ///
   /// let validator = NpmrcValidator::builder()
   ///   .config_path("./fixtures/.npmrc")
@@ -156,10 +142,6 @@ where
       .build();
 
     let diagnostics = self.validate_registry(&config)?;
-
-    messages.diagnostics.extend(diagnostics.into_iter());
-
-    let diagnostics = self.validate_additional_validation(&config)?;
 
     messages.diagnostics.extend(diagnostics.into_iter());
 
@@ -246,22 +228,4 @@ mod tests {
       msg.render();
     }
   }
-
-  // #[test]
-  // fn test_validate_additional_validation() {
-  //   let result = NpmrcValidator::builder()
-  //     .config_path("fixtures/.npmrc")
-  //     .with_additional_validation(Box::new(|config| {
-  //       config
-  //         .get::<String>("unknown_field")
-  //         .map_err(|e| UnknownErr::builder().source(Box::new(e)).build().into())?;
-  //       Ok(())
-  //     }))
-  //     .build()
-  //     .validate();
-  //   assert!(matches!(
-  //     result,
-  //     Err(NpmrcValidatorError::UnknownErr { .. })
-  //   ));
-  // }
 }

@@ -3,7 +3,7 @@ mod scheduler;
 use std::path::{Path, PathBuf};
 
 use base64::{Engine, engine::general_purpose::STANDARD};
-use doctor_ext::{Messages, ValidatorError};
+use doctor_core::{Messages, ValidatorError};
 use doctor_lint::{
   Category, EnvironmentFlags, LintMode, LintValidator, OxlintrcBuilder, Sfconfig,
   inner::Category20250601Inner,

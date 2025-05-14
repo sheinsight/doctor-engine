@@ -1,6 +1,9 @@
 use std::{borrow::Cow, path::Path};
 
-use doctor_ext::{Messages, PathExt, Validator, ValidatorError};
+use doctor_core::{
+  Messages, ValidatorError,
+  traits::{PathExt, Validator},
+};
 use lazy_regex::regex;
 use miette::MietteDiagnostic;
 use typed_builder::TypedBuilder;
@@ -20,7 +23,7 @@ use crate::{
 /// ```rust
 /// use doctor_node::validator::NodeVersionValidator;
 /// use std::path::Path;
-/// use doctor_ext::{Validator, Messages, ValidatorError};
+/// use doctor_core::{ ValidatorError, traits::Validator};
 ///
 /// let validator = NodeVersionValidator::builder()
 ///   .config_path("./fixtures/.success")
@@ -32,7 +35,7 @@ use crate::{
 /// assert!(result.is_ok());
 /// ```
 #[derive(TypedBuilder)]
-pub struct NodeVersionValidator<'a, P, T>
+pub struct NodeVersionValidator<P, T>
 where
   P: AsRef<Path>,
   T: Into<Cow<'static, str>> + AsRef<str>,
@@ -41,13 +44,9 @@ where
 
   #[builder(default = None, setter(strip_option))]
   with_valid_range: Option<Vec<T>>,
-
-  #[builder(default = None, setter(strip_option))]
-  with_additional_validation:
-    Option<Box<dyn Fn(&NodeVersion) -> Result<Vec<MietteDiagnostic>, ValidatorError> + 'a>>,
 }
 
-impl<'a, P, T> NodeVersionValidator<'a, P, T>
+impl<P, T> NodeVersionValidator<P, T>
 where
   P: AsRef<Path>,
   T: Into<Cow<'static, str>> + AsRef<str>,
@@ -84,22 +83,9 @@ where
 
     Ok(diagnostics)
   }
-
-  fn validate_additional_validation(
-    &self,
-    node_version: &NodeVersion,
-  ) -> Result<Vec<MietteDiagnostic>, ValidatorError> {
-    let mut diagnostics = vec![];
-
-    if let Some(with_additional_validation) = &self.with_additional_validation {
-      diagnostics.extend(with_additional_validation(node_version)?);
-    }
-
-    Ok(diagnostics)
-  }
 }
 
-impl<'a, P, T> Validator for NodeVersionValidator<'a, P, T>
+impl<P, T> Validator for NodeVersionValidator<P, T>
 where
   P: AsRef<Path>,
   T: Into<Cow<'static, str>> + AsRef<str>,
@@ -111,7 +97,7 @@ where
   /// ```rust
   /// use doctor_node::validator::NodeVersionValidator;
   /// use std::path::Path;
-  /// use doctor_ext::{Validator, Messages, ValidatorError};
+  /// use doctor_core::{ ValidatorError, traits::Validator};
   ///
   /// let validator = NodeVersionValidator::builder()
   ///   .config_path("./fixtures/.success")
@@ -164,8 +150,6 @@ where
 
     let diagnostics = self.validate_valid_range(&node_version)?;
     messages.diagnostics.extend(diagnostics);
-
-    self.validate_additional_validation(&node_version)?;
 
     Ok(vec![messages])
   }
@@ -233,31 +217,6 @@ mod tests {
 
     assert!(res.is_ok());
   }
-
-  // #[test]
-  // fn test_validate_node_version_file_additional_validation() {
-  //   let path = "./fixtures/.success";
-  //   let res = NodeVersionValidator::builder()
-  //     .config_path(path.to_string())
-  //     .with_additional_validation(Box::new(|version| {
-  //       if version.starts_with("v") {
-  //         Ok(())
-  //       } else {
-  //         InvalidErr::builder()
-  //           .config_path(path.to_string())
-  //           .version(version.to_string())
-  //           .build()
-  //           .into()
-  //       }
-  //     }))
-  //     .build()
-  //     .validate();
-
-  //   assert!(matches!(
-  //     res,
-  //     Err(NodeVersionValidatorError::VersionRequirementNotMet(_))
-  //   ));
-  // }
 
   #[test]
   fn test_validate_node_version_file_valid_range() {

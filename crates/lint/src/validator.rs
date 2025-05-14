@@ -4,7 +4,7 @@ use std::{
   sync::Arc,
 };
 
-use doctor_ext::{Messages, Validator, ValidatorError};
+use doctor_core::{Messages, ValidatorError, traits::Validator};
 use doctor_walk_parallel::{WalkError, WalkIgnore, WalkParallelJs};
 use miette::MietteDiagnostic;
 use oxc_allocator::Allocator;

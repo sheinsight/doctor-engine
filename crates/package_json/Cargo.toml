@@ -36,4 +36,4 @@ biome_rowan         = "=0.5.7"
 biome_text_edit     = "=0.5.7"
 biome_unicode_table = "=0.5.7"
 
-doctor_ext = { workspace = true }
+doctor_core = { workspace = true }
