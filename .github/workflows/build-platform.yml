@@ -36,11 +36,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
+          cache: pnpm
           cache-dependency-path: ${{ env.NAPI_DIR }}/package-lock.json
           
-      - name: Install dependencies
-        run: npm install
+      # - name: Install dependencies
+      #   run: npm install
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.11.0
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
         
       - name: Cache cargo
         uses: actions/cache@v4
