@@ -80,23 +80,32 @@ jobs:
           name: js-*
           path: ${{ env.NAPI_DIR }}
           merge-multiple: true
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.11.0
+          run_install: false
+
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
-          cache-dependency-path: ${{ env.NAPI_DIR }}/package-lock.json
+          # node-version: 20
+          node-version-file: .node-version
+          cache: pnpm
+          cache-dependency-path: '**/pnpm-lock.yaml'
+ 
       - name: List packages
+        shell: bash
         run: |
           ls -l
           ls -R ./artifacts
-          npm i
-          npm run create-npm-dirs
-          npm run artifacts
+          pnpm install --frozen-lockfile --strict-peer-dependencies
+          pnpm run create-npm-dirs
+          pnpm run artifacts
           ls -R ./artifacts
           ls -R ./npm
           ls -l
-        shell: bash
+        
 
       - name: Create Draft Release
         id: create_release
@@ -111,7 +120,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-          npm publish
+          pnpm publish
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           RELEASE_ID: ${{ steps.create_release.outputs.id }}
