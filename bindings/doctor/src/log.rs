@@ -8,7 +8,7 @@ static INIT: Once = Once::new();
 
 #[derive(Debug, Clone, Copy, Display, PartialEq, Eq)]
 #[strum(serialize_all = "lowercase")]
-#[napi]
+#[napi(string_enum)]
 pub enum LogLevel {
   Error,
   Warn,

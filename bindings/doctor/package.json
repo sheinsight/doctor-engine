@@ -1,11 +1,11 @@
 {
-	"name": "@shined/doctor",
+	"name": "@shined/doctor-binding",
 	"version": "0.0.20",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"napi": {
-		"binaryName": "doctor",
-		"packageName": "@shined/doctor",
+		"binaryName": "doctor-binding",
+		"packageName": "@shined/doctor-binding",
 		"targets": [
 			"x86_64-apple-darwin",
 			"aarch64-apple-darwin",
@@ -17,7 +17,6 @@
 			"aarch64-unknown-linux-musl"
 		]
 	},
-	"bin": "./bin/index.mjs",
 	"scripts": {
 		"create-npm-dirs": "napi create-npm-dirs",
 		"artifacts": "napi artifacts ",
@@ -47,8 +46,5 @@
 		"@napi-rs/cli": "^3.0.0-alpha.75",
 		"clean-pkg-json": "^1.2.1",
 		"vitest": "^3.1.1"
-	},
-	"dependencies": {
-		"cac": "^6.7.14"
 	}
 }

@@ -1,10 +1,10 @@
-#!/usr/bin/env node
 
 import { cac } from "cac";
-import { initializeLogger,doctor } from "../index.js"
+import { initializeLogger,doctor } from "@shined/doctor-binding"
 import { performance } from "node:perf_hooks"
-const cli = cac("doctor");
+import process from 'node:process';
 
+const cli = cac("doctor");
 
 cli.command('','check project health')
   .option('-v, --verbose', 'Verbose output')
@@ -36,4 +36,3 @@ cli.help();
 
 
 cli.parse();
-

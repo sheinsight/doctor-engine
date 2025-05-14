@@ -1,0 +1,22 @@
+{
+	"name": "@shined/doctor",
+	"version": "0.0.20",
+	"private": true,
+	"packageManager": "pnpm@10.11.0",
+	"scripts": {
+		"release":"node --no-warnings --experimental-strip-types build.mts"
+	},
+	"license": "MIT",
+	"devDependencies": {
+		"@tsconfig/node22": "^22.0.1",
+		"read-pkg":"^9.0.1",
+		"enquirer":"^2.4.1",
+		"semver":"^7.7.2",
+		"@types/semver":"^7.7.0",
+		"write-package":"^7.1.0",
+		"execa":"^9.5.3",
+		"consola":"^3.4.2",
+		"read-yaml-file":"^2.1.0",
+		"find-packages":"^10.0.4"
+	}
+}

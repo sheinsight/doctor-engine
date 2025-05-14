@@ -1,5 +1,6 @@
 [workspace]
 members = [
+  "bindings/doctor",
   "crates/cloc",
   "crates/doctor",
   "crates/ext",
@@ -8,7 +9,6 @@ members = [
   "crates/npmrc",
   "crates/package_json",
   "crates/walk_parallel",
-  "napi/doctor_engine",
 ]
 resolver = "3"
 
@@ -74,6 +74,7 @@ insta  = "1.36.1"
 tokei = "12.1.2"
 
 doctor               = { path = "crates/doctor" }
+doctor_binding_core  = { path = "bindings/core" }
 doctor_cloc          = { path = "crates/cloc" }
 doctor_ext           = { path = "crates/ext" }
 doctor_lint          = { path = "crates/lint" }

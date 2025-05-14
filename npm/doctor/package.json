@@ -1,0 +1,37 @@
+{
+	"name": "@shined/doctor",
+	"version": "0.0.20",
+	"main": "index.js",
+	"types": "index.d.ts",
+	"bin": "./bin/index.mjs",
+	"scripts": {
+		"build": "tsdown",
+		"test": "vitest run",
+		"prepack": "clean-pkg-json"
+	},
+	"repository": {
+		"url": "git+https://github.com/sheinsight/doctor-engine.git"
+	},
+	"publishConfig": {
+		"access": "public",
+		"tag": "latest"
+	},
+	"files": [
+		"index.js",
+		"index.d.ts",
+		"bin/index.mjs"
+	],
+	"license": "MIT",
+	"devDependencies": {
+		"@tsconfig/node22": "^22.0.1",
+		"@types/node": "^22.15.18",
+		"clean-pkg-json": "^1.2.1",
+		"tsdown": "^0.11.9",
+		"typescript": "^5.8.3",
+		"vitest": "^3.1.1"
+	},
+	"dependencies": {
+		"@shined/doctor-binding": "workspace:*",
+		"cac": "^6.7.14"
+	}
+}
