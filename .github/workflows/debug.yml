@@ -2,7 +2,7 @@ name: debug
 env:
   DEBUG: napi:*
   APP_NAME: doctor
-  NAPI_DIR: napi/doctor_engine
+  NAPI_DIR: napi/doctor
   CARGO_PROFILE_RELEASE_BUILD_OVERRIDE_DEBUG: true
 
 permissions:

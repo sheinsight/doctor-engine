@@ -14,7 +14,7 @@ on:
         type: string
     
 env:
-  NAPI_DIR: napi/doctor_engine
+  NAPI_DIR: napi/doctor
   APP_NAME: doctor
 
 jobs:
@@ -75,7 +75,7 @@ jobs:
           run: |
             set -e 
             rustup target add ${{ inputs.target }}
-            cd ./napi/doctor_engine
+            cd ./napi/doctor
             npm run build -- --target ${{ inputs.target }}
             
       - name: Build

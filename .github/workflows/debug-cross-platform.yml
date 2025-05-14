@@ -4,7 +4,7 @@ env:
   APP_NAME: doctor
   MACOSX_DEPLOYMENT_TARGET: '10.13'
   CARGO_INCREMENTAL: '1'
-  NAPI_DIR: napi/doctor_engine
+  NAPI_DIR: napi/doctor
   CARGO_PROFILE_RELEASE_BUILD_OVERRIDE_DEBUG: true
 permissions:
   contents: write
