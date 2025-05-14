@@ -8,7 +8,7 @@ members = [
   "crates/npmrc",
   "crates/package_json",
   "crates/walk_parallel",
-  "napi/doctor_engine",
+  "napi/doctor",
 ]
 resolver = "3"
 
