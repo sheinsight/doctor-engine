@@ -4,7 +4,8 @@
 	 "private":true,
 	 "packageManager": "pnpm@10.11.0",
 	"scripts": {
-		"test": "vitest run"
+		"test": "vitest run",
+		"release":"node --experimental-strip-types --no-warnings release.mts "
 	},
 	"license": "MIT"
 }
