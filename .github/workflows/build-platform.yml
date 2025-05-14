@@ -101,7 +101,7 @@ jobs:
       - name: Upload Js
         uses: actions/upload-artifact@v4
         with:
-          name: js-${{ inputs.target }}
+          name: js
           path: |
             ${{ env.NAPI_DIR }}/index.js
             ${{ env.NAPI_DIR }}/index.d.ts
