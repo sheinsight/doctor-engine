@@ -1,6 +1,6 @@
 
 import { cac } from "cac";
-import { initializeLogger,doctor } from "../../../bindings/doctor-binding/index.js"
+import { initializeLogger,doctor } from "@shined/doctor-binding"
 import { performance } from "node:perf_hooks"
 const cli = cac("doctor");
 

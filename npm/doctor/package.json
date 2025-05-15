@@ -7,7 +7,7 @@
 		"doctor": "./bin/index.mjs"
 	},
 	"scripts": {
-		"build": "tsdown",
+		"build": "rslib build",
 		"test": "vitest run",
 		"prepack": "clean-pkg-json"
 	},
@@ -24,6 +24,8 @@
 	],
 	"license": "MIT",
 	"devDependencies": {
+		"@types/node": "^22.15.18",
+		"@rslib/core": "^0.7.1",
 		"@tsconfig/node-ts": "^23.6.1",
 		"@tsconfig/node22": "^22.0.1",
 		"clean-pkg-json": "^1.2.1",

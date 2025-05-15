@@ -1,1 +1,1 @@
-export * from "../../../bindings/doctor-binding/index.js"
+export * from "@shined/doctor-binding"
