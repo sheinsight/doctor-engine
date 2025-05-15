@@ -89,7 +89,7 @@ jobs:
         shell: bash
         run: |
           # npm run build -- --target ${{ inputs.target }}
-          pnpm --filter @shined/doctor-binding build -- --target ${{ inputs.target }}
+          pnpm --filter @shined/doctor-binding build --target ${{ inputs.target }}
 
       - name: Show binary
         shell: bash
