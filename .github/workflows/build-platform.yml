@@ -15,7 +15,7 @@ on:
     
 env:
   NAPI_DIR: bindings/doctor
-  APP_NAME: doctor
+  APP_NAME: doctor-binding
 
 jobs:
   build:
