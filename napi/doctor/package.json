@@ -1,8 +1,8 @@
 {
 	"name": "@shined/doctor",
 	"version": "0.0.21-snapshot.1",
-	"main": "index.js",
-	"types": "index.d.ts",
+	"main": "es/index.js",
+	"types": "es/index.d.ts",
 	"bin": {
 		"doctor": "./bin/index.mjs"
 	},
@@ -19,9 +19,8 @@
 		"tag": "snapshot"
 	},
 	"files": [
-		"index.js",
-		"index.d.ts",
-		"bin/index.mjs"
+		"bin",
+		"es"
 	],
 	"license": "MIT",
 	"devDependencies": {

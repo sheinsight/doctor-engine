@@ -17,9 +17,6 @@
 			"aarch64-unknown-linux-musl"
 		]
 	},
-	"bin": {
-		"doctor": "./bin/index.mjs"
-	},
 	"scripts": {
 		"create-npm-dirs": "napi create-npm-dirs",
 		"artifacts": "napi artifacts ",
@@ -41,8 +38,7 @@
 	},
 	"files": [
 		"index.js",
-		"index.d.ts",
-		"bin/index.mjs"
+		"index.d.ts"
 	],
 	"license": "MIT",
 	"devDependencies": {
