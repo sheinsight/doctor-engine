@@ -36,20 +36,11 @@ const versionType = [
   'preminor',
   'prepatch',
   'prerelease',
-  'snapshot',
 ] as const;
 
 const choices = versionType.map((type) => {
-  if (type === 'snapshot') {
-    const next = `0.0.0-snapshot.${hash}`;
-    return {
-      name: next,
-      message: 'snapshot',
-      hint: next,
-      value: next,
-    };
-  }
-  const value = semver.inc(packageJson.version, type, 'alpha')!;
+   
+  const value = semver.inc(packageJson.version, type, 'snapshot')!;
   return {
     name: value,
     message: type,
@@ -61,7 +52,7 @@ const choices = versionType.map((type) => {
 const { v } = await enquirer.prompt<{ v: string }>({
   type: 'select',
   name: 'v',
-  message: 'What type of release?',
+  message: `What type of release? Current version: ${packageJson.version}`,
   choices: choices,
 });
 
