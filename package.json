@@ -1,6 +1,6 @@
 {
 	"name": "@shined/doctor-registry",
-	"version": "0.0.21-snapshot.9",
+	"version": "0.0.21",
 	"private": true,
 	"packageManager": "pnpm@10.11.0",
 	"scripts": {
@@ -24,5 +24,5 @@
 		"write-package": "^7.1.0"
 	},
 	"readme": "ERROR: No README data found!",
-	"_id": "0.0.21-snapshot.9"
+	"_id": "0.0.21"
 }
