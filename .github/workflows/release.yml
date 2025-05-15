@@ -40,7 +40,7 @@ jobs:
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine-zig
           - host: ubuntu-latest
             target: x86_64-unknown-linux-musl
-            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-musl
+            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine-zig
           # macOS 平台
           - host: macos-latest
             target: x86_64-apple-darwin
