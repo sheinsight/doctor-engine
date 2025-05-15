@@ -6,8 +6,19 @@ export default defineConfig({
       bundle:false,
       format: 'esm',
       syntax: 'es2021',
+      // dts:{
+      //   bundle:false,
+      //   distPath:"es",
+      //   autoExtension:true
+      // },
+      dts: true,
+      // outBase:"es",
       output: {
         target: 'node',
+        distPath:{
+          root:"es",
+          js: './',
+        }
       },
     },
   ], 
