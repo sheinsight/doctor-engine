@@ -3,7 +3,7 @@
 
 
 import { expect, test } from 'vitest'
-import { innerDebugLint, initializeLogger,innerLint, NaPiCategory } from '../index.js'
+import { innerDebugLint, initializeLogger,innerLint, NaPiCategory } from '../index.ts'
 
 
 test('adds 1 + 2 to equal 3', async () => {
