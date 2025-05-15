@@ -1,11 +1,26 @@
 {
 	"name": "@shined/doctor-registry",
-	"version": "0.0.20",
+	"version": "0.0.21-snapshot.0",
 	 "private":true,
 	 "packageManager": "pnpm@10.11.0",
 	"scripts": {
 		"test": "vitest run",
 		"release":"node --experimental-strip-types --no-warnings release.mts "
 	},
-	"license": "MIT"
+	"license": "MIT",
+	"devDependencies": {
+		"read-pkg": "^9.0.1",
+		"write-package":"^7.1.0",
+		"@types/semver":"^7.7.0",
+		"read-yaml-file":"^2.1.0",
+		"find-packages":"^10.0.4",
+		"semver":"^7.7.2",
+		"consola":"^3.4.2",
+		"enquirer":"^2.4.1",
+		"@types/node":"^22.15.18",
+		"execa":"^9.5.3",
+		"@tsconfig/node22":"^22.0.1",
+		"@tsconfig/node-ts":"^23.6.1",
+		"typescript":"^5.8.3"
+	}
 }
