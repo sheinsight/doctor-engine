@@ -3,8 +3,8 @@ import { defineConfig } from 'tsdown'
 
 export default [
   defineConfig({
-    entry: '**/src/*.ts',
-    outDir: 'esm',
+    entry: '**/src/*.(m)ts',
+    outDir: 'es',
     platform: 'node',
     target: 'node22'
   }),

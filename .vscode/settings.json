@@ -62,6 +62,7 @@
     "ropey",
     "rsplit",
     "rustc",
+    "rustup",
     "Scons",
     "serde",
     "serviceworker",

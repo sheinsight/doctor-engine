@@ -6,7 +6,7 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   # MACOSX_DEPLOYMENT_TARGET: '10.13'
   # CARGO_INCREMENTAL: '1'
-  NAPI_DIR: napi/doctor
+  NAPI_DIR: bindings/doctor
   CARGO_PROFILE_RELEASE_BUILD_OVERRIDE_DEBUG: true
 permissions:
   contents: write
@@ -60,14 +60,16 @@ jobs:
   publish:
     needs: [build-platforms]
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ${{ env.NAPI_DIR }}
+    # defaults:
+    #   run:
+    #     working-directory: ${{ env.NAPI_DIR }}
     steps:
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
@@ -88,7 +90,6 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          # node-version: 20
           node-version-file: .node-version
           cache: pnpm
           cache-dependency-path: '**/pnpm-lock.yaml'
@@ -96,6 +97,7 @@ jobs:
       - name: List packages
         shell: bash
         run: |
+          cd ${{ env.NAPI_DIR }}
           ls -l
           ls -R ./artifacts
           pnpm install --frozen-lockfile --strict-peer-dependencies
@@ -105,6 +107,10 @@ jobs:
           ls -R ./npm
           ls -l
         
+      - name: Build npm
+        shell: bash
+        run: |
+          pnpm --filter @shined/doctor build
 
       - name: Create Draft Release
         id: create_release

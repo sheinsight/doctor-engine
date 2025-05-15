@@ -1,0 +1,59 @@
+{
+	"name": "@shined/doctor-binding",
+	"version": "0.0.21-snapshot.1",
+	"main": "index.js",
+	"types": "index.d.ts",
+	"napi": {
+		"binaryName": "doctor-binding",
+		"packageName": "@shined/doctor-binding",
+		"targets": [
+			"x86_64-apple-darwin",
+			"aarch64-apple-darwin",
+			"x86_64-pc-windows-msvc",
+			"aarch64-pc-windows-msvc",
+			"x86_64-unknown-linux-gnu",
+			"x86_64-unknown-linux-musl",
+			"aarch64-unknown-linux-gnu",
+			"aarch64-unknown-linux-musl"
+		]
+	},
+	"bin": {
+		"doctor": "./bin/index.mjs"
+	},
+	"scripts": {
+		"create-npm-dirs": "napi create-npm-dirs",
+		"artifacts": "napi artifacts ",
+		"build:js": "napi build --platform --js index.js --dts index.d.ts",
+		"build": "napi build --platform --release",
+		"build:debug": "napi build --platform",
+		"prepublishOnly": "napi prepublish -t npm --gh-release-id $RELEASE_ID",
+		"universal": "napi universal",
+		"test": "vitest run",
+		"demo": "napi prepublish -h",
+		"prepack": "clean-pkg-json"
+	},
+	"repository": {
+		"url": "git+https://github.com/sheinsight/doctor-engine.git"
+	},
+	"publishConfig": {
+		"access": "public",
+		"tag": "snapshot"
+	},
+	"files": [
+		"index.js",
+		"index.d.ts",
+		"bin/index.mjs"
+	],
+	"license": "MIT",
+	"devDependencies": {
+		"@napi-rs/cli": "^3.0.0-alpha.75",
+		"clean-pkg-json": "^1.2.1",
+		"vitest": "^3.1.1"
+	}, 
+	"bugs": {
+		"url": "https://github.com/sheinsight/doctor-engine/issues"
+	},
+	"readme": "ERROR: No README data found!",
+	"homepage": "https://github.com/sheinsight/doctor-engine#readme",
+	"_id": "0.0.21-snapshot.1"
+}

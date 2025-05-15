@@ -8,7 +8,7 @@ members = [
   "crates/npmrc",
   "crates/package_json",
   "crates/walk_parallel",
-  "napi/doctor",
+  "bindings/doctor",
 ]
 resolver = "3"
 
@@ -74,6 +74,7 @@ insta  = "1.36.1"
 tokei = "12.1.2"
 
 doctor               = { path = "crates/doctor" }
+doctor_binding       = { path = "bindings/doctor" }
 doctor_cloc          = { path = "crates/cloc" }
 doctor_core          = { path = "crates/core" }
 doctor_lint          = { path = "crates/lint" }

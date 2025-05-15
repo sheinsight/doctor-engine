@@ -14,7 +14,7 @@ on:
         type: string
     
 env:
-  NAPI_DIR: napi/doctor
+  NAPI_DIR: bindings/doctor
   APP_NAME: doctor
 
 jobs:
@@ -22,9 +22,9 @@ jobs:
     name: ${{ inputs.host }} - ${{ inputs.target }} - node@20
     runs-on: ${{ inputs.host }}
     
-    defaults:
-      run:
-        working-directory: ${{ env.NAPI_DIR }}
+    # defaults:
+    #   run:
+    #     working-directory: ${{ env.NAPI_DIR }}
         
     steps:
       - name: Checkout
@@ -40,11 +40,9 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          # node-version: 22.15.0
           node-version-file: .node-version
           cache: pnpm
           cache-dependency-path: '**/pnpm-lock.yaml'
-          # cache-dependency-path: ${{ env.NAPI_DIR }}/package-lock.json
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --strict-peer-dependencies
@@ -69,11 +67,11 @@ jobs:
           
       - name: Enable long paths on Windows
         if: contains(inputs.host, 'windows')
+        shell: bash
         run: |
           git config --system core.longpaths true
-        shell: bash
         
-      - name: Build in docker
+      - name: Build binding in docker
         uses: addnab/docker-run-action@v3
         if: ${{ inputs.docker }}
         with:
@@ -82,14 +80,21 @@ jobs:
           run: |
             set -e 
             rustup target add ${{ inputs.target }}
-            cd ./napi/doctor
+            cd ./bindings/doctor
             npm run build -- --target ${{ inputs.target }}
             
-      - name: Build
+            
+      - name: Build binding
         if: ${{ !inputs.docker }}
         shell: bash
         run: |
-          npm run build -- --target ${{ inputs.target }}
+          # npm run build -- --target ${{ inputs.target }}
+          pnpm --filter @shined/doctor-binding build -- --target ${{ inputs.target }}
+
+      - name: Build npm
+        shell: bash
+        run: |
+          pnpm --filter @shined/doctor build
         
       - name: Upload artifact
         uses: actions/upload-artifact@v4
