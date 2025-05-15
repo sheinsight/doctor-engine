@@ -6,7 +6,7 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   # MACOSX_DEPLOYMENT_TARGET: '10.13'
   # CARGO_INCREMENTAL: '1'
-  NAPI_DIR: bindings/doctor
+  NAPI_DIR: bindings/doctor-binding
   CARGO_PROFILE_RELEASE_BUILD_OVERRIDE_DEBUG: true
 permissions:
   contents: write

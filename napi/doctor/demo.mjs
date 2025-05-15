@@ -1,6 +1,6 @@
 
 
-import { innerDebugLint, initializeLogger,innerLint, NaPiCategory,doctor,LogLevel,getLanguagesStatistics } from './index.js'
+import { innerDebugLint, initializeLogger,innerLint, NaPiCategory,doctor,LogLevel,getLanguagesStatistics } from './es/index.mjs'
 
 (async () => {
 

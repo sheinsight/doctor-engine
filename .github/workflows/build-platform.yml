@@ -14,7 +14,7 @@ on:
         type: string
     
 env:
-  NAPI_DIR: bindings/doctor
+  NAPI_DIR: bindings/doctor-binding
   APP_NAME: doctor-binding
 
 jobs:

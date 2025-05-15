@@ -8,7 +8,7 @@ members = [
   "crates/npmrc",
   "crates/package_json",
   "crates/walk_parallel",
-  "bindings/doctor",
+  "bindings/doctor-binding",
 ]
 resolver = "3"
 
