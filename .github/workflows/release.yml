@@ -75,6 +75,13 @@ jobs:
         with:
           path: ${{ env.NAPI_DIR }}/artifacts
           merge-multiple: true
+
+      - name: Show artifacts
+        shell: bash
+        run: |
+          cd ${{ env.NAPI_DIR }}
+          ls -R ./artifacts
+
       - name: Download Js
         uses: actions/download-artifact@v4
         with:
@@ -125,7 +132,8 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-          pnpm -r publish --no-git-checks
+          ## napi 生成的 binding 文件，napi 自己会发布
+          pnpm -r --filter="!*-darwin-*" --filter="!*-linux-*" --filter="!*-win32-*" publish --no-git-checks
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           RELEASE_ID: ${{ steps.create_release.outputs.id }}
