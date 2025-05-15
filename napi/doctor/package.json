@@ -1,13 +1,13 @@
 {
 	"name": "@shined/doctor",
-	"version": "0.0.21-snapshot.1",
+	"version": "0.0.21-snapshot.2",
 	"main": "es/index.js",
 	"types": "es/index.d.ts",
 	"bin": {
 		"doctor": "./bin/index.mjs"
 	},
 	"scripts": {
-		"build":"tsdown",
+		"build": "tsdown",
 		"test": "vitest run",
 		"prepack": "clean-pkg-json"
 	},
@@ -24,11 +24,11 @@
 	],
 	"license": "MIT",
 	"devDependencies": {
+		"@tsconfig/node-ts": "^23.6.1",
+		"@tsconfig/node22": "^22.0.1",
 		"clean-pkg-json": "^1.2.1",
 		"tsdown": "^0.11.9",
-		"vitest": "^3.1.1",
-		"@tsconfig/node-ts": "^23.6.1",
-		"@tsconfig/node22": "^22.0.1"
+		"vitest": "^3.1.1"
 	},
 	"dependencies": {
 		"@shined/doctor-binding": "workspace:*",
@@ -39,5 +39,5 @@
 	},
 	"readme": "ERROR: No README data found!",
 	"homepage": "https://github.com/sheinsight/doctor-engine#readme",
-	"_id": "0.0.21-snapshot.1"
+	"_id": "0.0.21-snapshot.2"
 }
