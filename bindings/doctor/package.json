@@ -1,6 +1,6 @@
 {
 	"name": "@shined/doctor-binding",
-	"version": "0.0.21-snapshot.4",
+	"version": "0.0.21-snapshot.5",
 	"main": "index.js",
 	"types": "index.d.ts",
 	"napi": {
@@ -51,5 +51,5 @@
 	},
 	"readme": "ERROR: No README data found!",
 	"homepage": "https://github.com/sheinsight/doctor-engine#readme",
-	"_id": "0.0.21-snapshot.4"
+	"_id": "0.0.21-snapshot.5"
 }
