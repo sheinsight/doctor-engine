@@ -1,6 +1,6 @@
 
 
-import { innerDebugLint, initializeLogger,innerLint, NaPiCategory,doctor,LogLevel,getLanguagesStatistics } from './es/index.mjs'
+import { innerDebugLint, initializeLogger,innerLint, NaPiCategory,doctor,LogLevel,getLangStats } from './index.js'
 
 (async () => {
 
@@ -20,7 +20,7 @@ import { innerDebugLint, initializeLogger,innerLint, NaPiCategory,doctor,LogLeve
   // console.log(JSON.stringify(res1,null,2));
   
 
-  const res2 = await getLanguagesStatistics(['/Users/ityuany/GitRepository/csp-new'])
+  const res2 = await getLangStats(['/Users/ityuany/GitRepository/csp-new'])
 
   console.table(res2)
  

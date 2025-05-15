@@ -1,6 +1,8 @@
+use napi_derive::napi;
+
 #[derive(Debug)]
-#[cfg_attr(feature = "napi", napi_derive::napi(string_enum))]
-pub enum LanguageType {
+#[napi(string_enum)]
+pub enum LangType {
   ABNF,
   Abap,
   ActionScript,
@@ -229,7 +231,7 @@ pub enum LanguageType {
   Zsh,
 }
 
-impl From<tokei::LanguageType> for LanguageType {
+impl From<tokei::LanguageType> for LangType {
   fn from(language: tokei::LanguageType) -> Self {
     match language {
       tokei::LanguageType::ABNF => Self::ABNF,
