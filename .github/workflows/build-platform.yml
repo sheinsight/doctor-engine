@@ -99,7 +99,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: bindings-${{ inputs.target }}
+          name: doctor-binding-${{ inputs.target }}
           path: ${{ env.NAPI_DIR }}/${{ env.APP_NAME }}.*.node
           if-no-files-found: error 
 
