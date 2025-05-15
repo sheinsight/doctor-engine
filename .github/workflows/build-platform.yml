@@ -80,7 +80,7 @@ jobs:
           run: |
             set -e 
             rustup target add ${{ inputs.target }}
-            cd ./bindings/doctor
+            cd ${{ env.NAPI_DIR }}
             npm run build -- --target ${{ inputs.target }}
             
             
