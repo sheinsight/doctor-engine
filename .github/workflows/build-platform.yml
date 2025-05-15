@@ -91,6 +91,11 @@ jobs:
           # npm run build -- --target ${{ inputs.target }}
           pnpm --filter @shined/doctor-binding build -- --target ${{ inputs.target }}
 
+      - name: Show binary
+        shell: bash
+        run: |
+          ls -l ${{ env.NAPI_DIR }}
+
       - name: Build npm
         shell: bash
         run: |
