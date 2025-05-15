@@ -379,7 +379,6 @@ module.exports.getLanguagesStatistics = nativeBinding.getLanguagesStatistics
 module.exports.initializeLogger = nativeBinding.initializeLogger
 module.exports.innerDebugLint = nativeBinding.innerDebugLint
 module.exports.innerLint = nativeBinding.innerLint
-module.exports.LanguageType = nativeBinding.LanguageType
 module.exports.LogLevel = nativeBinding.LogLevel
 module.exports.NaPiCategory = nativeBinding.NaPiCategory
 module.exports.NapiSeverity = nativeBinding.NapiSeverity

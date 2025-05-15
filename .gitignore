@@ -27,3 +27,4 @@ node_modules
 *.node
 napi/doctor/index.js
 napi/doctor/index.d.ts
+npm/doctor/es

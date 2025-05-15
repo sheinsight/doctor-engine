@@ -1,1 +1,0 @@
-export * from "../../../bindings/doctor-binding/index.js";
