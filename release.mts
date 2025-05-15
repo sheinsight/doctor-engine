@@ -5,7 +5,6 @@ import { $ } from 'execa';
 import semver from 'semver';
 import enquirer from 'enquirer';
 import { writePackage } from 'write-package';
-// import { isWorkspace, writeWorkspacePackageVersion } from './utils.js';
 import consola from 'consola';
 import readYamlFile from 'read-yaml-file';
 import { findPackages } from 'find-packages';
@@ -68,6 +67,7 @@ if (isSure) {
 
   console.log(v,tag);
   packageJson.version = v;
+  packageJson._id = v;
   packageJson.private = true;
   await writePackage(path.join(process.cwd(), 'package.json'), packageJson);
 
@@ -83,6 +83,7 @@ if (isSure) {
     const packageJson = await readPackage({ cwd: item.dir });
     if (!packageJson.private) {
       packageJson.version = v;
+      packageJson._id = v;
       packageJson.publishConfig = {
         access: 'public',
         tag,
@@ -90,13 +91,9 @@ if (isSure) {
       await writePackage(path.join(item.dir, 'package.json'), packageJson);
     }
   }
-
-
-  // await writePackage(packageJson);
-  // await writeWorkspacePackageVersion(v);
-  // await $$`git add .`;
-  // await $$`git commit -m ${v}`;
-  // await $$`git tag v${v}`;
-  // consola.success(`tag v${v} created`);
+  await $$`git add .`;
+  await $$`git commit -m ${v}`;
+  await $$`git tag v${v}`;
+  consola.success(`tag v${v} created`);
 
 }
