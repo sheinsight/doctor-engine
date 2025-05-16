@@ -72,12 +72,17 @@ jobs:
           cd ${{ inputs.binding_dir }}
           pnpm run create-npm-dirs
 
+      - name: Show npm dirs
+        shell: bash
+        run: |
+          ls -R ${{ inputs.binding_dir }}/npm
+
       - name: Move artifacts to npm
         run: |
           cd ${{ inputs.binding_dir }}
           pnpm run artifacts
 
-      - name: Show npm
+      - name: Show npm dirs with artifacts
         shell: bash
         run: |
           ls -R ${{ inputs.binding_dir }}/npm
