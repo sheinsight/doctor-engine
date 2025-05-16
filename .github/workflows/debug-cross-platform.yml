@@ -51,5 +51,6 @@ jobs:
       docker: ${{ matrix.platform.docker }}
       binding_dir: bindings/doctor-binding
       binding_name: doctor-binding
+      npm_package_name: '@shined/doctor-binding'
 
 
