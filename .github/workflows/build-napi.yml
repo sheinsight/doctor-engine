@@ -18,19 +18,11 @@ on:
       binding_name:
         required: true
         type: string
-    
-# env:
-#   NAPI_DIR: bindings/doctor-binding
-#   APP_NAME: doctor-binding
 
 jobs:
   build:
     name: ${{ inputs.host }} - ${{ inputs.target }} - node@20
     runs-on: ${{ inputs.host }}
-    
-    # defaults:
-    #   run:
-    #     working-directory: ${{ env.NAPI_DIR }}
         
     steps:
       - name: Checkout
