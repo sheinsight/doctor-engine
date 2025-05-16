@@ -76,7 +76,7 @@ jobs:
     with:
       binding_dir: bindings/doctor-binding
       npm_package_name: '@shined/doctor'
-      release_name: 'doctor-binding ${{ github.ref_name }}'
+      release_name: 'doctor ${{ github.ref_name }}'
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
