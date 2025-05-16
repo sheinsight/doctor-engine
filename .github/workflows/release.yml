@@ -70,7 +70,7 @@ jobs:
       release_name: '@shined/doctor-binding ${{ github.ref_name }}'
 
   npm-publish:
-    needs: [build-platforms]
+    needs: [napi-publish]
     uses: ./.github/workflows/npm-publish.yml
     with:
       binding_dir: bindings/doctor-binding
