@@ -44,7 +44,7 @@ jobs:
       - name: Show js
         shell: bash
         run: |
-          ls -R ${{ inputs.binding_dir }}
+          ls -l ${{ inputs.binding_dir }}
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -58,12 +58,6 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
           cache-dependency-path: '**/pnpm-lock.yaml'
-
-      - name: List packages
-        shell: bash
-        run: |
-          ls -l ${{ inputs.binding_dir }}
-          ls -R ${{ inputs.binding_dir }}/artifacts
   
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --strict-peer-dependencies
