@@ -60,91 +60,104 @@ jobs:
       binding_dir: bindings/doctor-binding
       binding_name: doctor-binding
 
-  
-  publish:
+  napi-publish:
     needs: [build-platforms]
-    runs-on: ubuntu-latest
-    # defaults:
-    #   run:
-    #     working-directory: ${{ env.NAPI_DIR }}
-    steps:
+    uses: ./.github/workflows/napi-publish.yml
+    with:
+      binding_dir: bindings/doctor-binding
+      binding_name: doctor-binding
+      npm_package_name: '@shined/doctor-binding'
+      release_name: '@shined/doctor-binding ${{ github.ref_name }}'
 
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+  npm-publish:
+    needs: [build-platforms]
+    uses: ./.github/workflows/npm-publish.yml
+    with:
+      binding_dir: bindings/doctor-binding
+      npm_package_name: '@shined/doctor'
+      release_name: '@shined/doctor-binding ${{ github.ref_name }}'
 
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: ${{ env.NAPI_DIR }}/artifacts
-          merge-multiple: true
+  # publish:
+  #   needs: [build-platforms]
+  #   runs-on: ubuntu-latest
+  #   steps:
 
-      - name: Show artifacts
-        shell: bash
-        run: |
-          cd ${{ env.NAPI_DIR }}
-          ls -R ./artifacts
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Download Js
-        uses: actions/download-artifact@v4
-        with:
-          name: js
-          path: ${{ env.NAPI_DIR }}
-          merge-multiple: true
+  #     - name: Download all artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         path: ${{ env.NAPI_DIR }}/artifacts
+  #         merge-multiple: true
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10.11.0
-          run_install: false
+  #     - name: Show artifacts
+  #       shell: bash
+  #       run: |
+  #         cd ${{ env.NAPI_DIR }}
+  #         ls -R ./artifacts
 
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .node-version
-          cache: pnpm
-          cache-dependency-path: '**/pnpm-lock.yaml'
+  #     - name: Download Js
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: js
+  #         path: ${{ env.NAPI_DIR }}
+  #         merge-multiple: true
+
+  #     - uses: pnpm/action-setup@v4
+  #       with:
+  #         version: 10.11.0
+  #         run_install: false
+
+  #     - name: Setup node
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version-file: .node-version
+  #         cache: pnpm
+  #         cache-dependency-path: '**/pnpm-lock.yaml'
  
-      - name: List packages
-        shell: bash
-        run: |
-          cd ${{ env.NAPI_DIR }}
-          ls -l
-          ls -R ./artifacts
-          pnpm install --frozen-lockfile --strict-peer-dependencies
-          pnpm run create-npm-dirs
-          pnpm run artifacts
-          ls -R ./artifacts
-          ls -R ./npm
-          ls -l
+  #     - name: List packages
+  #       shell: bash
+  #       run: |
+  #         cd ${{ env.NAPI_DIR }}
+  #         ls -l
+  #         ls -R ./artifacts
+  #         pnpm install --frozen-lockfile --strict-peer-dependencies
+  #         pnpm run create-npm-dirs
+  #         pnpm run artifacts
+  #         ls -R ./artifacts
+  #         ls -R ./npm
+  #         ls -l
         
-      - name: Build npm
-        shell: bash
-        run: |
-          pnpm --filter @shined/doctor build
+  #     - name: Build npm
+  #       shell: bash
+  #       run: |
+  #         pnpm --filter @shined/doctor build
 
-      - name: Create Draft Release
-        id: create_release
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          tag_name: ${{ github.ref_name }}
-          draft: true
-          prerelease: false
+  #     - name: Create Draft Release
+  #       id: create_release
+  #       uses: softprops/action-gh-release@v2
+  #       if: startsWith(github.ref, 'refs/tags/')
+  #       with:
+  #         tag_name: ${{ github.ref_name }}
+  #         draft: true
+  #         prerelease: false
 
-      - name: Publish
-        if: startsWith(github.ref, 'refs/tags/')
-        run: |
-          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-          ## napi 生成的 binding 文件，napi 自己会发布
-          pnpm -r --filter="!*-darwin-*" --filter="!*-linux-*" --filter="!*-win32-*" publish --no-git-checks
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          RELEASE_ID: ${{ steps.create_release.outputs.id }}
+  #     - name: Publish
+  #       if: startsWith(github.ref, 'refs/tags/')
+  #       run: |
+  #         echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+  #         ## napi 生成的 binding 文件，napi 自己会发布
+  #         pnpm -r --filter="!*-darwin-*" --filter="!*-linux-*" --filter="!*-win32-*" publish --no-git-checks
+  #       env:
+  #         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  #         RELEASE_ID: ${{ steps.create_release.outputs.id }}
 
-      - name: Update Release
-        if: startsWith(github.ref, 'refs/tags/')
-        run: | 
-          echo "Updating release..."
-          gh release edit ${{ github.ref_name }} --draft=false --latest
+  #     - name: Update Release
+  #       if: startsWith(github.ref, 'refs/tags/')
+  #       run: | 
+  #         echo "Updating release..."
+  #         gh release edit ${{ github.ref_name }} --draft=false --latest
 
