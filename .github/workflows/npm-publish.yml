@@ -61,7 +61,9 @@ jobs:
   
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --strict-peer-dependencies
-          
+        
+      - name: Build
+        run: pnpm --filter ${{ inputs.npm_package_name }} build
 
       # TODO: 需要修改
       - name: Create Draft Release
