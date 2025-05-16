@@ -1,6 +1,6 @@
 {
 	"name": "@shined/doctor",
-	"version": "0.0.24-snapshot.2",
+	"version": "0.0.24-snapshot.3",
 	"main": "es/index.js",
 	"types": "es/index.d.ts",
 	"bin": {
@@ -41,5 +41,5 @@
 	},
 	"readme": "ERROR: No README data found!",
 	"homepage": "https://github.com/sheinsight/doctor-engine#readme",
-	"_id": "0.0.24-snapshot.2"
+	"_id": "0.0.24-snapshot.3"
 }
