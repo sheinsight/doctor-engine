@@ -65,7 +65,6 @@ jobs:
     uses: ./.github/workflows/napi-publish.yml
     with:
       binding_dir: bindings/doctor-binding
-      binding_name: doctor-binding
       npm_package_name: '@shined/doctor-binding'
       release_name: '@shined/doctor-binding ${{ github.ref_name }}'
 

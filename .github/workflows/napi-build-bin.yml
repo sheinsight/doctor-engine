@@ -102,7 +102,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: doctor-binding-${{ inputs.target }}
+          name: ${{ inputs.binding_name }}-${{ inputs.target }}
           path: ${{ inputs.binding_dir }}/${{ inputs.binding_name }}.*.node
           if-no-files-found: error 
 
