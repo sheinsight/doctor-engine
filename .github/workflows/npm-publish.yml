@@ -1,7 +1,5 @@
 name: NPM Publish
-permissions:
-  contents: write
-  id-token: write
+
 on:
   workflow_call:
     inputs:
@@ -17,6 +15,15 @@ on:
     secrets:
       NPM_TOKEN:
         required: true 
+
+env:
+  DEBUG: napi:*
+  # 如果没有的话 napi prepublish 会报错
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+permissions:
+  contents: write
+  id-token: write
 
 jobs:
   publish:
@@ -85,6 +92,4 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         run: | 
           echo "Updating release..."
-          gh release edit "${{ inputs.release_name }}" --draft=false --latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          gh release edit ${{ github.ref_name }} --draft=false --latest
