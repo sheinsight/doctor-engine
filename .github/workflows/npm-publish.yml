@@ -1,5 +1,7 @@
 name: NPM Publish
-
+permissions:
+  contents: write
+  id-token: write
 on:
   workflow_call:
     inputs:
