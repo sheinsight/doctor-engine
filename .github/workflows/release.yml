@@ -67,6 +67,8 @@ jobs:
       binding_dir: bindings/doctor-binding
       npm_package_name: '@shined/doctor-binding'
       release_name: '@shined/doctor-binding ${{ github.ref_name }}'
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   npm-publish:
     needs: [napi-publish]
@@ -75,6 +77,8 @@ jobs:
       binding_dir: bindings/doctor-binding
       npm_package_name: '@shined/doctor'
       release_name: '@shined/doctor-binding ${{ github.ref_name }}'
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   # publish:
   #   needs: [build-platforms]
