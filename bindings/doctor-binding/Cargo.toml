@@ -12,7 +12,7 @@ rust-version.workspace = true
 crate-type = ["cdylib"]
 
 [build-dependencies]
-napi-build = { workspace = true }
+napi-build  = { workspace = true }
 
 [dependencies]
 base64          = { workspace = true }
