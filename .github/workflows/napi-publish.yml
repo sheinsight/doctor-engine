@@ -8,10 +8,7 @@ on:
         type: string
       npm_package_name:
         required: true
-        type: string
-      release_name:
-        required: true
-        type: string
+        type: string 
     secrets:
       NPM_TOKEN:
         required: true 
@@ -105,7 +102,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          name: "${{ inputs.release_name }}"
           tag_name: ${{ github.ref_name }}
           draft: true
           prerelease: false
