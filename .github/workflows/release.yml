@@ -69,6 +69,7 @@ jobs:
       release_name: 'doctor-binding ${{ github.ref_name }}'
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   npm-publish:
     needs: [napi-publish]
@@ -79,6 +80,8 @@ jobs:
       release_name: 'doctor ${{ github.ref_name }}'
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
   # publish:
   #   needs: [build-platforms]

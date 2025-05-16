@@ -15,6 +15,8 @@ on:
     secrets:
       NPM_TOKEN:
         required: true
+      GITHUB_TOKEN:
+        required: true
 
 jobs:
   publish:
@@ -66,7 +68,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          name: ${{ inputs.release_name }}
+          name: "${{ inputs.release_name }}"
           tag_name: ${{ github.ref_name }}
           draft: true
           prerelease: false
@@ -84,3 +86,5 @@ jobs:
         run: | 
           echo "Updating release..."
           gh release edit "${{ inputs.release_name }}" --draft=false --latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
