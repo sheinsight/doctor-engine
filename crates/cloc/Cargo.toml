@@ -11,3 +11,5 @@ version                = "0.1.0"
 
 [dependencies]
 tokei = { workspace = true }
+
+doctor_walk = { workspace = true }

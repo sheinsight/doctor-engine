@@ -26,3 +26,9 @@ impl DerefMut for WalkIgnore {
     &mut self.0
   }
 }
+
+impl From<Vec<String>> for WalkIgnore {
+  fn from(value: Vec<String>) -> Self {
+    Self(value)
+  }
+}

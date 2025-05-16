@@ -1,25 +1,30 @@
 use std::path::Path;
 
-use tokei::{Config, Languages};
+use doctor_walk::WalkIgnore;
+use tokei::{Config, Languages, Sort};
 
+mod opts;
 mod stats;
 
+pub use opts::Opts;
 pub use stats::Stats;
 
-pub fn get_languages_statistics<P: AsRef<Path>>(path: &[P]) -> Vec<Stats> {
-  let config = Config::default();
+pub fn get_lang_stats<P: AsRef<Path>>(path: &[P], opts: Option<Opts>) -> Vec<Stats> {
+  let config = Config {
+    sort: Some(Sort::Code),
+    ..Config::default()
+  };
   let mut languages = Languages::new();
+
+  let mut def_ignore = WalkIgnore::default();
+
+  let i = opts.unwrap_or_default().ignore;
+
+  def_ignore.extend(i.iter().cloned());
 
   languages.get_statistics(
     path,
-    &[
-      ".git",
-      "node_modules",
-      "**/node_modules/**",
-      "**/dist/**",
-      "**/build/**",
-      "**/target/**",
-    ],
+    &def_ignore.iter().map(|s| s.as_str()).collect::<Vec<_>>(),
     &config,
   );
 
@@ -34,8 +39,8 @@ mod tests {
 
   #[test]
   fn test_count_lines() {
-    let languages_statistics = get_languages_statistics(&["/Users/10015448/Git/csp-new"]);
+    let lang_stats = get_lang_stats(&["/Users/10015448/Git/csp-new"], None);
 
-    println!("{:#?}", languages_statistics);
+    println!("{:#?}", lang_stats);
   }
 }

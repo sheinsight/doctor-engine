@@ -18,7 +18,7 @@ export interface DoctorOptions {
   withDashboard?: boolean
 }
 
-export declare function getLangStats(paths: Array<string>): Array<LangStats>
+export declare function getLangStats(paths: Array<string>, opts?: Opts | undefined | null): Array<LangStats>
 
 export interface GlobJsArgs {
   ignore?: Array<string>
@@ -321,6 +321,10 @@ export declare const enum NapiSeverity {
 export interface NapiSourceSpan {
   offset: number
   length: number
+}
+
+export interface Opts {
+  ignore: Array<string>
 }
 
 export interface Position {
