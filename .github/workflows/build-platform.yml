@@ -12,10 +12,16 @@ on:
       docker:
         required: false
         type: string
+      binding_dir:
+        required: true
+        type: string
+      binding_name:
+        required: true
+        type: string
     
-env:
-  NAPI_DIR: bindings/doctor-binding
-  APP_NAME: doctor-binding
+# env:
+#   NAPI_DIR: bindings/doctor-binding
+#   APP_NAME: doctor-binding
 
 jobs:
   build:
@@ -80,7 +86,7 @@ jobs:
           run: |
             set -e 
             rustup target add ${{ inputs.target }}
-            cd ${{ env.NAPI_DIR }}
+            cd ${{ inputs.binding_dir }}
             npm run build -- --target ${{ inputs.target }}
             
             
@@ -94,7 +100,7 @@ jobs:
       - name: Show binary
         shell: bash
         run: |
-          ls -l ${{ env.NAPI_DIR }}
+          ls -l ${{ inputs.binding_dir }}
 
       - name: Build npm
         shell: bash
@@ -105,7 +111,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: doctor-binding-${{ inputs.target }}
-          path: ${{ env.NAPI_DIR }}/${{ env.APP_NAME }}.*.node
+          path: ${{ inputs.binding_dir }}/${{ inputs.binding_name }}.*.node
           if-no-files-found: error 
 
       - name: Upload Js
@@ -113,7 +119,7 @@ jobs:
         with:
           name: js
           path: |
-            ${{ env.NAPI_DIR }}/index.js
-            ${{ env.NAPI_DIR }}/index.d.ts
+            ${{ inputs.binding_dir }}/index.js
+            ${{ inputs.binding_dir }}/index.d.ts
           if-no-files-found: error 
           overwrite: true

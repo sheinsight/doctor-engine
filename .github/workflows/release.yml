@@ -1,7 +1,6 @@
 name: shined-doctor-engine-release
 env:
   DEBUG: napi:*
-  APP_NAME: doctor
   # 如果没有的话 napi prepublish 会报错
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   # MACOSX_DEPLOYMENT_TARGET: '10.13'
@@ -58,6 +57,8 @@ jobs:
       host: ${{ matrix.platform.host }}
       target: ${{ matrix.platform.target }}
       docker: ${{ matrix.platform.docker }}
+      binding_dir: bindings/doctor-binding
+      binding_name: doctor-binding
 
   
   publish:
