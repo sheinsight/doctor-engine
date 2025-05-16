@@ -68,10 +68,14 @@ jobs:
         run: pnpm install --frozen-lockfile --strict-peer-dependencies
 
       - name: Create napi npm dirs
-        run: pnpm run create-npm-dirs
+        run: |
+          cd ${{ inputs.binding_dir }}
+          pnpm run create-npm-dirs
 
       - name: Move artifacts to npm
-        run: pnpm run artifacts
+        run: |
+          cd ${{ inputs.binding_dir }}
+          pnpm run artifacts
 
       - name: Show npm
         shell: bash
