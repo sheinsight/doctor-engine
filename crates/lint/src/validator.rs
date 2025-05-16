@@ -5,7 +5,7 @@ use std::{
 };
 
 use doctor_core::{Messages, ValidatorError, traits::Validator};
-use doctor_walk_parallel::{WalkError, WalkIgnore, WalkParallelJs};
+use doctor_walk::{WalkError, WalkIgnore, WalkParallelJs};
 use miette::MietteDiagnostic;
 use oxc_allocator::Allocator;
 use oxc_linter::{ConfigStoreBuilder, Oxlintrc};

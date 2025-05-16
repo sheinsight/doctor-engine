@@ -2,7 +2,7 @@ use doctor_lint::{
   Category, EnvironmentFlags, GlobalValue, Globals, LintMode, LintValidator,
   config::OxlintrcBuilder, inner::Category20250601Inner,
 };
-use doctor_walk_parallel::WalkIgnore;
+use doctor_walk::WalkIgnore;
 
 use std::time::Instant;
 fn main() -> anyhow::Result<()> {

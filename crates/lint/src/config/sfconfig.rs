@@ -1,7 +1,7 @@
 use std::{fs::read_to_string, path::Path};
 
 use doctor_core::ValidatorError;
-use doctor_walk_parallel::WalkIgnore;
+use doctor_walk::WalkIgnore;
 use serde::{Deserialize, Serialize};
 
 use super::Globals;

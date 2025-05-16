@@ -9,13 +9,13 @@ rust-version.workspace = true
 version                = "0.1.0"
 
 [dependencies]
-base64               = { workspace = true }
-doctor_core          = { workspace = true }
-doctor_lint          = { workspace = true }
-doctor_node          = { workspace = true }
-doctor_npmrc         = { workspace = true }
-doctor_package_json  = { workspace = true }
-doctor_walk_parallel = { workspace = true }
-miette               = { workspace = true }
-tabled               = { workspace = true }
-typed-builder        = { workspace = true }
+base64              = { workspace = true }
+doctor_core         = { workspace = true }
+doctor_lint         = { workspace = true }
+doctor_node         = { workspace = true }
+doctor_npmrc        = { workspace = true }
+doctor_package_json = { workspace = true }
+doctor_walk         = { workspace = true }
+miette              = { workspace = true }
+tabled              = { workspace = true }
+typed-builder       = { workspace = true }

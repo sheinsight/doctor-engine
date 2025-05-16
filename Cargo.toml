@@ -7,7 +7,7 @@ members = [
   "crates/node",
   "crates/npmrc",
   "crates/package_json",
-  "crates/walk_parallel",
+  "crates/walk",
   "bindings/doctor-binding",
 ]
 resolver = "3"
@@ -73,15 +73,15 @@ insta  = "1.36.1"
 
 tokei = "12.1.2"
 
-doctor               = { path = "crates/doctor" }
-doctor_binding       = { path = "bindings/doctor" }
-doctor_cloc          = { path = "crates/cloc" }
-doctor_core          = { path = "crates/core" }
-doctor_lint          = { path = "crates/lint" }
-doctor_node          = { path = "crates/node" }
-doctor_npmrc         = { path = "crates/npmrc" }
-doctor_package_json  = { path = "crates/package_json" }
-doctor_walk_parallel = { path = "crates/walk_parallel" }
+doctor              = { path = "crates/doctor" }
+doctor_binding      = { path = "bindings/doctor" }
+doctor_cloc         = { path = "crates/cloc" }
+doctor_core         = { path = "crates/core" }
+doctor_lint         = { path = "crates/lint" }
+doctor_node         = { path = "crates/node" }
+doctor_npmrc        = { path = "crates/npmrc" }
+doctor_package_json = { path = "crates/package_json" }
+doctor_walk         = { path = "crates/walk" }
 
 [profile.release]
 # 发布构建优化

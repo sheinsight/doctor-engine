@@ -29,7 +29,7 @@ pub fn initialize_logger(level: Option<LogLevel>) {
       "doctor_node",
       "doctor_npmrc",
       "doctor_package_json",
-      "doctor_walk_parallel",
+      "doctor_walk",
     ]
     .into_iter()
     .map(|item| format!("{item}={level}"))
