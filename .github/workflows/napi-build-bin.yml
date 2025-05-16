@@ -1,4 +1,4 @@
-name: building-platform-binary
+name: NAPI Build 
 
 on:
   workflow_call:
