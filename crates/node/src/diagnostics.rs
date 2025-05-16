@@ -5,18 +5,21 @@ use miette::{LabeledSpan, MietteDiagnostic, SourceSpan};
 pub struct NodeVersionFileNotFoundDiagnostic;
 
 impl NodeVersionFileNotFoundDiagnostic {
-  pub fn at<P: AsRef<Path>>(path: P) -> MietteDiagnostic {
+  pub fn at<P: AsRef<Path>>(path: P, regex_str: &str) -> MietteDiagnostic {
     let dir = path.as_ref().parent().map_or(Path::new(""), |p| p);
 
     MietteDiagnostic::new(r#"Config file was not found."#)
       .with_code("shined(node-version:config-file-not-found)")
       .with_severity(miette::Severity::Error)
       .with_help(format!(
-            r#"Please add .node-version file to your project {}. 
+        r#"Please add .node-version file to your project {}. 
 
-Correctly declare the version number of the node you are using, which needs to meet the format '^\d+\.\d+\.\d+$'."#,
-            dir.display().to_string()
-          ))
+Correctly declare the version number of the node you are using, which needs to meet the format '{}'.
+
+e.g. 'v18.0.0' or '18.0.0'."#,
+        regex_str,
+        dir.display().to_string()
+      ))
   }
 }
 
@@ -39,12 +42,21 @@ impl InvalidVersionRangeDiagnostic {
 pub struct InvalidVersionFormatDiagnostic;
 
 impl InvalidVersionFormatDiagnostic {
-  pub fn at(span: impl Into<SourceSpan>) -> MietteDiagnostic {
-    MietteDiagnostic::new(r#"Only support version numbers that meet '^\d+\.\d+\.\d+$'."#)
-      .with_label(LabeledSpan::at(span, r#"Wrong version number format"#))
-      .with_help(r#"Please modify your version number to meet the format '^\d+\.\d+\.\d+$'."#)
-      .with_code("shined(node-version:invalid-version-format)")
-      .with_severity(miette::Severity::Error)
+  pub fn at(span: impl Into<SourceSpan>, regex_str: &str) -> MietteDiagnostic {
+    MietteDiagnostic::new(format!(
+      r#"Only support version numbers that meet '{}'."#,
+      regex_str
+    ))
+    .with_label(LabeledSpan::at(
+      span,
+      r#"Invalid node version number format"#,
+    ))
+    .with_help(format!(
+      r#"Please modify your version number to meet the format '{}'."#,
+      regex_str
+    ))
+    .with_code("shined(node-version:invalid-version-format)")
+    .with_severity(miette::Severity::Error)
   }
 }
 

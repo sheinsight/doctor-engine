@@ -111,10 +111,15 @@ where
   fn validate(&self) -> Result<Vec<Messages>, ValidatorError> {
     let path = self.config_path.as_ref();
 
+    let r = regex!(r"^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$");
+
     if !path.exists() {
       return Ok(vec![
         Messages::builder()
-          .diagnostics(vec![NodeVersionFileNotFoundDiagnostic::at(path)])
+          .diagnostics(vec![NodeVersionFileNotFoundDiagnostic::at(
+            path,
+            r.as_str(),
+          )])
           .build(),
       ]);
     }
@@ -128,9 +133,8 @@ where
       .build();
 
     if let Some(version) = &node_version.version {
-      let r = regex!(r#"^\d+\.\d+\.\d+$"#);
       if !r.is_match(&version) {
-        let diagnostic = InvalidVersionFormatDiagnostic::at(0..version.len());
+        let diagnostic = InvalidVersionFormatDiagnostic::at(0..version.len(), r.as_str());
 
         messages.push(diagnostic);
 
@@ -172,6 +176,11 @@ mod tests {
     for msg in res {
       assert!(msg.has_error());
       msg.render();
+      assert_eq!(msg.diagnostics.len(), 1);
+      assert_eq!(
+        msg.diagnostics[0].code,
+        Some("shined(node-version:invalid-version-format)".to_string())
+      );
     }
   }
 
@@ -188,6 +197,11 @@ mod tests {
     for msg in res {
       assert!(msg.has_error());
       msg.render();
+      assert_eq!(msg.diagnostics.len(), 1);
+      assert_eq!(
+        msg.diagnostics[0].code,
+        Some("shined(node-version:config-file-not-found)".to_string())
+      );
     }
   }
 
@@ -204,6 +218,11 @@ mod tests {
     for msg in res {
       assert!(msg.has_error());
       msg.render();
+      assert_eq!(msg.diagnostics.len(), 1);
+      assert_eq!(
+        msg.diagnostics[0].code,
+        Some("shined(node-version:empty-version)".to_string())
+      );
     }
   }
 
@@ -215,7 +234,12 @@ mod tests {
       .build()
       .validate();
 
-    assert!(res.is_ok());
+    let res = res.unwrap();
+
+    for msg in res {
+      assert!(!msg.has_error());
+      msg.render();
+    }
   }
 
   #[test]
@@ -226,7 +250,12 @@ mod tests {
       .build()
       .validate();
 
-    assert!(res.is_ok());
+    let res = res.unwrap();
+
+    for msg in res {
+      assert!(!msg.has_error());
+      msg.render();
+    }
   }
 
   #[test]
@@ -242,6 +271,32 @@ mod tests {
     for msg in res {
       assert!(msg.has_error());
       msg.render();
+      assert_eq!(msg.diagnostics.len(), 1);
+      assert_eq!(
+        msg.diagnostics[0].code,
+        Some("shined(node-version:not-in-valid-range)".to_string())
+      );
+    }
+  }
+
+  #[test]
+  fn test_validate_node_version_file_valid_range_error2() {
+    let res = NodeVersionValidator::builder()
+      .config_path("./fixtures/invalid2")
+      .with_valid_range(vec!["^18.0.0", "^2.0.0"])
+      .build()
+      .validate();
+
+    let res = res.unwrap();
+
+    for msg in res {
+      assert!(msg.has_error());
+      msg.render();
+      assert_eq!(msg.diagnostics.len(), 1);
+      assert_eq!(
+        msg.diagnostics[0].code,
+        Some("shined(node-version:invalid-version-format)".to_string())
+      );
     }
   }
 }
