@@ -1,19 +1,18 @@
-use miette::Severity;
 use napi_derive::napi;
 
 #[napi(string_enum)]
-pub enum NapiSeverity {
+pub enum Severity {
   Error,
   Warning,
   Advice,
 }
 
-impl From<Severity> for NapiSeverity {
-  fn from(severity: Severity) -> Self {
+impl From<miette::Severity> for Severity {
+  fn from(severity: miette::Severity) -> Self {
     match severity {
-      Severity::Error => NapiSeverity::Error,
-      Severity::Warning => NapiSeverity::Warning,
-      Severity::Advice => NapiSeverity::Advice,
+      miette::Severity::Error => Severity::Error,
+      miette::Severity::Warning => Severity::Warning,
+      miette::Severity::Advice => Severity::Advice,
     }
   }
 }

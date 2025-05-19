@@ -1,17 +1,45 @@
 
 
-import { innerDebugLint, initializeLogger,innerLint, NaPiCategory,doctor,LogLevel,getLangStats } from './index.js'
+import { 
+  innerDebugLint, 
+  initializeLogger,
+  innerLint, 
+  NaPiCategory,
+  doctor,
+  LogLevel,
+  getLangStats,
+  // getSourceLocation
+ } from './index.js'
+ import { performance } from "node:perf_hooks"
 
 (async () => {
-
+  // console.log("getSourceLocation-->",getSourceLocation);
+  
   // initializeLogger(LogLevel.Silent);
-  initializeLogger(LogLevel.Error);
+  // initializeLogger(LogLevel.Error);
   // console.log('start')
 
-  const res1 = await doctor('/Users/ityuany/GitRepository/csp-new',{
+  const start = performance.now()
+
+  const res1 = await doctor('/Users/10015448/Git/csp-new',{
     maxRenderCount:10,
     withDashboard:true,
   });
+
+  // for (const item of res1) {
+  //   console.log("item-->",item.sourcePath);
+    
+  //   for (const diagnostic of item.diagnostics) {
+
+  //     for(const label of diagnostic.labels){
+  //       console.log("label-->",label);
+  //     }
+
+  //   }
+  // }
+
+  const end = performance.now()
+  console.log(`Time taken: ${end - start} milliseconds`)
 
 
 
@@ -20,16 +48,16 @@ import { innerDebugLint, initializeLogger,innerLint, NaPiCategory,doctor,LogLeve
   // console.log(JSON.stringify(res1,null,2));
   
 
-  const res2 = await getLangStats(['/Users/10015448/Git/csp-new'],{
-    ignore: [
-      '**/node_modules/**',
-      'node_modules',
-      '**/*.d.ts',
-      "csp-*"
-    ]
-  })
+  // const res2 = await getLangStats(['/Users/10015448/Git/csp-new'],{
+  //   ignore: [
+  //     '**/node_modules/**',
+  //     'node_modules',
+  //     '**/*.d.ts',
+  //     "csp-*"
+  //   ]
+  // })
 
-  console.table(res2)
+  // console.table(res2)
  
 
   // console.log(res);

@@ -12,10 +12,16 @@ pub struct NapiMessages {
 
 impl From<Messages> for NapiMessages {
   fn from(messages: Messages) -> Self {
+    let source_code = messages.source_code.clone();
     NapiMessages {
       // source_code: messages.source_code,
       source_path: messages.source_path,
-      diagnostics: messages.diagnostics.into_iter().map(|d| d.into()).collect(),
+      diagnostics: messages
+        .diagnostics
+        .into_iter()
+        .map(|d| (source_code.clone(), d))
+        .map(NapiDiagnostics::from)
+        .collect(),
     }
   }
 }

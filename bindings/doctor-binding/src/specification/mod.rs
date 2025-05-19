@@ -4,7 +4,9 @@ use napi_derive::napi;
 
 mod diagnostics;
 mod labeled_span;
+mod location;
 mod messages;
+mod position;
 mod severity;
 mod source_span;
 

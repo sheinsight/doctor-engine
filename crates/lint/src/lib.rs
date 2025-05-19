@@ -13,6 +13,5 @@ pub mod ext;
 pub mod inner;
 mod validator;
 
-pub use validator::*;
-
 pub use config::*;
+pub use validator::*;
