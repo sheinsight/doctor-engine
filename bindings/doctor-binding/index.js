@@ -383,4 +383,4 @@ module.exports.LogLevel = nativeBinding.LogLevel
 module.exports.NaPiCategory = nativeBinding.NaPiCategory
 module.exports.Severity = nativeBinding.Severity
 module.exports.unSafeInnerDebugLint = nativeBinding.unSafeInnerDebugLint
-module.exports.unsafeInnerLint = nativeBinding.unsafeInnerLint
+module.exports.unSafeInnerLint = nativeBinding.unSafeInnerLint

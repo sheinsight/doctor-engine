@@ -3,7 +3,7 @@
 import { 
   unSafeInnerDebugLint, 
   initializeLogger,
-  unsafeInnerLint, 
+  unSafeInnerLint, 
   NaPiCategory,
   doctor,
   LogLevel,

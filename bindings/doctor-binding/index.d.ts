@@ -351,4 +351,4 @@ export interface Span {
 
 export declare function unSafeInnerDebugLint(oxlintConfig: string, globJsArgs: GlobJsArgs): Promise<Array<Diagnostic>>
 
-export declare function unsafeInnerLint(globJsArgs: GlobJsArgs, category: NaPiCategory): Promise<Array<Diagnostic>>
+export declare function unSafeInnerLint(globJsArgs: GlobJsArgs, category: NaPiCategory): Promise<Array<Diagnostic>>

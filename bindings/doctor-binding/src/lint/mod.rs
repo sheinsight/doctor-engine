@@ -93,7 +93,7 @@ pub async fn un_safe_inner_debug_lint(
 }
 
 #[napi]
-pub async fn unsafe_inner_lint(
+pub async fn un_safe_inner_lint(
   glob_js_args: GlobJsArgs,
   category: NaPiCategory,
 ) -> Result<Vec<Diagnostic>> {

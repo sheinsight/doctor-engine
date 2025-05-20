@@ -62,4 +62,4 @@ export const LogLevel = __napiModule.exports.LogLevel
 export const NaPiCategory = __napiModule.exports.NaPiCategory
 export const Severity = __napiModule.exports.Severity
 export const unSafeInnerDebugLint = __napiModule.exports.unSafeInnerDebugLint
-export const unsafeInnerLint = __napiModule.exports.unsafeInnerLint
+export const unSafeInnerLint = __napiModule.exports.unSafeInnerLint

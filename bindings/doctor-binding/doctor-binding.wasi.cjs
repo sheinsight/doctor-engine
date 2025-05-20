@@ -93,4 +93,4 @@ module.exports.LogLevel = __napiModule.exports.LogLevel
 module.exports.NaPiCategory = __napiModule.exports.NaPiCategory
 module.exports.Severity = __napiModule.exports.Severity
 module.exports.unSafeInnerDebugLint = __napiModule.exports.unSafeInnerDebugLint
-module.exports.unsafeInnerLint = __napiModule.exports.unsafeInnerLint
+module.exports.unSafeInnerLint = __napiModule.exports.unSafeInnerLint
