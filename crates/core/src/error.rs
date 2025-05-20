@@ -21,6 +21,6 @@ pub enum ValidatorError {
   #[error(transparent)]
   MietteInstallError(#[from] miette::InstallError),
 
-  #[error("unknown error")]
+  #[error("unknown error {0}")]
   Unknown(#[from] Box<dyn std::error::Error + Send + Sync>),
 }
