@@ -1,9 +1,9 @@
 
 
 import { 
-  innerDebugLint, 
+  unSafeInnerDebugLint, 
   initializeLogger,
-  innerLint, 
+  unsafeInnerLint, 
   NaPiCategory,
   doctor,
   LogLevel,

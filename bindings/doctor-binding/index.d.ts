@@ -30,10 +30,6 @@ export interface GlobJsArgs {
 
 export declare function initializeLogger(level?: LogLevel | undefined | null): void
 
-export declare function innerDebugLint(oxlintConfig: string, globJsArgs: GlobJsArgs): Promise<Array<Diagnostic>>
-
-export declare function innerLint(globJsArgs: GlobJsArgs, category: NaPiCategory): Promise<Array<Diagnostic>>
-
 export interface LabeledLoc {
   span: Span
   loc: Location
@@ -295,7 +291,7 @@ export declare const enum NaPiCategory {
 export interface NapiDiagnostics {
   message: string
   code?: string
-  severity?: NapiSeverity
+  severity?: Severity
   help?: string
   url?: string
   labels?: Array<NapiLabeledSpan>
@@ -303,24 +299,14 @@ export interface NapiDiagnostics {
 
 export interface NapiLabeledSpan {
   label?: string
-  span: NapiSourceSpan
+  span: SourceSpan
+  loc: SourceLocation
   primary: boolean
 }
 
 export interface NapiMessages {
   sourcePath: string
   diagnostics: Array<NapiDiagnostics>
-}
-
-export declare const enum NapiSeverity {
-  Error = 'Error',
-  Warning = 'Warning',
-  Advice = 'Advice'
-}
-
-export interface NapiSourceSpan {
-  offset: number
-  length: number
 }
 
 export interface Opts {
@@ -337,7 +323,32 @@ export interface Response {
   map: Record<string, number>
 }
 
+export declare const enum Severity {
+  Error = 'Error',
+  Warning = 'Warning',
+  Advice = 'Advice'
+}
+
+export interface SourceLocation {
+  start: SourcePosition
+  end: SourcePosition
+}
+
+export interface SourcePosition {
+  row: number
+  col: number
+}
+
+export interface SourceSpan {
+  offset: number
+  length: number
+}
+
 export interface Span {
   offset: number
   length: number
 }
+
+export declare function unSafeInnerDebugLint(oxlintConfig: string, globJsArgs: GlobJsArgs): Promise<Array<Diagnostic>>
+
+export declare function unsafeInnerLint(globJsArgs: GlobJsArgs, category: NaPiCategory): Promise<Array<Diagnostic>>
