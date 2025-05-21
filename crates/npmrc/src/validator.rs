@@ -8,12 +8,7 @@ use doctor_core::{
 use miette::MietteDiagnostic;
 use typed_builder::TypedBuilder;
 
-use crate::{
-  diagnostics::{
-    NpmrcConfigFileNotFoundDiagnostic, NpmrcMissingRegistryDiagnostic, NpmrcWrongRegistryDiagnostic,
-  },
-  npmrc_config::NpmrcConfig,
-};
+use crate::{diagnostics::DiagnosticFactory, npmrc_config::NpmrcConfig};
 
 /// NpmrcValidator is a validator for npmrc file
 ///
@@ -68,14 +63,14 @@ where
             .unwrap_or((0, 0));
 
           let diagnostic =
-            NpmrcWrongRegistryDiagnostic::at(offset..offset + length, &validate_registry);
+            DiagnosticFactory::at_invalid_registry(offset..offset + length, &validate_registry);
 
           diagnostics.push(diagnostic);
 
           return Ok(diagnostics);
         }
       } else {
-        let diagnostic = NpmrcMissingRegistryDiagnostic::at(0..config.__raw_source.len());
+        let diagnostic = DiagnosticFactory::at_missing_registry(0..config.__raw_source.len());
 
         diagnostics.push(diagnostic);
 
@@ -129,7 +124,7 @@ where
         Messages::builder()
           .source_code(String::new())
           .source_path(path.to_string_owned())
-          .diagnostics(vec![NpmrcConfigFileNotFoundDiagnostic::at(path)])
+          .diagnostics(vec![DiagnosticFactory::at_config_file_not_found(path)])
           .build(),
       ]);
     }
@@ -155,7 +150,7 @@ mod tests {
   use super::*;
 
   #[test]
-  fn test_validate_registry() {
+  fn should_return_ok_diagnostic() {
     let result = NpmrcValidator::builder()
       .config_path("fixtures/.npmrc")
       .with_registry_url(vec!["https://test.npmjs.org/"])
@@ -166,7 +161,7 @@ mod tests {
   }
 
   #[test]
-  fn test_validate_registry_error() {
+  fn should_return_invalid_registry_diagnostic() {
     let result = NpmrcValidator::builder()
       .config_path("fixtures/.npmrc")
       .with_registry_url(vec!["https://test2.npmjs.org"])
@@ -178,11 +173,16 @@ mod tests {
     for msg in result {
       assert!(msg.has_error());
       msg.render();
+      assert_eq!(msg.diagnostics.len(), 1);
+      assert_eq!(
+        msg.diagnostics[0].code,
+        Some("shined(npmrc:invalid-registry)".into())
+      );
     }
   }
 
   #[test]
-  fn test_validate_registry_error_not_found_field() {
+  fn should_return_missing_registry_diagnostic() {
     let result = NpmrcValidator::builder()
       .config_path("fixtures/.undef_registry")
       .with_registry_url(vec!["https://test.npmjs.org/"])
@@ -194,11 +194,16 @@ mod tests {
     for msg in result {
       assert!(msg.has_error());
       msg.render();
+      assert_eq!(msg.diagnostics.len(), 1);
+      assert_eq!(
+        msg.diagnostics[0].code,
+        Some("shined(npmrc:missing-registry)".into())
+      );
     }
   }
 
   #[test]
-  fn test_validate_registry_error_registry_value_is_empty() {
+  fn should_return_invalid_registry_diagnostic_when_registry_is_empty() {
     let result = NpmrcValidator::builder()
       .config_path("fixtures/.empty_registry")
       .with_registry_url(vec!["https://test.npmjs.org/"])
@@ -210,11 +215,16 @@ mod tests {
     for msg in result {
       assert!(msg.has_error());
       msg.render();
+      assert_eq!(msg.diagnostics.len(), 1);
+      assert_eq!(
+        msg.diagnostics[0].code,
+        Some("shined(npmrc:invalid-registry)".into())
+      );
     }
   }
 
   #[test]
-  fn test_validate_registry_trim_end_matches() {
+  fn should_return_ok_diagnostic_when_has_end_slash() {
     let result = NpmrcValidator::builder()
       .config_path("fixtures/.has_end")
       .with_registry_url(vec!["https://test.npmjs.org"])
@@ -226,6 +236,27 @@ mod tests {
     for msg in result {
       assert!(!msg.has_error());
       msg.render();
+    }
+  }
+
+  #[test]
+  fn should_return_config_file_not_found_diagnostic() {
+    let result = NpmrcValidator::builder()
+      .config_path("fixtures/.not_found")
+      .with_registry_url(vec!["https://test.npmjs.org/"])
+      .build()
+      .validate();
+
+    let result = result.unwrap();
+
+    for msg in result {
+      assert!(msg.has_error());
+      msg.render();
+      assert_eq!(msg.diagnostics.len(), 1);
+      assert_eq!(
+        msg.diagnostics[0].code,
+        Some("shined(npmrc:config-file-not-found)".into())
+      );
     }
   }
 }
