@@ -3,7 +3,7 @@ mod scheduler;
 use std::path::{Path, PathBuf};
 
 use base64::{Engine, engine::general_purpose::STANDARD};
-use doctor_core::{Messages, ValidatorError};
+use doctor_core::{Messages, ValidatorError, traits::Validator};
 use doctor_lint::{
   Category, EnvironmentFlags, LintMode, LintValidator, OxlintrcBuilder, Sfconfig,
   inner::Category20250601Inner,
@@ -35,6 +35,56 @@ pub struct DoctorOptions {
   with_dashboard: bool,
 }
 
+pub fn register_npmrc(cwd: impl AsRef<Path>) -> Box<dyn Validator> {
+  let text = decode_to_str(ENCODED.join("").as_str());
+
+  let validator = NpmrcValidator::builder()
+    .config_path(cwd.as_ref().to_path_buf())
+    .with_registry_url(vec![text])
+    .build();
+
+  Box::new(validator)
+}
+
+pub fn register_node_version(cwd: impl AsRef<Path>) -> Box<dyn Validator> {
+  let validator = NodeVersionValidator::builder()
+    .config_path(cwd.as_ref().to_path_buf())
+    .with_valid_range(vec!["^18.12.0", "^20.9.0", "^22.11.0"])
+    .build();
+
+  Box::new(validator)
+}
+
+pub fn register_package_json(cwd: impl AsRef<Path>) -> Box<dyn Validator> {
+  let validator = PackageJsonValidator::builder()
+    .config_path(cwd.as_ref().to_path_buf())
+    .with_validate_name(ValidateName::Exist)
+    .with_validate_private(ValidatePrivate::True)
+    .with_validate_package_manager(ValidatePackageManager::Exist)
+    .build();
+
+  Box::new(validator)
+}
+
+pub fn register_lint(cwd: impl AsRef<Path>, sfconfig: Sfconfig) -> Box<dyn Validator> {
+  let category = Category::V20250601Inner(Category20250601Inner::default());
+  let rc = OxlintrcBuilder::default()
+    .with_category(category)
+    .with_globals(sfconfig.globals)
+    .with_mode(LintMode::Production)
+    .with_envs(EnvironmentFlags::default())
+    .build()
+    .unwrap();
+  let validator = LintValidator::builder()
+    .cwd(cwd.as_ref().to_path_buf())
+    .ignore(sfconfig.ignore)
+    .with_show_report(false)
+    .oxlintrc(rc)
+    .build();
+
+  Box::new(validator)
+}
+
 pub fn doctor<T: AsRef<Path>>(
   cwd: T,
   options: DoctorOptions,
@@ -56,51 +106,15 @@ pub fn doctor<T: AsRef<Path>>(
 
   let cwd = PathBuf::from(cwd.as_ref());
 
-  let text = decode_to_str(ENCODED.join("").as_str());
-
-  scheduler.push(Box::new(
-    NpmrcValidator::builder()
-      .config_path(cwd.join(".npmrc"))
-      .with_registry_url(vec![text])
-      .build(),
-  ));
-
-  scheduler.push(Box::new(
-    NodeVersionValidator::builder()
-      .config_path(cwd.join(".node-version"))
-      .with_valid_range(vec!["^18.12.0", "^20.9.0", "^22.11.0"])
-      .build(),
-  ));
-
-  scheduler.push(Box::new(
-    PackageJsonValidator::builder()
-      .config_path(cwd.join("package.json"))
-      .with_validate_name(ValidateName::Exist)
-      .with_validate_private(ValidatePrivate::True)
-      .with_validate_package_manager(ValidatePackageManager::Exist)
-      .build(),
-  ));
-
-  let category = Category::V20250601Inner(Category20250601Inner::default());
-
   let sfconfig = Sfconfig::parse(cwd.join(".sfconfig").join("spec.json"))?;
 
-  let rc = OxlintrcBuilder::default()
-    .with_category(category)
-    .with_globals(sfconfig.globals)
-    .with_mode(LintMode::Production)
-    .with_envs(EnvironmentFlags::default())
-    .build()
-    .unwrap();
+  scheduler.push(register_npmrc(cwd.join(".npmrc")));
 
-  scheduler.push(Box::new(
-    LintValidator::builder()
-      .cwd(cwd)
-      .ignore(sfconfig.ignore)
-      .with_show_report(false)
-      .oxlintrc(rc)
-      .build(),
-  ));
+  scheduler.push(register_node_version(cwd.join(".node-version")));
+
+  scheduler.push(register_package_json(cwd.join("package.json")));
+
+  scheduler.push(register_lint(cwd, sfconfig));
 
   let messages = scheduler
     .validator()

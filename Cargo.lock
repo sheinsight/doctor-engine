@@ -899,6 +899,7 @@ dependencies = [
 name = "doctor_npmrc"
 version = "0.1.0"
 dependencies = [
+ "base64 0.22.1",
  "config",
  "doctor_core",
  "miette",
