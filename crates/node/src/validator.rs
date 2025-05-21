@@ -8,13 +8,7 @@ use lazy_regex::regex;
 use miette::MietteDiagnostic;
 use typed_builder::TypedBuilder;
 
-use crate::{
-  diagnostics::{
-    EmptyNodeVersionDiagnostic, InvalidVersionFormatDiagnostic, InvalidVersionRangeDiagnostic,
-    NodeVersionFileNotFoundDiagnostic,
-  },
-  node_version::NodeVersion,
-};
+use crate::{diagnostics::DiagnosticFactory, node_version::NodeVersion};
 
 /// validate node version file
 ///
@@ -75,8 +69,13 @@ where
         return Ok(diagnostics);
       }
 
-      let diagnostic =
-        InvalidVersionRangeDiagnostic::at(0..len, ranges.iter().map(|r| r.to_string()).collect());
+      // let diagnostic =
+      //   InvalidVersionRangeDiagnostic::at(0..len, ranges.iter().map(|r| r.to_string()).collect());
+
+      let diagnostic = DiagnosticFactory::at_invalid_version_range(
+        0..len,
+        ranges.iter().map(|r| r.to_string()).collect(),
+      );
 
       diagnostics.push(diagnostic);
     }
@@ -116,7 +115,7 @@ where
     if !path.exists() {
       return Ok(vec![
         Messages::builder()
-          .diagnostics(vec![NodeVersionFileNotFoundDiagnostic::at(
+          .diagnostics(vec![DiagnosticFactory::at_config_file_not_found(
             path,
             r.as_str(),
           )])
@@ -134,7 +133,7 @@ where
 
     if let Some(version) = &node_version.version {
       if !r.is_match(&version) {
-        let diagnostic = InvalidVersionFormatDiagnostic::at(0..version.len(), r.as_str());
+        let diagnostic = DiagnosticFactory::at_invalid_version_format(0..version.len(), r.as_str());
 
         messages.push(diagnostic);
 
@@ -144,7 +143,9 @@ where
 
     if let Some(raw_source) = &node_version.__raw_source {
       if raw_source.trim().is_empty() {
-        let diagnostic = EmptyNodeVersionDiagnostic::at(0..raw_source.len());
+        // let diagnostic = EmptyNodeVersionDiagnostic::at(0..raw_source.len());
+
+        let diagnostic = DiagnosticFactory::at_empty_node_version(0..raw_source.len());
 
         messages.push(diagnostic);
 
@@ -239,6 +240,7 @@ mod tests {
     for msg in res {
       assert!(!msg.has_error());
       msg.render();
+      assert_eq!(msg.diagnostics.len(), 0);
     }
   }
 
@@ -255,6 +257,7 @@ mod tests {
     for msg in res {
       assert!(!msg.has_error());
       msg.render();
+      assert!(msg.diagnostics.is_empty())
     }
   }
 
@@ -274,7 +277,7 @@ mod tests {
       assert_eq!(msg.diagnostics.len(), 1);
       assert_eq!(
         msg.diagnostics[0].code,
-        Some("shined(node-version:not-in-valid-range)".to_string())
+        Some("shined(node-version:invalid-version-range)".to_string())
       );
     }
   }
