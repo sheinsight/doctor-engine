@@ -1,72 +1,88 @@
 use std::path::Path;
 
-use miette::{LabeledSpan, MietteDiagnostic, SourceSpan};
+use miette::{LabeledSpan, MietteDiagnostic, SourceSpan, diagnostic};
 
-pub struct ConfigFileNotFoundDiagnostic;
+pub struct DiagnosticFactory;
 
-impl ConfigFileNotFoundDiagnostic {
-  pub fn at<P: AsRef<Path>>(path: P) -> MietteDiagnostic {
-    let dir = path.as_ref().parent().map_or(Path::new(""), |p| p);
-    MietteDiagnostic::new(format!("Config file was not found."))
-      .with_code("shined(package-json:config-file-not-found)")
-      .with_severity(miette::Severity::Error)
-      .with_help(format!(
-        "Please add a package.json file to your project at {}",
-        dir.display().to_string()
-      ))
+impl DiagnosticFactory {
+  pub fn at_config_file_not_found<P: AsRef<Path>>(path: P) -> MietteDiagnostic {
+    let file = path.as_ref();
+    let dir = file.parent().map_or(Path::new(""), |p| p);
+    let code = "shined(package-json:config-file-not-found)";
+    let help = format!(
+      "Please add a package.json file to your project at {}",
+      dir.display().to_string()
+    );
+    diagnostic!(
+      severity = miette::Severity::Error,
+      code = code,
+      help = help,
+      "Config file was not found: {}",
+      file.display().to_string()
+    )
   }
-}
 
-pub struct MissingPackageManagerDiagnostic;
+  pub fn at_missing_package_manager(span: impl Into<SourceSpan>) -> MietteDiagnostic {
+    let code = "shined(package-json:missing-package-manager)";
+    let help = r#"Add packageManager field to your package.json file. 
+    
+e.g.:  "packageManager": "npm@8.19.2""#;
+    let labels = vec![LabeledSpan::at(span, "Add packageManager field here")];
 
-impl MissingPackageManagerDiagnostic {
-  pub fn at(span: impl Into<SourceSpan>) -> MietteDiagnostic {
-    MietteDiagnostic::new("Missing required 'packageManager' field in package.json")
-      .with_code("shined(package-json:missing-package-manager)")
-      .with_severity(miette::Severity::Error)
-      .with_label(LabeledSpan::at(span, "Add packageManager field here"))
-      .with_help(
-        r#"Add the packageManager field to specify your package manager version, e.g.:  "packageManager": "npm@8.19.2""#,
-      )
+    diagnostic!(
+      severity = miette::Severity::Error,
+      code = code,
+      help = help,
+      labels = labels,
+      "Missing 'packageManager' field",
+    )
   }
-}
 
-pub struct MissingPrivateFieldDiagnostic;
+  pub fn at_missing_private_field(span: impl Into<SourceSpan>) -> MietteDiagnostic {
+    let code = "shined(package-json:missing-private)";
+    let help = r#"Add private field to your package.json file.
+    
+e.g.: "private": true"#;
+    let labels = vec![LabeledSpan::at(span, "Add private field here")];
 
-impl MissingPrivateFieldDiagnostic {
-  pub fn at(span: impl Into<SourceSpan>) -> MietteDiagnostic {
-    MietteDiagnostic::new("Require 'private' field")
-      .with_code("shined(package-json:missing-private)")
-      .with_severity(miette::Severity::Error)
-      .with_label(LabeledSpan::at(span, "private is required"))
-      .with_help("Please add a private field to your package.json file")
+    diagnostic!(
+      severity = miette::Severity::Error,
+      code = code,
+      help = help,
+      labels = labels,
+      "Missing 'private' field",
+    )
   }
-}
 
-pub struct MissingNameFieldDiagnostic;
+  pub fn at_missing_name_field(span: impl Into<SourceSpan>) -> MietteDiagnostic {
+    let code = "shined(package-json:missing-name)";
+    let help = r#"Add name field to your package.json file.
+    
+e.g.: "name": "my-package""#;
+    let labels = vec![LabeledSpan::at(span, "Add name field here")];
 
-impl MissingNameFieldDiagnostic {
-  pub fn at(span: impl Into<SourceSpan>) -> MietteDiagnostic {
-    MietteDiagnostic::new("Require 'name' field")
-      .with_code("shined(package-json:missing-name)")
-      .with_severity(miette::Severity::Error)
-      .with_label(LabeledSpan::at(span, "name is required"))
-      .with_help("Please add a name field to your package.json file")
+    diagnostic!(
+      severity = miette::Severity::Error,
+      code = code,
+      help = help,
+      labels = labels,
+      "Missing 'name' field",
+    )
   }
-}
 
-pub struct PrivateNotTrueDiagnostic;
+  pub fn at_private_not_true(span: impl Into<SourceSpan>) -> MietteDiagnostic {
+    let code = "shined(package-json:private-not-true)";
+    let help = r#"Update your package.json to include: "private": true
 
-impl PrivateNotTrueDiagnostic {
-  pub fn at(span: impl Into<SourceSpan>) -> MietteDiagnostic {
-    MietteDiagnostic::new("The 'private' field in package.json must be set to true")
-      .with_code("shined(package-json:private-not-true)")
-      .with_severity(miette::Severity::Error)
-      .with_label(LabeledSpan::at(span, "Set private field to true"))
-      .with_help(
-        r#"Update your package.json to include: "private": true
+This ensures the package cannot be accidentally published to npm."#;
+    let labels = vec![LabeledSpan::at(span, "Set private field to true")];
 
-This ensures the package cannot be accidentally published to npm."#,
-      )
+    diagnostic!(
+      severity = miette::Severity::Error,
+      code = code,
+      help = help,
+      labels = labels,
+      "The 'private' field in package.json must be set to true",
+    )
   }
 }

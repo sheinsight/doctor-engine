@@ -10,10 +10,7 @@ use miette::MietteDiagnostic;
 use package_json_parser::PackageJsonParser;
 use typed_builder::TypedBuilder;
 
-use crate::diagnostics::{
-  ConfigFileNotFoundDiagnostic, MissingNameFieldDiagnostic, MissingPackageManagerDiagnostic,
-  MissingPrivateFieldDiagnostic, PrivateNotTrueDiagnostic,
-};
+use crate::diagnostics::DiagnosticFactory;
 
 #[derive(Debug)]
 pub enum ValidateName {
@@ -178,7 +175,8 @@ where
           .as_ref()
           .map_or(0, |source| source.len());
 
-        diagnostics.push(MissingPackageManagerDiagnostic::at(0..len));
+        diagnostics.push(DiagnosticFactory::at_missing_package_manager(0..len));
+
         return Ok(diagnostics);
       };
     }
@@ -207,7 +205,7 @@ where
             )?;
             let end = range.unwrap_or_default().end().into();
             let start = range.unwrap_or_default().start().into();
-            diagnostics.push(PrivateNotTrueDiagnostic::at(start..end));
+            diagnostics.push(DiagnosticFactory::at_private_not_true(start..end));
             return Ok(diagnostics);
           }
         };
@@ -216,7 +214,7 @@ where
           .__raw_source
           .as_ref()
           .map_or(0, |source| source.len());
-        diagnostics.push(MissingPrivateFieldDiagnostic::at(0..len));
+        diagnostics.push(DiagnosticFactory::at_missing_private_field(0..len));
         return Ok(diagnostics);
       }
     }
@@ -237,7 +235,7 @@ where
           .as_ref()
           .map_or(0, |source| source.len());
 
-        diagnostics.push(MissingNameFieldDiagnostic::at(0..len));
+        diagnostics.push(DiagnosticFactory::at_missing_name_field(0..len));
       }
     }
 
@@ -273,7 +271,7 @@ where
         Messages::builder()
           .source_code(String::new())
           .source_path(path.to_string_owned())
-          .diagnostics(vec![ConfigFileNotFoundDiagnostic::at(path)])
+          .diagnostics(vec![DiagnosticFactory::at_config_file_not_found(path)])
           .build(),
       ]);
     }
@@ -305,7 +303,7 @@ mod tests {
   use super::*;
 
   #[test]
-  fn test_validate_name() {
+  fn should_return_missing_name_diagnostic() {
     let result = PackageJsonValidator::builder()
       .config_path("fixtures/no_name.json")
       .with_validate_name(ValidateName::Exist)
@@ -316,11 +314,13 @@ mod tests {
     for msg in result {
       assert!(msg.has_error());
       msg.render();
+      assert!(msg.diagnostics.len() == 1);
+      assert!(msg.diagnostics[0].code == Some("shined(package-json:missing-name)".into()));
     }
   }
 
   #[test]
-  fn test_validate_private() {
+  fn should_return_missing_private_diagnostic() {
     let result = PackageJsonValidator::builder()
       .config_path("fixtures/no_private.json")
       .with_validate_private(ValidatePrivate::True)
@@ -331,11 +331,13 @@ mod tests {
     for msg in result {
       assert!(msg.has_error());
       msg.render();
+      assert!(msg.diagnostics.len() == 1);
+      assert!(msg.diagnostics[0].code == Some("shined(package-json:missing-private)".into()));
     }
   }
 
   #[test]
-  fn test_validate_package_manager() {
+  fn should_return_missing_package_manager_diagnostic() {
     let result = PackageJsonValidator::builder()
       .config_path("fixtures/no_package_manager.json")
       .with_validate_package_manager(ValidatePackageManager::Exist)
@@ -346,11 +348,15 @@ mod tests {
     for msg in result {
       assert!(msg.has_error());
       msg.render();
+      assert!(msg.diagnostics.len() == 1);
+      assert!(
+        msg.diagnostics[0].code == Some("shined(package-json:missing-package-manager)".into())
+      );
     }
   }
 
   #[test]
-  fn should_fail_when_private_is_false() {
+  fn should_return_private_not_true_diagnostic() {
     let result = PackageJsonValidator::builder()
       .config_path("fixtures/private_false.json")
       .with_validate_private(ValidatePrivate::True)
@@ -361,6 +367,8 @@ mod tests {
     for msg in result {
       assert!(msg.has_error());
       msg.render();
+      assert!(msg.diagnostics.len() == 1);
+      assert!(msg.diagnostics[0].code == Some("shined(package-json:private-not-true)".into()));
     }
   }
 
