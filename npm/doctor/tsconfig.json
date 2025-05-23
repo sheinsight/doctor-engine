@@ -5,7 +5,10 @@
     "declaration": true,
     "emitDeclarationOnly": true,
     "skipLibCheck": true,
-    "isolatedModules": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "declarationMap": false,
+    "isolatedModules": true
   },
   "include": ["src/**/*"]
 }
