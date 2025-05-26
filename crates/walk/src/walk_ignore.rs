@@ -2,7 +2,25 @@ use std::ops::{Deref, DerefMut};
 
 use serde::{Deserialize, Serialize};
 
-pub const IGNORE_PATTERNS: [&str; 3] = ["**/node_modules/**", "node_modules", "**/*.d.ts"];
+pub const IGNORE_PATTERNS: [&str; 17] = [
+  "**/node_modules/**",
+  "node_modules",
+  "**/*.d.ts",
+  "**/*.min.*",
+  "**/*-min.*",
+  "**/*_min.*",
+  "**/.yarn/**",
+  "**/.temp/**",
+  "**/.tmp/**",
+  "**/.next/**",
+  "**/.nuxt/**",
+  "**/.output/**",
+  "**/.idea/**",
+  "**/.history/**",
+  "**/.cache/**",
+  "**/coverage/**",
+  "**/build/**",
+];
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct WalkIgnore(pub Vec<String>);
