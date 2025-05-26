@@ -80,18 +80,20 @@ impl Standards {
     Standards { standards }
   }
 
+  fn convert_messages(&self, messages: Vec<doctor_core::Messages>) -> Vec<NapiMessages> {
+    messages
+      .into_iter()
+      .map(NapiMessages::from)
+      .collect::<Vec<_>>()
+  }
+
   #[napi]
   pub async fn validate_npmrc(&self) -> Result<Vec<NapiMessages>> {
     let res = self
       .standards
       .validate_npmrc()
       .await
-      .map(|items| {
-        items
-          .into_iter()
-          .map(NapiMessages::from)
-          .collect::<Vec<_>>()
-      })
+      .map(|items| self.convert_messages(items))
       .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e))?;
 
     Ok(res)
@@ -103,12 +105,7 @@ impl Standards {
       .standards
       .validate_node_version()
       .await
-      .map(|items| {
-        items
-          .into_iter()
-          .map(NapiMessages::from)
-          .collect::<Vec<_>>()
-      })
+      .map(|items| self.convert_messages(items))
       .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e))?;
 
     Ok(res)
@@ -120,12 +117,7 @@ impl Standards {
       .standards
       .validate_package_json()
       .await
-      .map(|items| {
-        items
-          .into_iter()
-          .map(NapiMessages::from)
-          .collect::<Vec<_>>()
-      })
+      .map(|items| self.convert_messages(items))
       .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e))?;
 
     Ok(res)
@@ -137,12 +129,7 @@ impl Standards {
       .standards
       .validate_lint()
       .await
-      .map(|items| {
-        items
-          .into_iter()
-          .map(NapiMessages::from)
-          .collect::<Vec<_>>()
-      })
+      .map(|items| self.convert_messages(items))
       .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e))?;
 
     Ok(res)
@@ -154,12 +141,7 @@ impl Standards {
       .standards
       .validate_all()
       .await
-      .map(|items| {
-        items
-          .into_iter()
-          .map(NapiMessages::from)
-          .collect::<Vec<_>>()
-      })
+      .map(|items| self.convert_messages(items))
       .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e))?;
 
     Ok(res)
