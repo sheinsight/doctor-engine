@@ -47,8 +47,8 @@ impl RuleGetter for ReactRuleGetter {
         "react/jsx-no-duplicate-props":2,
         "react/jsx-no-target-blank":[2,{
           "enforceDynamicLinks": "always",
-          "warnOnSpreadAttributes":true,
-          "allowReferrer":true,
+          "warnOnSpreadAttributes":false,
+          "allowReferrer":false,
           "links":true,
           "forms":false
         }],
