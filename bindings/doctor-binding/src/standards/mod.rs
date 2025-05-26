@@ -62,6 +62,17 @@ pub struct StandardsOpts {
   pub quiet: Option<bool>,
 }
 
+impl Standards {
+  // 简单的辅助函数，避免生命周期问题
+  fn to_napi_error(err: doctor_core::ValidatorError) -> napi::Error {
+    napi::Error::new(napi::Status::GenericFailure, err.to_string())
+  }
+
+  fn convert_messages(messages: Vec<doctor_core::Messages>) -> Vec<NapiMessages> {
+    messages.into_iter().map(NapiMessages::from).collect()
+  }
+}
+
 #[napi]
 impl Standards {
   #[napi(factory)]
@@ -80,70 +91,53 @@ impl Standards {
     Standards { standards }
   }
 
-  fn convert_messages(&self, messages: Vec<doctor_core::Messages>) -> Vec<NapiMessages> {
-    messages
-      .into_iter()
-      .map(NapiMessages::from)
-      .collect::<Vec<_>>()
-  }
-
   #[napi]
   pub async fn validate_npmrc(&self) -> Result<Vec<NapiMessages>> {
-    let res = self
+    self
       .standards
       .validate_npmrc()
       .await
-      .map(|items| self.convert_messages(items))
-      .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e))?;
-
-    Ok(res)
+      .map(Self::convert_messages)
+      .map_err(Self::to_napi_error)
   }
 
   #[napi]
   pub async fn validate_node_version(&self) -> Result<Vec<NapiMessages>> {
-    let res = self
+    self
       .standards
       .validate_node_version()
       .await
-      .map(|items| self.convert_messages(items))
-      .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e))?;
-
-    Ok(res)
+      .map(Self::convert_messages)
+      .map_err(Self::to_napi_error)
   }
 
   #[napi]
   pub async fn validate_package_json(&self) -> Result<Vec<NapiMessages>> {
-    let res = self
+    self
       .standards
       .validate_package_json()
       .await
-      .map(|items| self.convert_messages(items))
-      .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e))?;
-
-    Ok(res)
+      .map(Self::convert_messages)
+      .map_err(Self::to_napi_error)
   }
 
   #[napi]
   pub async fn validate_lint(&self) -> Result<Vec<NapiMessages>> {
-    let res = self
+    self
       .standards
       .validate_lint()
       .await
-      .map(|items| self.convert_messages(items))
-      .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e))?;
-
-    Ok(res)
+      .map(Self::convert_messages)
+      .map_err(Self::to_napi_error)
   }
 
   #[napi]
   pub async fn validate_all(&self) -> Result<Vec<NapiMessages>> {
-    let res = self
+    self
       .standards
       .validate_all()
       .await
-      .map(|items| self.convert_messages(items))
-      .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e))?;
-
-    Ok(res)
+      .map(Self::convert_messages)
+      .map_err(Self::to_napi_error)
   }
 }
