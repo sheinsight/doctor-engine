@@ -14,10 +14,10 @@ pub struct Row {
   pub count: usize,
 }
 
-pub struct MessagesDashboard<'a>(&'a Vec<Messages>);
+pub struct MessagesDashboard<'a>(&'a [Messages]);
 
 impl<'a> MessagesDashboard<'a> {
-  pub fn new(messages: &'a Vec<Messages>) -> Self {
+  pub fn new(messages: &'a [Messages]) -> Self {
     Self(messages)
   }
 

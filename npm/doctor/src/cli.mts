@@ -1,6 +1,6 @@
 
 import { cac } from "cac";
-import { initializeLogger, verifyStandards } from "@shined/doctor-binding"
+import { initializeLogger, Standards } from "@shined/doctor-binding"
 import { performance } from "node:perf_hooks"
 const cli = cac("doctor");
 
@@ -16,7 +16,9 @@ cli.command('','check project health')
 
     const cwd = options.cwd || process.cwd();
 
-    const res = await verifyStandards(cwd);
+    const standards = await Standards.create(cwd);
+
+    const res = await standards.validateAll();
 
     if (res.length > 0) {
       process.exit(1);

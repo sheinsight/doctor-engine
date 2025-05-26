@@ -375,6 +375,8 @@ if (!nativeBinding) {
 }
 
 module.exports = nativeBinding
+module.exports.Demo = nativeBinding.Demo
+module.exports.Standards = nativeBinding.Standards
 module.exports.getLangStats = nativeBinding.getLangStats
 module.exports.initializeLogger = nativeBinding.initializeLogger
 module.exports.LangType = nativeBinding.LangType
@@ -383,4 +385,3 @@ module.exports.NaPiCategory = nativeBinding.NaPiCategory
 module.exports.Severity = nativeBinding.Severity
 module.exports.unSafeInnerDebugLint = nativeBinding.unSafeInnerDebugLint
 module.exports.unSafeInnerLint = nativeBinding.unSafeInnerLint
-module.exports.verifyStandards = nativeBinding.verifyStandards

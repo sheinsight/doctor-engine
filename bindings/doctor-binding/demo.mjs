@@ -7,8 +7,9 @@ import {
   NaPiCategory,
   LogLevel,
   getLangStats,
-  verifyStandards,
+  // verifyStandards,
   // getSourceLocation
+  Standards
  } from './index.js'
  import { performance } from "node:perf_hooks"
 
@@ -19,12 +20,35 @@ import {
   // initializeLogger(LogLevel.Error);
   // console.log('start')
 
+
   const start = performance.now()
 
-  const res1 = await verifyStandards('/Users/10015448/Git/csp-new',{
-    maxRenderCount:10,
-    withDashboard:true,
-  });
+  let x = Standards.create("/Users/10015448/Git/csp-new");
+
+  // const res1 = await x.validateNpmrc();
+  // console.log(res1);
+
+  // const res2 = await x.validateNodeVersion();
+  // console.log(res2);
+
+  // const res3 = await x.validatePackageJson();
+  // console.log(res3);
+
+  const res4 = await x.validateAll();
+  // console.log(JSON.stringify(res4,null,2));
+  
+
+  // let x = Demo.withDemo("cwd-path");
+
+  // console.log(JSON.stringify(x),x);
+  
+
+  
+
+  // const res1 = await verifyStandards('/Users/10015448/Git/csp-new',{
+  //   maxRenderCount:10,
+  //   withDashboard:true,
+  // });
 
   // for (const item of res1) {
   //   console.log("item-->",item.sourcePath);
