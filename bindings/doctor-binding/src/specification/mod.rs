@@ -37,7 +37,10 @@ impl Default for DoctorOptions {
 }
 
 #[napi]
-pub async fn doctor(cwd: String, opts: Option<DoctorOptions>) -> Result<Vec<NapiMessages>> {
+pub async fn verify_standards(
+  cwd: String,
+  opts: Option<DoctorOptions>,
+) -> Result<Vec<NapiMessages>> {
   let opts = opts.unwrap_or_default();
 
   let messages = doctor::doctor(cwd, opts.into())

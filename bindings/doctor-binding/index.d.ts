@@ -10,8 +10,6 @@ export interface Diagnostic {
   labels: Array<LabeledLoc>
 }
 
-export declare function doctor(cwd: string, opts?: DoctorOptions | undefined | null): Promise<Array<NapiMessages>>
-
 export interface DoctorOptions {
   verbose?: boolean
   maxRenderCount?: number
@@ -352,3 +350,5 @@ export interface Span {
 export declare function unSafeInnerDebugLint(oxlintConfig: string, globJsArgs: GlobJsArgs): Promise<Array<Diagnostic>>
 
 export declare function unSafeInnerLint(globJsArgs: GlobJsArgs, category: NaPiCategory): Promise<Array<Diagnostic>>
+
+export declare function verifyStandards(cwd: string, opts?: DoctorOptions | undefined | null): Promise<Array<NapiMessages>>

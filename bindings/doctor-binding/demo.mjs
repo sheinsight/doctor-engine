@@ -5,9 +5,9 @@ import {
   initializeLogger,
   unSafeInnerLint, 
   NaPiCategory,
-  doctor,
   LogLevel,
   getLangStats,
+  verifyStandards,
   // getSourceLocation
  } from './index.js'
  import { performance } from "node:perf_hooks"
@@ -21,7 +21,7 @@ import {
 
   const start = performance.now()
 
-  const res1 = await doctor('/Users/10015448/Git/csp-new',{
+  const res1 = await verifyStandards('/Users/10015448/Git/csp-new',{
     maxRenderCount:10,
     withDashboard:true,
   });
