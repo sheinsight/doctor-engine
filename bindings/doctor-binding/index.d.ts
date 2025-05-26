@@ -10,12 +10,6 @@ export interface Diagnostic {
   labels: Array<LabeledLoc>
 }
 
-export interface DoctorOptions {
-  verbose?: boolean
-  maxRenderCount?: number
-  withDashboard?: boolean
-}
-
 export declare function getLangStats(paths: Array<string>, opts?: Opts | undefined | null): Array<LangStats>
 
 export interface GlobJsArgs {
@@ -351,4 +345,10 @@ export declare function unSafeInnerDebugLint(oxlintConfig: string, globJsArgs: G
 
 export declare function unSafeInnerLint(globJsArgs: GlobJsArgs, category: NaPiCategory): Promise<Array<Diagnostic>>
 
-export declare function verifyStandards(cwd: string, opts?: DoctorOptions | undefined | null): Promise<Array<NapiMessages>>
+export declare function verifyStandards(cwd: string, opts?: VerifyStandardsOptions | undefined | null): Promise<Array<NapiMessages>>
+
+export interface VerifyStandardsOptions {
+  verbose?: boolean
+  maxRenderCount?: number
+  withDashboard?: boolean
+}
