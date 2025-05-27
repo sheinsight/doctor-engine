@@ -1,17 +1,17 @@
 use napi_derive::napi;
 
-use super::LangType;
+use super::JsLangType;
 
 #[derive(Debug)]
 #[napi(object)]
-pub struct LangStats {
-  pub lang: LangType,
+pub struct JsLangStats {
+  pub lang: JsLangType,
   pub code: u32,
   pub comments: u32,
   pub blanks: u32,
 }
 
-impl From<doctor_cloc::Stats> for LangStats {
+impl From<doctor_cloc::Stats> for JsLangStats {
   fn from(stats: doctor_cloc::Stats) -> Self {
     Self {
       lang: stats.lang.into(),

@@ -1,4 +1,4 @@
-use messages::NapiMessages;
+use messages::JsMessages;
 use napi::Result;
 use napi_derive::napi;
 
@@ -49,8 +49,8 @@ impl Standards {
     napi::Error::new(napi::Status::GenericFailure, err.to_string())
   }
 
-  fn convert_messages(messages: Vec<doctor_core::Messages>) -> Vec<NapiMessages> {
-    messages.into_iter().map(NapiMessages::from).collect()
+  fn convert_messages(messages: Vec<doctor_core::Messages>) -> Vec<JsMessages> {
+    messages.into_iter().map(JsMessages::from).collect()
   }
 }
 
@@ -63,7 +63,7 @@ impl Standards {
   }
 
   #[napi(setter)]
-  pub async fn validate_npmrc(&self) -> Result<Vec<NapiMessages>> {
+  pub async fn validate_npmrc(&self) -> Result<Vec<JsMessages>> {
     self
       .standards
       .validate_npmrc()
@@ -72,7 +72,7 @@ impl Standards {
   }
 
   #[napi]
-  pub async fn validate_node_version(&self) -> Result<Vec<NapiMessages>> {
+  pub async fn validate_node_version(&self) -> Result<Vec<JsMessages>> {
     self
       .standards
       .validate_node_version()
@@ -81,7 +81,7 @@ impl Standards {
   }
 
   #[napi]
-  pub async fn validate_package_json(&self) -> Result<Vec<NapiMessages>> {
+  pub async fn validate_package_json(&self) -> Result<Vec<JsMessages>> {
     self
       .standards
       .validate_package_json()
@@ -90,7 +90,7 @@ impl Standards {
   }
 
   #[napi]
-  pub async fn validate_lint(&self) -> Result<Vec<NapiMessages>> {
+  pub async fn validate_lint(&self) -> Result<Vec<JsMessages>> {
     self
       .standards
       .validate_lint()
@@ -99,7 +99,7 @@ impl Standards {
   }
 
   #[napi]
-  pub async fn validate_all(&self, opts: Option<JsRenderOpts>) -> Result<Vec<NapiMessages>> {
+  pub async fn validate_all(&self, opts: Option<JsRenderOpts>) -> Result<Vec<JsMessages>> {
     let res = self.standards.validate_all().map_err(Self::to_napi_error)?;
 
     let opts = opts.unwrap_or_default();

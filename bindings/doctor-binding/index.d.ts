@@ -3,10 +3,10 @@
 export declare class Standards {
   static create(cwd: string): Standards
   set validateNpmrc()
-  validateNodeVersion(): Promise<Array<NapiMessages>>
-  validatePackageJson(): Promise<Array<NapiMessages>>
-  validateLint(): Promise<Array<NapiMessages>>
-  validateAll(opts?: JsRenderOpts | undefined | null): Promise<Array<NapiMessages>>
+  validateNodeVersion(): Promise<Array<JsMessages>>
+  validatePackageJson(): Promise<Array<JsMessages>>
+  validateLint(): Promise<Array<JsMessages>>
+  validateAll(opts?: JsRenderOpts | undefined | null): Promise<Array<JsMessages>>
 }
 
 export interface Diagnostic {
@@ -19,7 +19,7 @@ export interface Diagnostic {
   labels: Array<LabeledLoc>
 }
 
-export declare function getLangStats(paths: Array<string>, opts?: Opts | undefined | null): Array<LangStats>
+export declare function getLangStats(paths: Array<string>, opts?: JsOpts | undefined | null): Array<LangStats>
 
 export interface GlobJsArgs {
   ignore?: Array<string>
@@ -31,10 +31,56 @@ export interface GlobJsArgs {
 
 export declare function initializeLogger(level?: LogLevel | undefined | null): void
 
+export interface JsDiagnostics {
+  message: string
+  code?: string
+  severity?: JsSeverity
+  help?: string
+  url?: string
+  labels?: Array<JsLabeledSpan>
+}
+
+export interface JsLabeledSpan {
+  label?: string
+  span: JsSourceSpan
+  loc: JsSourceLocation
+  primary: boolean
+}
+
+export interface JsMessages {
+  sourcePath: string
+  diagnostics: Array<JsDiagnostics>
+}
+
+export interface JsOpts {
+  ignore: Array<string>
+}
+
 export interface JsRenderOpts {
   withDashboard?: boolean
   maxRenderCount?: number
   quiet?: boolean
+}
+
+export declare const enum JsSeverity {
+  Error = 'Error',
+  Warning = 'Warning',
+  Advice = 'Advice'
+}
+
+export interface JsSourceLocation {
+  start: JsSourcePosition
+  end: JsSourcePosition
+}
+
+export interface JsSourcePosition {
+  row: number
+  col: number
+}
+
+export interface JsSourceSpan {
+  offset: number
+  length: number
 }
 
 export interface LabeledLoc {
@@ -295,31 +341,6 @@ export declare const enum NaPiCategory {
   V20250601Inner = 0
 }
 
-export interface NapiDiagnostics {
-  message: string
-  code?: string
-  severity?: Severity
-  help?: string
-  url?: string
-  labels?: Array<NapiLabeledSpan>
-}
-
-export interface NapiLabeledSpan {
-  label?: string
-  span: SourceSpan
-  loc: SourceLocation
-  primary: boolean
-}
-
-export interface NapiMessages {
-  sourcePath: string
-  diagnostics: Array<NapiDiagnostics>
-}
-
-export interface Opts {
-  ignore: Array<string>
-}
-
 export interface Position {
   line: number
   col: number
@@ -328,27 +349,6 @@ export interface Position {
 export interface Response {
   rc: string
   map: Record<string, number>
-}
-
-export declare const enum Severity {
-  Error = 'Error',
-  Warning = 'Warning',
-  Advice = 'Advice'
-}
-
-export interface SourceLocation {
-  start: SourcePosition
-  end: SourcePosition
-}
-
-export interface SourcePosition {
-  row: number
-  col: number
-}
-
-export interface SourceSpan {
-  offset: number
-  length: number
 }
 
 export interface Span {

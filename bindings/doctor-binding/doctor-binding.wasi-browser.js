@@ -57,9 +57,9 @@ export default __napiModule.exports
 export const Standards = __napiModule.exports.Standards
 export const getLangStats = __napiModule.exports.getLangStats
 export const initializeLogger = __napiModule.exports.initializeLogger
+export const JsSeverity = __napiModule.exports.JsSeverity
 export const LangType = __napiModule.exports.LangType
 export const LogLevel = __napiModule.exports.LogLevel
 export const NaPiCategory = __napiModule.exports.NaPiCategory
-export const Severity = __napiModule.exports.Severity
 export const unSafeInnerDebugLint = __napiModule.exports.unSafeInnerDebugLint
 export const unSafeInnerLint = __napiModule.exports.unSafeInnerLint

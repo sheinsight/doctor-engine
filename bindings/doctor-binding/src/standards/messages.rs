@@ -1,26 +1,26 @@
 use doctor_core::Messages;
 use napi_derive::napi;
 
-use super::diagnostics::NapiDiagnostics;
+use super::diagnostics::JsDiagnostics;
 
 #[napi(object)]
-pub struct NapiMessages {
+pub struct JsMessages {
   // pub source_code: String,
   pub source_path: String,
-  pub diagnostics: Vec<NapiDiagnostics>,
+  pub diagnostics: Vec<JsDiagnostics>,
 }
 
-impl From<Messages> for NapiMessages {
+impl From<Messages> for JsMessages {
   fn from(messages: Messages) -> Self {
     let source_code = messages.source_code.clone();
-    NapiMessages {
+    JsMessages {
       // source_code: messages.source_code,
       source_path: messages.source_path,
       diagnostics: messages
         .diagnostics
         .into_iter()
         .map(|d| (source_code.clone(), d))
-        .map(NapiDiagnostics::from)
+        .map(JsDiagnostics::from)
         .collect(),
     }
   }

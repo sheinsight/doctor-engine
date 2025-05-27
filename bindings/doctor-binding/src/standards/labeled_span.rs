@@ -2,21 +2,21 @@ use doctor_core::loc::Location;
 use miette::LabeledSpan;
 use napi_derive::napi;
 
-use super::{location::SourceLocation, source_span::SourceSpan};
+use super::{location::JsSourceLocation, source_span::JsSourceSpan};
 
 #[napi(object)]
-pub struct NapiLabeledSpan {
+pub struct JsLabeledSpan {
   pub label: Option<String>,
-  pub span: SourceSpan,
-  pub loc: SourceLocation,
+  pub span: JsSourceSpan,
+  pub loc: JsSourceLocation,
   pub primary: bool,
 }
 
-impl From<(LabeledSpan, Location)> for NapiLabeledSpan {
+impl From<(LabeledSpan, Location)> for JsLabeledSpan {
   fn from((span, loc): (LabeledSpan, Location)) -> Self {
-    NapiLabeledSpan {
+    JsLabeledSpan {
       label: span.label().map(|s| s.to_string()),
-      span: SourceSpan::from(span.inner().to_owned()),
+      span: JsSourceSpan::from(span.inner().to_owned()),
       loc: loc.into(),
       primary: span.primary(),
     }

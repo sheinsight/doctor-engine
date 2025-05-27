@@ -2,21 +2,21 @@ use doctor_core::loc::get_source_location;
 use miette::MietteDiagnostic;
 use napi_derive::napi;
 
-use super::{labeled_span::NapiLabeledSpan, severity::Severity};
+use super::{labeled_span::JsLabeledSpan, severity::JsSeverity};
 
 #[napi(object)]
-pub struct NapiDiagnostics {
+pub struct JsDiagnostics {
   pub message: String,
   pub code: Option<String>,
-  pub severity: Option<Severity>,
+  pub severity: Option<JsSeverity>,
   pub help: Option<String>,
   pub url: Option<String>,
-  pub labels: Option<Vec<NapiLabeledSpan>>,
+  pub labels: Option<Vec<JsLabeledSpan>>,
 }
 
-impl From<(String, MietteDiagnostic)> for NapiDiagnostics {
+impl From<(String, MietteDiagnostic)> for JsDiagnostics {
   fn from((source_code, diagnostic): (String, MietteDiagnostic)) -> Self {
-    NapiDiagnostics {
+    JsDiagnostics {
       message: diagnostic.message,
       code: diagnostic.code,
       severity: diagnostic.severity.map(|s| s.into()),
@@ -33,7 +33,7 @@ impl From<(String, MietteDiagnostic)> for NapiDiagnostics {
             );
             (labeled_span, loc)
           })
-          .map(NapiLabeledSpan::from)
+          .map(JsLabeledSpan::from)
           .collect()
       }),
     }

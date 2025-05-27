@@ -11,7 +11,7 @@ pub use lang_type::*;
 pub use opts::*;
 
 #[napi]
-pub fn get_lang_stats(paths: Vec<String>, opts: Option<JsOpts>) -> Result<Vec<LangStats>> {
+pub fn get_lang_stats(paths: Vec<String>, opts: Option<JsOpts>) -> Result<Vec<JsLangStats>> {
   let ignore = WalkIgnore::from(opts.map(|o| o.ignore).unwrap_or_default());
 
   let stats = LanguageStats::builder().cwd(paths).ignore(ignore).build();
@@ -19,7 +19,7 @@ pub fn get_lang_stats(paths: Vec<String>, opts: Option<JsOpts>) -> Result<Vec<La
   let stats = stats
     .stats()
     .into_iter()
-    .map(LangStats::from)
+    .map(JsLangStats::from)
     .collect::<Vec<_>>();
 
   Ok(stats)

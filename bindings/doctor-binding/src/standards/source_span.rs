@@ -1,14 +1,14 @@
 use napi_derive::napi;
 
 #[napi(object)]
-pub struct SourceSpan {
+pub struct JsSourceSpan {
   pub offset: u32,
   pub length: u32,
 }
 
-impl From<miette::SourceSpan> for SourceSpan {
+impl From<miette::SourceSpan> for JsSourceSpan {
   fn from(span: miette::SourceSpan) -> Self {
-    SourceSpan {
+    JsSourceSpan {
       offset: span.offset() as u32,
       length: span.len() as u32,
     }

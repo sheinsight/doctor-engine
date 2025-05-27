@@ -1,17 +1,17 @@
 use napi_derive::napi;
 
-use super::position::SourcePosition;
+use super::position::JsSourcePosition;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[napi(object)]
-pub struct SourceLocation {
-  pub start: SourcePosition,
-  pub end: SourcePosition,
+pub struct JsSourceLocation {
+  pub start: JsSourcePosition,
+  pub end: JsSourcePosition,
 }
 
-impl From<doctor_core::loc::Location> for SourceLocation {
+impl From<doctor_core::loc::Location> for JsSourceLocation {
   fn from(location: doctor_core::loc::Location) -> Self {
-    SourceLocation {
+    JsSourceLocation {
       start: location.start.into(),
       end: location.end.into(),
     }
