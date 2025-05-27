@@ -787,6 +787,7 @@ name = "doctor"
 version = "0.1.0"
 dependencies = [
  "base64 0.22.1",
+ "doctor_cloc",
  "doctor_core",
  "doctor_lint",
  "doctor_node",
@@ -838,6 +839,7 @@ version = "0.1.0"
 dependencies = [
  "doctor_walk",
  "tokei",
+ "typed-builder",
 ]
 
 [[package]]

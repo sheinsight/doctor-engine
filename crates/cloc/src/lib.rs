@@ -1,5 +1,3 @@
-use std::path::Path;
-
 use doctor_walk::WalkIgnore;
 use tokei::{Config, Languages, Sort};
 
@@ -8,29 +6,37 @@ mod stats;
 
 pub use opts::Opts;
 pub use stats::Stats;
+use typed_builder::TypedBuilder;
 
-pub fn get_lang_stats<P: AsRef<Path>>(path: &[P], opts: Option<Opts>) -> Vec<Stats> {
-  let config = Config {
-    sort: Some(Sort::Code),
-    ..Config::default()
-  };
-  let mut languages = Languages::new();
+#[derive(TypedBuilder)]
+pub struct LanguageStats {
+  pub cwd: Vec<String>,
+  #[builder(default = WalkIgnore::default())]
+  pub ignore: WalkIgnore,
+}
 
-  let mut def_ignore = WalkIgnore::default();
+impl LanguageStats {
+  pub fn stats(&self) -> Vec<Stats> {
+    let config = Config {
+      sort: Some(Sort::Code),
+      ..Config::default()
+    };
+    let mut languages = Languages::new();
 
-  let i = opts.unwrap_or_default().ignore;
+    let mut def_ignore = WalkIgnore::default();
 
-  def_ignore.extend(i.iter().cloned());
+    def_ignore.extend(self.ignore.iter().cloned());
 
-  languages.get_statistics(
-    path,
-    &def_ignore.iter().map(|s| s.as_str()).collect::<Vec<_>>(),
-    &config,
-  );
+    languages.get_statistics(
+      &self.cwd,
+      &def_ignore.iter().map(|s| s.as_str()).collect::<Vec<_>>(),
+      &config,
+    );
 
-  let lang_stats = languages.into_iter().map(Stats::from).collect::<Vec<_>>();
+    let lang_stats = languages.into_iter().map(Stats::from).collect::<Vec<_>>();
 
-  lang_stats
+    lang_stats
+  }
 }
 
 #[cfg(test)]
@@ -39,7 +45,16 @@ mod tests {
 
   #[test]
   fn test_count_lines() {
-    let lang_stats = get_lang_stats(&["/Users/10015448/Git/csp-new"], None);
+    let ignore = WalkIgnore::from(vec![
+      "**/node_modules/**".to_string(),
+      "node_modules".to_string(),
+    ]);
+
+    let lang_stats = LanguageStats::builder()
+      .cwd(vec!["/Users/10015448/Git/csp-new".to_string()])
+      .ignore(ignore)
+      .build()
+      .stats();
 
     println!("{:#?}", lang_stats);
   }

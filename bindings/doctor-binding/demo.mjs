@@ -25,44 +25,10 @@ import {
 
   let x = Standards.create("/Users/10015448/Git/csp-new");
 
-  // const res1 = await x.validateNpmrc();
-  // console.log(res1);
-
-  // const res2 = await x.validateNodeVersion();
-  // console.log(res2);
-
-  // const res3 = await x.validatePackageJson();
-  // console.log(res3);
-
-  const res4 = await x.validateAll();
-  // console.log(JSON.stringify(res4,null,2));
-  
-
-  // let x = Demo.withDemo("cwd-path");
-
-  // console.log(JSON.stringify(x),x);
-  
-
-  
-
-  // const res1 = await verifyStandards('/Users/10015448/Git/csp-new',{
-  //   maxRenderCount:10,
-  //   withDashboard:true,
-  // });
-
-  // for (const item of res1) {
-  //   console.log("item-->",item.sourcePath);
-    
-  //   for (const diagnostic of item.diagnostics) {
-
-  //     for(const label of diagnostic.labels){
-  //       console.log("label-->",label);
-  //     }
-
-  //   }
-  // }
+  await x.validateAll(); 
 
   const end = performance.now()
+
   console.log(`Time taken: ${end - start} milliseconds`)
 
 
@@ -72,16 +38,20 @@ import {
   // console.log(JSON.stringify(res1,null,2));
   
 
-  // const res2 = await getLangStats(['/Users/10015448/Git/csp-new'],{
-  //   ignore: [
-  //     '**/node_modules/**',
-  //     'node_modules',
-  //     '**/*.d.ts',
-  //     "csp-*"
-  //   ]
-  // })
+  const start1 = performance.now()
+  const res2 = await getLangStats(['/Users/10015448/Git/gtms'],{
+    ignore: [
+      '**/node_modules/**',
+      'node_modules',
+      // '**/*.d.ts',
+      // "csp-*"
+    ]
+  })
+  const end1 = performance.now()
 
-  // console.table(res2)
+  console.table(res2)
+
+  console.log(`Time taken: ${end1 - start1} milliseconds`)
  
 
   // console.log(res);

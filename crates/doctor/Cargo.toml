@@ -10,6 +10,7 @@ version                = "0.1.0"
 
 [dependencies]
 base64              = { workspace = true }
+doctor_cloc         = { workspace = true }
 doctor_core         = { workspace = true }
 doctor_lint         = { workspace = true }
 doctor_node         = { workspace = true }
