@@ -31,28 +31,28 @@ impl Standards {
     Standards { cwd }
   }
 
-  pub async fn validate_npmrc(&self) -> Result<Vec<Messages>, ValidatorError> {
+  pub fn validate_npmrc(&self) -> Result<Vec<Messages>, ValidatorError> {
     let file = self.cwd.join(".npmrc");
     let npmrc_builder = register::register_npmrc(file);
     let message = npmrc_builder.validate()?;
     Ok(message)
   }
 
-  pub async fn validate_node_version(&self) -> Result<Vec<Messages>, ValidatorError> {
+  pub fn validate_node_version(&self) -> Result<Vec<Messages>, ValidatorError> {
     let file = self.cwd.join(".node-version");
     let node_version_builder = register::register_node_version(file);
     let message = node_version_builder.validate()?;
     Ok(message)
   }
 
-  pub async fn validate_package_json(&self) -> Result<Vec<Messages>, ValidatorError> {
+  pub fn validate_package_json(&self) -> Result<Vec<Messages>, ValidatorError> {
     let file = self.cwd.join("package.json");
     let package_json_builder = register::register_package_json(file);
     let message = package_json_builder.validate()?;
     Ok(message)
   }
 
-  pub async fn validate_lint(&self) -> Result<Vec<Messages>, ValidatorError> {
+  pub fn validate_lint(&self) -> Result<Vec<Messages>, ValidatorError> {
     let file = self.cwd.join(".sfconfig").join("spec.json");
     let sfconfig = Sfconfig::parse(file)?;
     let lint_builder = register::register_lint(self.cwd.clone(), sfconfig);
@@ -60,12 +60,12 @@ impl Standards {
     Ok(message)
   }
 
-  pub async fn validate_all(&self) -> Result<Vec<Messages>, ValidatorError> {
+  pub fn validate_all(&self) -> Result<Vec<Messages>, ValidatorError> {
     let mut messages = Vec::new();
-    messages.extend(self.validate_npmrc().await?);
-    messages.extend(self.validate_node_version().await?);
-    messages.extend(self.validate_package_json().await?);
-    messages.extend(self.validate_lint().await?);
+    messages.extend(self.validate_npmrc()?);
+    messages.extend(self.validate_node_version()?);
+    messages.extend(self.validate_package_json()?);
+    messages.extend(self.validate_lint()?);
     Ok(messages)
   }
 

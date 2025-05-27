@@ -67,7 +67,6 @@ impl Standards {
     self
       .standards
       .validate_npmrc()
-      .await
       .map(Self::convert_messages)
       .map_err(Self::to_napi_error)
   }
@@ -77,7 +76,6 @@ impl Standards {
     self
       .standards
       .validate_node_version()
-      .await
       .map(Self::convert_messages)
       .map_err(Self::to_napi_error)
   }
@@ -87,7 +85,6 @@ impl Standards {
     self
       .standards
       .validate_package_json()
-      .await
       .map(Self::convert_messages)
       .map_err(Self::to_napi_error)
   }
@@ -97,18 +94,13 @@ impl Standards {
     self
       .standards
       .validate_lint()
-      .await
       .map(Self::convert_messages)
       .map_err(Self::to_napi_error)
   }
 
   #[napi]
   pub async fn validate_all(&self, opts: Option<JsRenderOpts>) -> Result<Vec<NapiMessages>> {
-    let res = self
-      .standards
-      .validate_all()
-      .await
-      .map_err(Self::to_napi_error)?;
+    let res = self.standards.validate_all().map_err(Self::to_napi_error)?;
 
     let opts = opts.unwrap_or_default();
 
