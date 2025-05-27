@@ -40,12 +40,12 @@ import {
 
   const start1 = performance.now()
   const res2 = await getLangStats(['/Users/10015448/Git/gtms'],{
-    ignore: [
-      '**/node_modules/**',
-      'node_modules',
-      // '**/*.d.ts',
-      // "csp-*"
-    ]
+    // ignore: [
+    //   '**/node_modules/**',
+    //   'node_modules',
+    //   // '**/*.d.ts',
+    //   // "csp-*"
+    // ]
   })
   const end1 = performance.now()
 

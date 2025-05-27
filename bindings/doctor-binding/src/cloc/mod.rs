@@ -12,7 +12,10 @@ pub use opts::*;
 
 #[napi]
 pub fn get_lang_stats(paths: Vec<String>, opts: Option<JsOpts>) -> Result<Vec<JsLangStats>> {
-  let ignore = WalkIgnore::from(opts.map(|o| o.ignore).unwrap_or_default());
+  let ignore = opts
+    .and_then(|o| o.ignore)
+    .map(WalkIgnore::from)
+    .unwrap_or_default();
 
   let stats = LanguageStats::builder().cwd(paths).ignore(ignore).build();
 

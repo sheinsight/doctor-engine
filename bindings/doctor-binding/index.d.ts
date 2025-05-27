@@ -19,7 +19,7 @@ export interface Diagnostic {
   labels: Array<LabeledLoc>
 }
 
-export declare function getLangStats(paths: Array<string>, opts?: JsOpts | undefined | null): Array<LangStats>
+export declare function getLangStats(paths: Array<string>, opts?: JsOpts | undefined | null): Array<JsLangStats>
 
 export interface GlobJsArgs {
   ignore?: Array<string>
@@ -47,55 +47,14 @@ export interface JsLabeledSpan {
   primary: boolean
 }
 
-export interface JsMessages {
-  sourcePath: string
-  diagnostics: Array<JsDiagnostics>
-}
-
-export interface JsOpts {
-  ignore: Array<string>
-}
-
-export interface JsRenderOpts {
-  withDashboard?: boolean
-  maxRenderCount?: number
-  quiet?: boolean
-}
-
-export declare const enum JsSeverity {
-  Error = 'Error',
-  Warning = 'Warning',
-  Advice = 'Advice'
-}
-
-export interface JsSourceLocation {
-  start: JsSourcePosition
-  end: JsSourcePosition
-}
-
-export interface JsSourcePosition {
-  row: number
-  col: number
-}
-
-export interface JsSourceSpan {
-  offset: number
-  length: number
-}
-
-export interface LabeledLoc {
-  span: Span
-  loc: Location
-}
-
-export interface LangStats {
-  lang: LangType
+export interface JsLangStats {
+  lang: JsLangType
   code: number
   comments: number
   blanks: number
 }
 
-export declare const enum LangType {
+export declare const enum JsLangType {
   ABNF = 'ABNF',
   Abap = 'Abap',
   ActionScript = 'ActionScript',
@@ -322,6 +281,47 @@ export declare const enum LangType {
   Yaml = 'Yaml',
   Zig = 'Zig',
   Zsh = 'Zsh'
+}
+
+export interface JsMessages {
+  sourcePath: string
+  diagnostics: Array<JsDiagnostics>
+}
+
+export interface JsOpts {
+  ignore?: Array<string>
+}
+
+export interface JsRenderOpts {
+  withDashboard?: boolean
+  maxRenderCount?: number
+  quiet?: boolean
+}
+
+export declare const enum JsSeverity {
+  Error = 'Error',
+  Warning = 'Warning',
+  Advice = 'Advice'
+}
+
+export interface JsSourceLocation {
+  start: JsSourcePosition
+  end: JsSourcePosition
+}
+
+export interface JsSourcePosition {
+  row: number
+  col: number
+}
+
+export interface JsSourceSpan {
+  offset: number
+  length: number
+}
+
+export interface LabeledLoc {
+  span: Span
+  loc: Location
 }
 
 export interface Location {
