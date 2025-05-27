@@ -10,56 +10,37 @@ mod position;
 mod severity;
 mod source_span;
 
-// #[napi(object)]
-// pub struct VerifyStandardsOptions {
-//   pub verbose: Option<bool>,
-//   pub max_render_count: Option<u32>,
-//   pub with_dashboard: Option<bool>,
-// }
+#[napi(object)]
+pub struct JsRenderOpts {
+  pub with_dashboard: Option<bool>,
+  pub max_render_count: Option<u32>,
+  pub quiet: Option<bool>,
+}
 
-// impl Into<doctor::standards::VerifyStandardsOptions> for VerifyStandardsOptions {
-//   fn into(self) -> doctor::standards::VerifyStandardsOptions {
-//     doctor::standards::VerifyStandardsOptions::builder()
-//       .max_render_count(self.max_render_count.unwrap_or(100) as usize)
-//       .with_dashboard(self.with_dashboard.unwrap_or(true))
-//       .build()
-//   }
-// }
+impl Default for JsRenderOpts {
+  fn default() -> Self {
+    Self {
+      with_dashboard: Some(true),
+      max_render_count: None,
+      quiet: Some(false),
+    }
+  }
+}
 
-// impl Default for VerifyStandardsOptions {
-//   fn default() -> Self {
-//     Self {
-//       verbose: None,
-//       max_render_count: Some(100),
-//       with_dashboard: Some(true),
-//     }
-//   }
-// }
-
-// #[napi]
-// pub async fn verify_standards(
-//   cwd: String,
-//   opts: Option<VerifyStandardsOptions>,
-// ) -> Result<Vec<NapiMessages>> {
-//   let opts = opts.unwrap_or_default();
-
-//   let messages = doctor::standards::verify_standards(cwd, opts.into())
-//     .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e))?;
-
-//   Ok(messages.into_iter().map(|m| m.into()).collect())
-// }
+impl Into<doctor::standards::RenderOpts> for JsRenderOpts {
+  fn into(self) -> doctor::standards::RenderOpts {
+    doctor::standards::RenderOpts {
+      with_dashboard: self.with_dashboard.unwrap_or(true),
+      max_render_count: self.max_render_count,
+      ..Default::default()
+    }
+  }
+}
 
 #[napi]
 pub struct Standards {
   #[napi(skip)]
   pub standards: doctor::standards::Standards,
-}
-
-#[napi(object)]
-pub struct StandardsOpts {
-  pub with_dashboard: Option<bool>,
-  pub max_render_count: Option<u32>,
-  pub quiet: Option<bool>,
 }
 
 impl Standards {
@@ -76,22 +57,12 @@ impl Standards {
 #[napi]
 impl Standards {
   #[napi(factory)]
-  pub fn create(cwd: String, opts: Option<StandardsOpts>) -> Standards {
-    let standards = doctor::standards::Standards::create(
-      cwd,
-      doctor::standards::StandardsOpts {
-        with_dashboard: opts.as_ref().and_then(|o| o.with_dashboard).unwrap_or(true),
-        quiet: opts.as_ref().and_then(|o| o.quiet).unwrap_or(false),
-        max_render_count: opts
-          .as_ref()
-          .map(|o| o.max_render_count)
-          .unwrap_or(Some(500)),
-      },
-    );
+  pub fn create(cwd: String) -> Standards {
+    let standards = doctor::standards::Standards::create(cwd);
     Standards { standards }
   }
 
-  #[napi]
+  #[napi(setter)]
   pub async fn validate_npmrc(&self) -> Result<Vec<NapiMessages>> {
     self
       .standards
@@ -132,12 +103,19 @@ impl Standards {
   }
 
   #[napi]
-  pub async fn validate_all(&self) -> Result<Vec<NapiMessages>> {
-    self
+  pub async fn validate_all(&self, opts: Option<JsRenderOpts>) -> Result<Vec<NapiMessages>> {
+    let res = self
       .standards
       .validate_all()
       .await
-      .map(Self::convert_messages)
-      .map_err(Self::to_napi_error)
+      .map_err(Self::to_napi_error)?;
+
+    let opts = opts.unwrap_or_default();
+
+    if !opts.quiet.unwrap_or(false) {
+      self.standards.render(&res, opts.into());
+    }
+
+    Ok(Self::convert_messages(res))
   }
 }

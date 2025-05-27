@@ -375,7 +375,6 @@ if (!nativeBinding) {
 }
 
 module.exports = nativeBinding
-module.exports.Demo = nativeBinding.Demo
 module.exports.Standards = nativeBinding.Standards
 module.exports.getLangStats = nativeBinding.getLangStats
 module.exports.initializeLogger = nativeBinding.initializeLogger

@@ -85,7 +85,6 @@ const { instance: __napiInstance, module: __wasiModule, napiModule: __napiModule
   },
 })
 module.exports = __napiModule.exports
-module.exports.Demo = __napiModule.exports.Demo
 module.exports.Standards = __napiModule.exports.Standards
 module.exports.getLangStats = __napiModule.exports.getLangStats
 module.exports.initializeLogger = __napiModule.exports.initializeLogger

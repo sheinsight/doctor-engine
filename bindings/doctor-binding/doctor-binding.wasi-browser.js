@@ -54,7 +54,6 @@ const {
   },
 })
 export default __napiModule.exports
-export const Demo = __napiModule.exports.Demo
 export const Standards = __napiModule.exports.Standards
 export const getLangStats = __napiModule.exports.getLangStats
 export const initializeLogger = __napiModule.exports.initializeLogger

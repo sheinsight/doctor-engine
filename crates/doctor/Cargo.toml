@@ -17,5 +17,6 @@ doctor_npmrc        = { workspace = true }
 doctor_package_json = { workspace = true }
 doctor_walk         = { workspace = true }
 miette              = { workspace = true }
+rustc-hash          = { workspace = true }
 tabled              = { workspace = true }
 typed-builder       = { workspace = true }

@@ -794,6 +794,7 @@ dependencies = [
  "doctor_package_json",
  "doctor_walk",
  "miette",
+ "rustc-hash 2.1.1",
  "tabled",
  "typed-builder",
 ]
