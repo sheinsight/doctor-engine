@@ -29,21 +29,15 @@ e.g. 'v18.0.0' or '18.0.0'."#,
     ranges: Vec<String>,
   ) -> MietteDiagnostic {
     let code = "shined(node-version:invalid-version-range)";
-
-    let labels = vec![LabeledSpan::at(
-      span,
-      format!(
-        r#"Wrong version number format , Only support version range in {:?}"#,
-        ranges
-      ),
-    )];
+    let help = format!(r#"Select a valid version"#);
+    let labels = vec![LabeledSpan::at(span, r#"Invalid version range"#)];
 
     diagnostic!(
       severity = miette::Severity::Error,
       code = code,
-      // help = help,
+      help = help,
       labels = labels,
-      "Wrong version number format , Only support version range in {:?}",
+      "Only support version range in {:?}",
       ranges
     )
   }
