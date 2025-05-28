@@ -20,7 +20,12 @@ cli.command('','check project health')
 
     const res = await standards.validateAll();
 
-    if (res.length > 0) {
+    const errorCount = res.reduce((count, msg) => 
+      count + msg.diagnostics.filter(d => d.severity === "Error").length, 0
+    );
+
+    if (errorCount > 0) {
+      console.log(`Found ${errorCount} errors`);
       process.exit(1);
     }
 
