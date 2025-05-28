@@ -70,6 +70,19 @@ impl Standards {
   }
 
   pub fn render(&self, messages: &Vec<Messages>, opts: RenderOpts) {
+    miette::set_hook(Box::new(|_| {
+      Box::new(
+        miette::MietteHandlerOpts::new()
+          .unicode(true)
+          .force_graphical(true)
+          .context_lines(10)
+          .tab_width(2)
+          .break_words(true)
+          .build(),
+      )
+    }))
+    .unwrap();
+
     let messages: Vec<Messages> = messages
       .iter()
       .filter(|message| !message.is_empty())
