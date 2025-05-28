@@ -35,7 +35,7 @@ impl RuleGetter for EslintRuleGetter {
         "eslint/no-empty-pattern": [2],
         "eslint/no-ex-assign":[2],
         "eslint/no-fallthrough":[2,{
-            "allowEmptyCases":true
+            "allowEmptyCase":true
         }],
         "eslint/no-func-assign":[2],
         "eslint/no-global-assign":[2,{"exceptions":[]}],
