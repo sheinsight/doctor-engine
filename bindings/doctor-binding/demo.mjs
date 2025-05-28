@@ -39,17 +39,17 @@ import {
   
 
   const start1 = performance.now()
-  const res2 = await cloc(['/Users/10015448/Git/gtms'],{
-    // ignore: [
-    //   '**/node_modules/**',
-    //   'node_modules',
-    //   // '**/*.d.ts',
-    //   // "csp-*"
-    // ]
-  })
+  // const res2 = await cloc(['/Users/10015448/Git/gtms'],{
+  //   // ignore: [
+  //   //   '**/node_modules/**',
+  //   //   'node_modules',
+  //   //   // '**/*.d.ts',
+  //   //   // "csp-*"
+  //   // ]
+  // })
   const end1 = performance.now()
 
-  console.table(res2)
+  // console.table(res2)
 
   console.log(`Time taken: ${end1 - start1} milliseconds`)
  
