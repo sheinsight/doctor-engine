@@ -852,6 +852,7 @@ dependencies = [
  "oxc_diagnostics",
  "oxc_linter",
  "ropey",
+ "serde",
  "serde_ini",
  "serde_json",
  "thiserror 2.0.12",

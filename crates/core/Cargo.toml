@@ -15,6 +15,7 @@ node-semver     = { workspace = true }
 oxc_diagnostics = { workspace = true }
 oxc_linter      = { workspace = true }
 ropey           = { workspace = true }
+serde           = { workspace = true }
 serde_ini       = { workspace = true }
 serde_json      = { workspace = true }
 thiserror       = { workspace = true }
