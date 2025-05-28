@@ -2,7 +2,7 @@
 /* eslint-disable */
 export declare class Standards {
   static create(cwd: string): Standards
-  set validateNpmrc()
+  validateNpmrc(): Promise<Array<JsMessages>>
   validateNodeVersion(): Promise<Array<JsMessages>>
   validatePackageJson(): Promise<Array<JsMessages>>
   validateLint(): Promise<Array<JsMessages>>
