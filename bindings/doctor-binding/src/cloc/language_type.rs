@@ -2,7 +2,7 @@ use napi_derive::napi;
 
 #[derive(Debug)]
 #[napi(string_enum)]
-pub enum JsLangType {
+pub enum JsLanguageType {
   ABNF,
   Abap,
   ActionScript,
@@ -231,7 +231,7 @@ pub enum JsLangType {
   Zsh,
 }
 
-impl From<tokei::LanguageType> for JsLangType {
+impl From<tokei::LanguageType> for JsLanguageType {
   fn from(language: tokei::LanguageType) -> Self {
     match language {
       tokei::LanguageType::ABNF => Self::ABNF,

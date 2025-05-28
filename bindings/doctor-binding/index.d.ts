@@ -19,7 +19,7 @@ export interface Diagnostic {
   labels: Array<LabeledLoc>
 }
 
-export declare function getLangStats(paths: Array<string>, opts?: JsOpts | undefined | null): Array<JsLangStats>
+export declare function getCloc(paths: Array<string>, opts?: JsOpts | undefined | null): Array<JsLanguageStats>
 
 export interface GlobJsArgs {
   ignore?: Array<string>
@@ -47,14 +47,14 @@ export interface JsLabeledSpan {
   primary: boolean
 }
 
-export interface JsLangStats {
-  lang: JsLangType
+export interface JsLanguageStats {
+  lang: JsLanguageType
   code: number
   comments: number
   blanks: number
 }
 
-export declare const enum JsLangType {
+export declare const enum JsLanguageType {
   ABNF = 'ABNF',
   Abap = 'Abap',
   ActionScript = 'ActionScript',

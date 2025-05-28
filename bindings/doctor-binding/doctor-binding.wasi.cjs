@@ -86,9 +86,9 @@ const { instance: __napiInstance, module: __wasiModule, napiModule: __napiModule
 })
 module.exports = __napiModule.exports
 module.exports.Standards = __napiModule.exports.Standards
-module.exports.getLangStats = __napiModule.exports.getLangStats
+module.exports.getCloc = __napiModule.exports.getCloc
 module.exports.initializeLogger = __napiModule.exports.initializeLogger
-module.exports.JsLangType = __napiModule.exports.JsLangType
+module.exports.JsLanguageType = __napiModule.exports.JsLanguageType
 module.exports.JsSeverity = __napiModule.exports.JsSeverity
 module.exports.LogLevel = __napiModule.exports.LogLevel
 module.exports.NaPiCategory = __napiModule.exports.NaPiCategory

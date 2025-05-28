@@ -6,7 +6,7 @@ import {
   unSafeInnerLint, 
   NaPiCategory,
   LogLevel,
-  getLangStats,
+  getCloc,
   // verifyStandards,
   // getSourceLocation
   Standards
@@ -39,7 +39,7 @@ import {
   
 
   const start1 = performance.now()
-  const res2 = await getLangStats(['/Users/10015448/Git/gtms'],{
+  const res2 = await getCloc(['/Users/10015448/Git/gtms'],{
     // ignore: [
     //   '**/node_modules/**',
     //   'node_modules',
