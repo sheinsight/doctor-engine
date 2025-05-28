@@ -23,7 +23,7 @@ import {
 
   const start = performance.now()
 
-  let x = Standards.create("/Users/10015448/Git/csp-new");
+  let x = Standards.create("/Users/10015448/Git/csp-new/demo");
 
   await x.validateAll(); 
 

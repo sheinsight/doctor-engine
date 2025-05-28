@@ -11,6 +11,7 @@ use oxc_allocator::Allocator;
 use oxc_linter::{ConfigStoreBuilder, Oxlintrc};
 use oxc_parser::Parser;
 use oxc_semantic::SemanticBuilder;
+use rustc_hash::FxHashMap;
 use typed_builder::TypedBuilder;
 
 use crate::{
@@ -32,9 +33,9 @@ pub struct LintValidator {
 
 impl Validator for LintValidator {
   fn validate(&self) -> Result<Vec<Messages>, ValidatorError> {
-    let config = ConfigStoreBuilder::from_oxlintrc(true, self.oxlintrc.clone())?
-      .build()
-      .unwrap();
+    let config = ConfigStoreBuilder::from_oxlintrc(true, self.oxlintrc.clone())?.build();
+
+    let config_store = oxc_linter::ConfigStore::new(config, FxHashMap::default());
 
     let lint = oxc_linter::Linter::new(
       oxc_linter::LintOptions {
@@ -43,7 +44,7 @@ impl Validator for LintValidator {
         // report_unused_directive: Some(AllowWarnDeny::Deny),
         report_unused_directive: Some(oxc_linter::AllowWarnDeny::Allow),
       },
-      config,
+      config_store,
     );
 
     let parallel = WalkParallelJs::builder()
@@ -164,7 +165,9 @@ impl Validator for LintValidator {
 
 impl LintValidator {
   pub fn run(&self) -> Result<Vec<Result<FileDiagnostic, WalkError>>, LintError> {
-    let config = ConfigStoreBuilder::from_oxlintrc(true, self.oxlintrc.clone())?.build()?;
+    let config = ConfigStoreBuilder::from_oxlintrc(true, self.oxlintrc.clone())?.build();
+
+    let config_store = oxc_linter::ConfigStore::new(config, FxHashMap::default());
 
     let lint = oxc_linter::Linter::new(
       oxc_linter::LintOptions {
@@ -173,7 +176,7 @@ impl LintValidator {
         // report_unused_directive: Some(AllowWarnDeny::Deny),
         report_unused_directive: Some(oxc_linter::AllowWarnDeny::Allow),
       },
-      config,
+      config_store,
     );
 
     let parallel = WalkParallelJs::builder()
