@@ -837,6 +837,7 @@ dependencies = [
 name = "doctor_cloc"
 version = "0.1.0"
 dependencies = [
+ "doctor_core",
  "doctor_walk",
  "tokei",
  "typed-builder",
@@ -940,6 +941,7 @@ dependencies = [
 name = "doctor_walk"
 version = "0.1.0"
 dependencies = [
+ "doctor_core",
  "ignore",
  "log",
  "rayon",

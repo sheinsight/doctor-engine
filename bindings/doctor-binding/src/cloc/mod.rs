@@ -1,5 +1,5 @@
 use doctor_cloc::LanguageStats;
-use doctor_walk::WalkIgnore;
+use doctor_core::Ignore;
 use napi::Result;
 use napi_derive::napi;
 mod language_stats;
@@ -14,7 +14,7 @@ pub use opts::*;
 pub fn get_cloc(paths: Vec<String>, opts: Option<JsOpts>) -> Result<Vec<JsLanguageStats>> {
   let ignore = opts
     .and_then(|o| o.ignore)
-    .map(WalkIgnore::from)
+    .map(Ignore::from)
     .unwrap_or_default();
 
   let stats = LanguageStats::builder().cwd(paths).ignore(ignore).build();

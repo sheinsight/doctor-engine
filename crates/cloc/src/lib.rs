@@ -1,4 +1,4 @@
-use doctor_walk::WalkIgnore;
+use doctor_core::Ignore;
 use tokei::{Config, Languages, Sort};
 
 mod opts;
@@ -11,8 +11,8 @@ use typed_builder::TypedBuilder;
 #[derive(TypedBuilder)]
 pub struct LanguageStats {
   pub cwd: Vec<String>,
-  #[builder(default = WalkIgnore::default())]
-  pub ignore: WalkIgnore,
+  #[builder(default = Ignore::default())]
+  pub ignore: Ignore,
 }
 
 impl LanguageStats {
@@ -23,7 +23,7 @@ impl LanguageStats {
     };
     let mut languages = Languages::new();
 
-    let mut def_ignore = WalkIgnore::default();
+    let mut def_ignore = Ignore::default();
 
     def_ignore.extend(self.ignore.iter().cloned());
 
@@ -45,7 +45,7 @@ mod tests {
 
   #[test]
   fn test_count_lines() {
-    let ignore = WalkIgnore::from(vec![
+    let ignore = Ignore::from(vec![
       "**/node_modules/**".to_string(),
       "node_modules".to_string(),
     ]);

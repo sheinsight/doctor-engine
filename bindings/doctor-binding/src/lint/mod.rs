@@ -7,12 +7,11 @@ mod span;
 use std::collections::HashMap;
 
 pub use diagnostic::Diagnostic;
-use doctor_core::traits::PathExt;
+use doctor_core::{Ignore, traits::PathExt};
 use doctor_lint::{
   Category, EnvironmentFlags, GlobalValue, Globals, LintMode, LintValidator, OxlintrcBuilder,
   inner::Category20250601Inner,
 };
-use doctor_walk::WalkIgnore;
 pub use label::LabeledLoc;
 pub use location::Location;
 use napi::Result;
@@ -54,7 +53,7 @@ pub async fn un_safe_inner_debug_lint(
   let rc: Oxlintrc = serde_json::from_str(&oxlint_config)
     .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
 
-  let mut ignore = WalkIgnore::default();
+  let mut ignore = Ignore::default();
 
   if let Some(ignore_patterns) = glob_js_args.ignore {
     ignore.extend(ignore_patterns);
@@ -101,7 +100,7 @@ pub async fn un_safe_inner_lint(
     NaPiCategory::V20250601Inner => Category::V20250601Inner(Category20250601Inner::default()),
   };
 
-  let mut ignore = WalkIgnore::default();
+  let mut ignore = Ignore::default();
   if let Some(ignore_patterns) = glob_js_args.ignore {
     ignore.extend(ignore_patterns);
   }

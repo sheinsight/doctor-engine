@@ -13,4 +13,5 @@ version                = "0.1.0"
 tokei         = { workspace = true }
 typed-builder = { workspace = true }
 
+doctor_core = { workspace = true }
 doctor_walk = { workspace = true }

@@ -15,3 +15,5 @@ rayon         = { workspace = true }
 serde         = { workspace = true }
 thiserror     = { workspace = true }
 typed-builder = { workspace = true }
+
+doctor_core = { workspace = true }

@@ -1,7 +1,6 @@
 use std::{fs::read_to_string, path::Path};
 
-use doctor_core::ValidatorError;
-use doctor_walk::WalkIgnore;
+use doctor_core::{Ignore, ValidatorError};
 use serde::{Deserialize, Serialize};
 
 use super::Globals;
@@ -11,7 +10,7 @@ pub struct Sfconfig {
   #[serde(default)]
   pub globals: Globals,
   #[serde(default)]
-  pub ignore: WalkIgnore,
+  pub ignore: Ignore,
 }
 
 impl Sfconfig {

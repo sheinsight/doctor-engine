@@ -4,8 +4,8 @@ use std::{
   sync::Arc,
 };
 
-use doctor_core::{Messages, ValidatorError, traits::Validator};
-use doctor_walk::{WalkError, WalkIgnore, WalkParallelJs};
+use doctor_core::{Ignore, Messages, ValidatorError, traits::Validator};
+use doctor_walk::{WalkError, WalkParallelJs};
 use miette::MietteDiagnostic;
 use oxc_allocator::Allocator;
 use oxc_linter::{ConfigStoreBuilder, Oxlintrc};
@@ -26,8 +26,8 @@ pub struct LintValidator {
   #[builder(default = false)]
   with_show_report: bool,
 
-  #[builder(default = WalkIgnore::default())]
-  pub ignore: WalkIgnore,
+  #[builder(default = Ignore::default())]
+  pub ignore: Ignore,
 }
 
 impl Validator for LintValidator {

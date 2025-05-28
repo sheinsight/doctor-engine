@@ -1,4 +1,5 @@
 use ::ignore::DirEntry;
+use doctor_core::Ignore;
 use extensions::Extensions;
 use rayon::prelude::*;
 use std::{
@@ -8,20 +9,17 @@ use std::{
 };
 use typed_builder::TypedBuilder;
 
-// mod demo;
 mod error;
 mod extensions;
-mod walk_ignore;
 
 pub use error::WalkError;
-pub use walk_ignore::WalkIgnore;
 
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct WalkParallelJs {
   cwd: PathBuf,
 
-  #[builder(default = WalkIgnore::default())]
-  pub ignore: WalkIgnore,
+  #[builder(default = Ignore::default())]
+  pub ignore: Ignore,
 }
 
 impl WalkParallelJs {

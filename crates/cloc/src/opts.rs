@@ -1,14 +1,14 @@
-use doctor_walk::WalkIgnore;
+use doctor_core::Ignore;
 
 #[derive(Debug, Clone)]
 pub struct Opts {
-  pub ignore: WalkIgnore,
+  pub ignore: Ignore,
 }
 
 impl Default for Opts {
   fn default() -> Self {
     Self {
-      ignore: WalkIgnore::default(),
+      ignore: Ignore::default(),
     }
   }
 }
