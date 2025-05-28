@@ -9,13 +9,13 @@ pub use stats::Stats;
 use typed_builder::TypedBuilder;
 
 #[derive(TypedBuilder)]
-pub struct LanguageStats {
+pub struct Cloc {
   pub cwd: Vec<String>,
   #[builder(default = Ignore::default())]
   pub ignore: Ignore,
 }
 
-impl LanguageStats {
+impl Cloc {
   pub fn stats(&self) -> Vec<Stats> {
     let config = Config {
       sort: Some(Sort::Code),
@@ -47,7 +47,7 @@ mod tests {
   fn test_count_lines() {
     let ignore = Ignore::from(&["**/node_modules/**", "node_modules"]);
 
-    let lang_stats = LanguageStats::builder()
+    let lang_stats = Cloc::builder()
       .cwd(vec!["/Users/10015448/Git/csp-new".to_string()])
       .ignore(ignore)
       .build()

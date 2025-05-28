@@ -1,4 +1,4 @@
-use doctor_cloc::LanguageStats;
+use doctor_cloc::Cloc;
 use doctor_core::Ignore;
 use napi::Result;
 use napi_derive::napi;
@@ -11,13 +11,13 @@ pub use language_type::*;
 pub use opts::*;
 
 #[napi]
-pub fn get_cloc(paths: Vec<String>, opts: Option<JsOpts>) -> Result<Vec<JsLanguageStats>> {
+pub fn cloc(paths: Vec<String>, opts: Option<JsOpts>) -> Result<Vec<JsLanguageStats>> {
   let ignore = opts
     .and_then(|o| o.ignore)
     .map(Ignore::from)
     .unwrap_or_default();
 
-  let stats = LanguageStats::builder().cwd(paths).ignore(ignore).build();
+  let stats = Cloc::builder().cwd(paths).ignore(ignore).build();
 
   let stats = stats
     .stats()

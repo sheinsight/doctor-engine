@@ -9,6 +9,8 @@ export declare class Standards {
   validateAll(opts?: JsRenderOpts | undefined | null): Promise<Array<JsMessages>>
 }
 
+export declare function cloc(paths: Array<string>, opts?: JsOpts | undefined | null): Array<JsLanguageStats>
+
 export interface Diagnostic {
   fileName: string
   help: string
@@ -18,8 +20,6 @@ export interface Diagnostic {
   message: string
   labels: Array<LabeledLoc>
 }
-
-export declare function getCloc(paths: Array<string>, opts?: JsOpts | undefined | null): Array<JsLanguageStats>
 
 export interface GlobJsArgs {
   ignore?: Array<string>

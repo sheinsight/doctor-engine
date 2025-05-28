@@ -55,7 +55,7 @@ const {
 })
 export default __napiModule.exports
 export const Standards = __napiModule.exports.Standards
-export const getCloc = __napiModule.exports.getCloc
+export const cloc = __napiModule.exports.cloc
 export const initializeLogger = __napiModule.exports.initializeLogger
 export const JsLanguageType = __napiModule.exports.JsLanguageType
 export const JsSeverity = __napiModule.exports.JsSeverity
