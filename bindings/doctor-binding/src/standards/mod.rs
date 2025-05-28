@@ -62,7 +62,7 @@ impl Standards {
     Standards { standards }
   }
 
-  #[napi(setter)]
+  #[napi]
   pub async fn validate_npmrc(&self) -> Result<Vec<JsMessages>> {
     self
       .standards
