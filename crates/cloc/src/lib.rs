@@ -45,10 +45,7 @@ mod tests {
 
   #[test]
   fn test_count_lines() {
-    let ignore = Ignore::from(vec![
-      "**/node_modules/**".to_string(),
-      "node_modules".to_string(),
-    ]);
+    let ignore = Ignore::from(&["**/node_modules/**", "node_modules"]);
 
     let lang_stats = LanguageStats::builder()
       .cwd(vec!["/Users/10015448/Git/csp-new".to_string()])

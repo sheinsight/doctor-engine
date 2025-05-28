@@ -50,3 +50,15 @@ impl From<Vec<String>> for Ignore {
     Self(value)
   }
 }
+
+impl<const N: usize> From<&[&str; N]> for Ignore {
+  fn from(value: &[&str; N]) -> Self {
+    Self(value.iter().map(|s| s.to_string()).collect())
+  }
+}
+
+impl From<Vec<&str>> for Ignore {
+  fn from(value: Vec<&str>) -> Self {
+    Self(value.into_iter().map(|s| s.to_string()).collect())
+  }
+}
