@@ -10,8 +10,7 @@ version                = "0.1.0"
 
 
 [dependencies]
-tokei         = { workspace = true }
-typed-builder = { workspace = true }
+tokei = { workspace = true }
+
 
 doctor_core = { workspace = true }
-doctor_walk = { workspace = true }

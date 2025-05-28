@@ -11,8 +11,8 @@ pub struct JsLanguageStats {
   pub blanks: u32,
 }
 
-impl From<doctor_cloc::Stats> for JsLanguageStats {
-  fn from(stats: doctor_cloc::Stats) -> Self {
+impl From<doctor::cloc::Stats> for JsLanguageStats {
+  fn from(stats: doctor::cloc::Stats) -> Self {
     Self {
       lang: stats.lang.into(),
       code: stats.code as u32,

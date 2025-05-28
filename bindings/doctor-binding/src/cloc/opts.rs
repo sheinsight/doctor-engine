@@ -7,9 +7,9 @@ pub struct JsOpts {
   pub ignore: Option<Vec<String>>,
 }
 
-impl Into<doctor_cloc::Opts> for JsOpts {
-  fn into(self) -> doctor_cloc::Opts {
-    doctor_cloc::Opts {
+impl Into<doctor::cloc::Opts> for JsOpts {
+  fn into(self) -> doctor::cloc::Opts {
+    doctor::cloc::Opts {
       ignore: self.ignore.map(Ignore::from).unwrap_or_default(),
     }
   }

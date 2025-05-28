@@ -1,4 +1,3 @@
-use doctor_cloc::Cloc;
 use doctor_core::Ignore;
 use napi::Result;
 use napi_derive::napi;
@@ -17,10 +16,9 @@ pub fn cloc(paths: Vec<String>, opts: Option<JsOpts>) -> Result<Vec<JsLanguageSt
     .map(Ignore::from)
     .unwrap_or_default();
 
-  let stats = Cloc::builder().cwd(paths).ignore(ignore).build();
+  let stats = doctor::cloc::cloc(&paths, Some(doctor::cloc::Opts { ignore }));
 
   let stats = stats
-    .stats()
     .into_iter()
     .map(JsLanguageStats::from)
     .collect::<Vec<_>>();

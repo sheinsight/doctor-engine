@@ -807,7 +807,6 @@ dependencies = [
  "anyhow",
  "base64 0.22.1",
  "doctor",
- "doctor_cloc",
  "doctor_core",
  "doctor_lint",
  "doctor_node",
@@ -838,9 +837,7 @@ name = "doctor_cloc"
 version = "0.1.0"
 dependencies = [
  "doctor_core",
- "doctor_walk",
  "tokei",
- "typed-builder",
 ]
 
 [[package]]

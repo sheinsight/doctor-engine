@@ -1,4 +1,7 @@
 mod scheduler;
 pub use scheduler::*;
 pub mod standards;
-pub mod stats;
+
+pub mod cloc {
+  pub use doctor_cloc::*;
+}
