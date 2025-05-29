@@ -10,9 +10,6 @@ A high-performance code quality inspection tool powered by Rust and Node.js.
 - 🚀 **High Performance**: Built with Rust for maximum speed and efficiency
 - 🔍 **Comprehensive Analysis**: Supports multiple programming languages and frameworks
 - ⚡ **Parallel Processing**: Utilizes multi-threading for faster code scanning
-- 📊 **Detailed Reports**: Generates clear and actionable quality reports
-- 🛠️ **Customizable Rules**: Flexible configuration options for different project needs
-- 🔄 **Easy Integration**: Seamlessly integrates with CI/CD pipelines
 
 ## Installation
 
@@ -126,30 +123,6 @@ function unSafeInnerLint(
   globArgs: GlobArgs,
   category: NaPiCategory
 ): Promise<Diagnostic[]>;
-```
-
-### Types
-
-#### Messages
-
-```typescript
-interface Messages {
-  sourcePath: string;
-  diagnostics: Array<Diagnostics>;
-}
-```
-
-#### Diagnostic
-
-```typescript
-interface Diagnostic {
-  message: string;
-  code?: string;
-  severity?: "Error" | "Warning" | "Advice";
-  help?: string;
-  url?: string;
-  labels?: Array<LabeledSpan>;
-}
 ```
 
 ## Contributing
