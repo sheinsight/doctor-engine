@@ -33,7 +33,6 @@ strum_macros    = { workspace = true }
 
 anyhow = { workspace = true }
 tabled = { workspace = true }
-tokei  = { workspace = true }
 
 doctor          = { workspace = true }
 doctor_core          = { workspace = true }

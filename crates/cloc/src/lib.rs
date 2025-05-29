@@ -8,6 +8,7 @@ mod stats;
 
 pub use opts::Opts;
 pub use stats::Stats;
+pub use tokei::LanguageType;
 
 pub fn cloc(paths: &[impl AsRef<Path>], opts: Option<Opts>) -> Vec<Stats> {
   let config = Config {

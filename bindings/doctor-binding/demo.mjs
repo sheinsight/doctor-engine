@@ -23,9 +23,12 @@ import {
 
   const start = performance.now()
 
-  let x = Standards.create("/Users/10015448/Git/csp-new/demo");
+  let standards = Standards.create("/Users/10015448/Git/ppm-front");
 
-  await x.validateAll(); 
+  // await standards.validateAll(); 
+
+   await standards.validateNodeVersion();
+  // console.log(res);
 
   const end = performance.now()
 
@@ -39,14 +42,7 @@ import {
   
 
   const start1 = performance.now()
-  const res2 = await cloc(['/Users/10015448/Git/gtms'],{
-    // ignore: [
-    //   '**/node_modules/**',
-    //   'node_modules',
-    //   // '**/*.d.ts',
-    //   // "csp-*"
-    // ]
-  })
+  const res2 = await cloc(['/Users/10015448/Git/gtms'],{})
   const end1 = performance.now()
 
   console.table(res2)
