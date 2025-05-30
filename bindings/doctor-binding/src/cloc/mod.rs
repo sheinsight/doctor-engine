@@ -10,7 +10,7 @@ pub use language_type::*;
 pub use opts::*;
 
 #[napi]
-pub fn cloc(paths: Vec<String>, opts: Option<JsOpts>) -> Result<Vec<JsLanguageStats>> {
+pub fn cloc(paths: Vec<String>, opts: Option<JsClocOpts>) -> Result<Vec<JsLanguageStats>> {
   let ignore = opts
     .and_then(|o| o.ignore)
     .map(Ignore::from)

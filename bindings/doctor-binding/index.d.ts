@@ -9,7 +9,7 @@ export declare class Standards {
   validateAll(opts?: JsRenderOpts | undefined | null): Promise<Array<JsMessages>>
 }
 
-export declare function cloc(paths: Array<string>, opts?: JsOpts | undefined | null): Array<JsLanguageStats>
+export declare function cloc(paths: Array<string>, opts?: JsClocOpts | undefined | null): Array<JsLanguageStats>
 
 export interface Diagnostic {
   fileName: string
@@ -30,6 +30,10 @@ export interface GlobJsArgs {
 }
 
 export declare function initializeLogger(level?: LogLevel | undefined | null): void
+
+export interface JsClocOpts {
+  ignore?: Array<string>
+}
 
 export interface JsDiagnostics {
   message: string
@@ -286,10 +290,6 @@ export declare const enum JsLanguageType {
 export interface JsMessages {
   sourcePath: string
   diagnostics: Array<JsDiagnostics>
-}
-
-export interface JsOpts {
-  ignore?: Array<string>
 }
 
 export interface JsRenderOpts {
