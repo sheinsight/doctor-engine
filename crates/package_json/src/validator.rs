@@ -1,13 +1,11 @@
-use std::path::Path;
-
-use biome_json_parser::{JsonParserOptions, parse_json};
-use biome_rowan::TextRange;
 use doctor_core::{
   Messages, ValidatorError,
   traits::{PathExt, Validator},
 };
+use jsonc_parser::{CollectOptions, ParseOptions, common::Ranged, parse_to_ast};
 use miette::MietteDiagnostic;
 use package_json_parser::PackageJsonParser;
+use std::path::Path;
 use typed_builder::TypedBuilder;
 
 use crate::diagnostics::DiagnosticFactory;
@@ -135,31 +133,23 @@ impl<P> PackageJsonValidator<P>
 where
   P: AsRef<Path>,
 {
-  fn find_private_range(&self, json_raw: &str) -> Result<Option<TextRange>, ValidatorError> {
-    let parse = parse_json(&json_raw, JsonParserOptions::default());
+  fn find_private_value_range(
+    &self,
+    json_raw: &str,
+  ) -> Result<Option<jsonc_parser::common::Range>, ValidatorError> {
+    let parse_result = parse_to_ast(
+      json_raw,
+      &CollectOptions::default(),
+      &ParseOptions::default(),
+    )
+    .unwrap();
 
-    let root = parse.tree();
-
-    let root_any_json_value = root.value()?;
-
-    let root = root_any_json_value.as_json_object_value().unwrap();
-
-    for member in root.json_member_list() {
-      let member = member?;
-
-      let name = member.name()?;
-
-      if name.inner_string_text()? == "private" {
-        let value = member.value().unwrap();
-        let value = value.as_json_boolean_value().unwrap();
-
-        let value_range = value.value_token()?.text_trimmed_range();
-
-        return Ok(Some(value_range));
-      }
-    }
-
-    Ok(None)
+    let res = parse_result
+      .value
+      .and_then(|v| v.as_object().cloned())
+      .and_then(|o| o.get("private").cloned())
+      .map(|v| v.value.range());
+    return Ok(res);
   }
 
   fn validate_package_manager(
@@ -197,14 +187,15 @@ where
           ValidatePrivate::True if actual == true => (),
           ValidatePrivate::False if actual == false => (),
           _ => {
-            let range = self.find_private_range(
+            let range = self.find_private_value_range(
               package_json
                 .__raw_source
                 .as_ref()
                 .map_or("", |source| source),
             )?;
-            let end = range.unwrap_or_default().end().into();
-            let start = range.unwrap_or_default().start().into();
+
+            let end = range.map_or(0, |r| r.end);
+            let start = range.map_or(0, |r| r.start);
             diagnostics.push(DiagnosticFactory::at_private_not_true(start..end));
             return Ok(diagnostics);
           }

@@ -16,6 +16,7 @@ version                = "0.1.0"
 
 [dependencies]
 
+jsonc-parser        = { workspace = true }
 miette              = { workspace = true }
 package_json_parser = { workspace = true }
 serde               = { workspace = true, features = ["derive"] }
@@ -23,17 +24,6 @@ serde_json          = { workspace = true }
 thiserror           = { workspace = true }
 tokio               = { workspace = true }
 typed-builder       = { workspace = true }
-# biome_deserialize        = { workspace = true }
-# biome_deserialize_macros = { workspace = true }
-# biome_json_parser        = { workspace = true }
-# biome_json_syntax        = { workspace = true }
-biome_console       = "=0.5.7"
-biome_diagnostics   = "=0.5.7"
-biome_json_parser   = "=0.5.7"
-biome_json_syntax   = "=0.5.7"
-biome_parser        = "=0.5.7"
-biome_rowan         = "=0.5.7"
-biome_text_edit     = "=0.5.7"
-biome_unicode_table = "=0.5.7"
+
 
 doctor_core = { workspace = true }
