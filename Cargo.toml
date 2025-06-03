@@ -72,7 +72,8 @@ strum_macros = "0.27.1"
 base64 = "0.22.1"
 insta  = "1.36.1"
 
-tokei = "12.1.2"
+jsonc-parser = "0.26.2"
+tokei        = "12.1.2"
 
 doctor              = { path = "crates/doctor" }
 doctor_binding      = { path = "bindings/doctor" }
