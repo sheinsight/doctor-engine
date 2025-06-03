@@ -1,9 +1,6 @@
-use std::{
-  collections::HashMap,
-  ops::{Deref, DerefMut},
-};
+use std::collections::HashMap;
 
-use doctor_core::{Messages, ValidatorError, traits::Validator};
+use doctor_core::Messages;
 use tabled::{Table, Tabled};
 
 #[derive(Tabled)]
@@ -48,50 +45,13 @@ impl<'a> MessagesDashboard<'a> {
   }
 }
 
-pub struct ValidatorScheduler(Vec<Box<dyn Validator>>);
-
-impl Default for ValidatorScheduler {
-  fn default() -> Self {
-    Self(vec![])
-  }
-}
-
-impl Deref for ValidatorScheduler {
-  type Target = Vec<Box<dyn Validator>>;
-
-  fn deref(&self) -> &Self::Target {
-    &self.0
-  }
-}
-
-impl DerefMut for ValidatorScheduler {
-  fn deref_mut(&mut self) -> &mut Self::Target {
-    &mut self.0
-  }
-}
-
-impl ValidatorScheduler {
-  pub fn validator(&self) -> Result<Vec<Messages>, ValidatorError> {
-    let mut messages = vec![];
-
-    for validator in self.iter() {
-      let result = validator.validate()?;
-      messages.extend(result.into_iter());
-    }
-
-    Ok(messages)
-  }
-}
-
 #[cfg(test)]
 mod tests {
   use super::*;
 
   #[test]
   fn should_render_empty_when_messages_is_empty() {
-    let scheduler = ValidatorScheduler::default();
-    let messages = scheduler.validator().unwrap();
-    let dashboard = MessagesDashboard::new(&messages);
+    let dashboard = MessagesDashboard::new(&[]);
     dashboard.render();
   }
 }

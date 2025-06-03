@@ -1,8 +1,8 @@
+use doctor_core::Ignore;
 use doctor_lint::{
   Category, EnvironmentFlags, GlobalValue, Globals, LintMode, LintValidator,
   config::OxlintrcBuilder, inner::Category20250601Inner,
 };
-use doctor_walk::WalkIgnore;
 
 use std::time::Instant;
 fn main() -> anyhow::Result<()> {
@@ -31,7 +31,7 @@ fn main() -> anyhow::Result<()> {
 
   eprintln!("3--->>>");
 
-  let ignore = WalkIgnore(vec!["**/node_modules/**".to_string()]);
+  let ignore = Ignore(vec!["**/node_modules/**".to_string()]);
 
   let linter_runner = LintValidator::builder()
     .cwd(cwd.to_string().into())
