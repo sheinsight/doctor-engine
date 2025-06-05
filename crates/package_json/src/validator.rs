@@ -267,7 +267,11 @@ where
       ]);
     }
 
-    let package_json = package_json_parser::PackageJsonParser::parse(path)?;
+    let package_json = package_json_parser::PackageJsonParser::parse(path).map_err(|e| {
+      eprintln!("error: {:?}", e);
+      let e = e.downcast::<serde_json::Error>().unwrap();
+      ValidatorError::SerdeJsonError(e)
+    })?;
 
     let mut messages = Messages::builder()
       .source_code(package_json.__raw_source.clone().unwrap_or_default())

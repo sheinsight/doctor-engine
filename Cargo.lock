@@ -1943,11 +1943,13 @@ dependencies = [
 
 [[package]]
 name = "package_json_parser"
-version = "0.0.6"
+version = "0.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "407196ab812efa68e7a5161836f3d5895e6ea1b888be174caca9a545eded0e31"
+checksum = "0cdd7a4bd6ebe84a402f16aebc1efd62bd51e05075d838c9423279551bf4a740"
 dependencies = [
+ "jsonc-parser",
  "lazy-regex",
+ "miette",
  "rustc-hash 2.1.1",
  "serde",
  "serde_json",
