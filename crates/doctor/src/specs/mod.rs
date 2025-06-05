@@ -5,14 +5,14 @@ use doctor_lint::Sfconfig;
 
 use crate::MessagesDashboard;
 
-pub mod register;
+mod register;
 
-pub struct RenderOpts {
+pub struct SpecificationsRenderOpts {
   pub with_dashboard: bool,
   pub max_render_count: Option<u32>,
 }
 
-impl Default for RenderOpts {
+impl Default for SpecificationsRenderOpts {
   fn default() -> Self {
     Self {
       with_dashboard: true,
@@ -21,14 +21,14 @@ impl Default for RenderOpts {
   }
 }
 
-pub struct Standards {
+pub struct Specifications {
   cwd: PathBuf,
 }
 
-impl Standards {
-  pub fn create(cwd: String) -> Standards {
+impl Specifications {
+  pub fn create(cwd: String) -> Specifications {
     let cwd = PathBuf::from(&cwd);
-    Standards { cwd }
+    Specifications { cwd }
   }
 
   pub fn validate_npmrc(&self) -> Result<Vec<Messages>, ValidatorError> {
@@ -69,7 +69,7 @@ impl Standards {
     Ok(messages)
   }
 
-  pub fn render(&self, messages: &Vec<Messages>, opts: RenderOpts) {
+  pub fn render(&self, messages: &Vec<Messages>, opts: SpecificationsRenderOpts) {
     miette::set_hook(Box::new(|_| {
       Box::new(
         miette::MietteHandlerOpts::new()

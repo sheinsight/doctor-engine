@@ -9,7 +9,7 @@ import {
   cloc,
   // verifyStandards,
   // getSourceLocation
-  Standards
+  JsSpecifications
  } from './index.js'
  import { performance } from "node:perf_hooks"
 
@@ -23,7 +23,7 @@ import {
 
   const start = performance.now()
 
-  let standards = Standards.create("/Users/10015448/Git/gtms",{
+  let spec = JsSpecifications.create("/Users/10015448/Git/gtms",{
     quiet: false,
     with_dashboard: true,
     max_render_count: 10,
@@ -34,8 +34,9 @@ import {
   //  await standards.validateLint();
 
   try {
+    // 规范
     // await standards.validatePackageJson();
-    await standards.validateAll();
+    await spec.validateLint();
   } catch (error) {
     console.log(error);
     

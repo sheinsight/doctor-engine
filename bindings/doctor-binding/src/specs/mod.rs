@@ -1,3 +1,4 @@
+use doctor::specs::SpecificationsRenderOpts;
 use messages::JsMessages;
 use napi::Result;
 use napi_derive::napi;
@@ -12,13 +13,13 @@ mod source_span;
 
 #[napi(object)]
 #[derive(Clone, Debug)]
-pub struct JsRenderOpts {
+pub struct JsSpecificationsRenderOpts {
   pub with_dashboard: Option<bool>,
   pub max_render_count: Option<u32>,
   pub quiet: Option<bool>,
 }
 
-impl Default for JsRenderOpts {
+impl Default for JsSpecificationsRenderOpts {
   fn default() -> Self {
     Self {
       with_dashboard: Some(true),
@@ -28,9 +29,9 @@ impl Default for JsRenderOpts {
   }
 }
 
-impl Into<doctor::standards::RenderOpts> for JsRenderOpts {
-  fn into(self) -> doctor::standards::RenderOpts {
-    doctor::standards::RenderOpts {
+impl Into<SpecificationsRenderOpts> for JsSpecificationsRenderOpts {
+  fn into(self) -> SpecificationsRenderOpts {
+    SpecificationsRenderOpts {
       with_dashboard: self.with_dashboard.unwrap_or(false),
       max_render_count: self.max_render_count,
       ..Default::default()
@@ -39,14 +40,14 @@ impl Into<doctor::standards::RenderOpts> for JsRenderOpts {
 }
 
 #[napi]
-pub struct Standards {
+pub struct JsSpecifications {
   #[napi(skip)]
-  pub standards: doctor::standards::Standards,
+  pub standards: doctor::specs::Specifications,
 
-  opts: Option<JsRenderOpts>,
+  opts: Option<JsSpecificationsRenderOpts>,
 }
 
-impl Standards {
+impl JsSpecifications {
   // 简单的辅助函数，避免生命周期问题
   fn to_napi_error(err: doctor_core::ValidatorError) -> napi::Error {
     napi::Error::new(napi::Status::GenericFailure, err.to_string())
@@ -67,11 +68,11 @@ impl Standards {
 }
 
 #[napi]
-impl Standards {
+impl JsSpecifications {
   #[napi(factory)]
-  pub fn create(cwd: String, opts: Option<JsRenderOpts>) -> Standards {
-    let standards = doctor::standards::Standards::create(cwd);
-    Standards { standards, opts }
+  pub fn create(cwd: String, opts: Option<JsSpecificationsRenderOpts>) -> JsSpecifications {
+    let standards = doctor::specs::Specifications::create(cwd);
+    JsSpecifications { standards, opts }
   }
 
   #[napi]

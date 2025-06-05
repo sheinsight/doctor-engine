@@ -375,7 +375,7 @@ if (!nativeBinding) {
 }
 
 module.exports = nativeBinding
-module.exports.Standards = nativeBinding.Standards
+module.exports.JsSpecifications = nativeBinding.JsSpecifications
 module.exports.cloc = nativeBinding.cloc
 module.exports.initializeLogger = nativeBinding.initializeLogger
 module.exports.JsLanguageType = nativeBinding.JsLanguageType
