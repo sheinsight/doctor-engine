@@ -75,7 +75,7 @@ impl Standards {
         miette::MietteHandlerOpts::new()
           .unicode(true)
           .force_graphical(true)
-          .context_lines(10)
+          .context_lines(5)
           .tab_width(2)
           .break_words(true)
           .build(),

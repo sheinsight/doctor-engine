@@ -11,6 +11,7 @@ mod severity;
 mod source_span;
 
 #[napi(object)]
+#[derive(Clone, Debug)]
 pub struct JsRenderOpts {
   pub with_dashboard: Option<bool>,
   pub max_render_count: Option<u32>,
@@ -30,7 +31,7 @@ impl Default for JsRenderOpts {
 impl Into<doctor::standards::RenderOpts> for JsRenderOpts {
   fn into(self) -> doctor::standards::RenderOpts {
     doctor::standards::RenderOpts {
-      with_dashboard: self.with_dashboard.unwrap_or(true),
+      with_dashboard: self.with_dashboard.unwrap_or(false),
       max_render_count: self.max_render_count,
       ..Default::default()
     }
@@ -41,6 +42,8 @@ impl Into<doctor::standards::RenderOpts> for JsRenderOpts {
 pub struct Standards {
   #[napi(skip)]
   pub standards: doctor::standards::Standards,
+
+  opts: Option<JsRenderOpts>,
 }
 
 impl Standards {
@@ -52,61 +55,78 @@ impl Standards {
   fn convert_messages(messages: Vec<doctor_core::Messages>) -> Vec<JsMessages> {
     messages.into_iter().map(JsMessages::from).collect()
   }
+
+  fn render_messages(&self, messages: &Vec<doctor_core::Messages>) {
+    if let Some(opts) = self.opts.as_ref() {
+      let quiet = opts.quiet.unwrap_or(false);
+      if !quiet {
+        self.standards.render(messages, opts.clone().into());
+      }
+    }
+  }
 }
 
 #[napi]
 impl Standards {
   #[napi(factory)]
-  pub fn create(cwd: String) -> Standards {
+  pub fn create(cwd: String, opts: Option<JsRenderOpts>) -> Standards {
     let standards = doctor::standards::Standards::create(cwd);
-    Standards { standards }
+    Standards { standards, opts }
   }
 
   #[napi]
   pub async fn validate_npmrc(&self) -> Result<Vec<JsMessages>> {
-    self
+    let res = self
       .standards
       .validate_npmrc()
-      .map(Self::convert_messages)
-      .map_err(Self::to_napi_error)
+      .map_err(Self::to_napi_error)?;
+
+    self.render_messages(&res);
+
+    Ok(Self::convert_messages(res))
   }
 
   #[napi]
   pub async fn validate_node_version(&self) -> Result<Vec<JsMessages>> {
-    self
+    let res = self
       .standards
       .validate_node_version()
-      .map(Self::convert_messages)
-      .map_err(Self::to_napi_error)
+      .map_err(Self::to_napi_error)?;
+
+    self.render_messages(&res);
+
+    Ok(Self::convert_messages(res))
   }
 
   #[napi]
   pub async fn validate_package_json(&self) -> Result<Vec<JsMessages>> {
-    self
+    let res = self
       .standards
       .validate_package_json()
-      .map(Self::convert_messages)
-      .map_err(Self::to_napi_error)
+      .map_err(Self::to_napi_error)?;
+
+    self.render_messages(&res);
+
+    Ok(Self::convert_messages(res))
   }
 
   #[napi]
   pub async fn validate_lint(&self) -> Result<Vec<JsMessages>> {
-    self
+    let res = self
       .standards
       .validate_lint()
-      .map(Self::convert_messages)
-      .map_err(Self::to_napi_error)
+      .map_err(Self::to_napi_error)?;
+
+    self.render_messages(&res);
+
+    Ok(Self::convert_messages(res))
   }
 
   #[napi]
-  pub async fn validate_all(&self, opts: Option<JsRenderOpts>) -> Result<Vec<JsMessages>> {
+  pub async fn validate_all(&self) -> Result<Vec<JsMessages>> {
     let res = self.standards.validate_all().map_err(Self::to_napi_error)?;
 
-    let opts = opts.unwrap_or_default();
-
-    if !opts.quiet.unwrap_or(false) {
-      self.standards.render(&res, opts.into());
-    }
+    self.render_messages(&res);
 
     Ok(Self::convert_messages(res))
   }

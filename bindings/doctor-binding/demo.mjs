@@ -23,11 +23,23 @@ import {
 
   const start = performance.now()
 
-  let standards = Standards.create("/Users/10015448/Git/ppm-front");
+  let standards = Standards.create("/Users/10015448/Git/gtms",{
+    quiet: false,
+    with_dashboard: true,
+    max_render_count: 10,
+  });
 
   // await standards.validateAll(); 
 
-   await standards.validateNodeVersion();
+  //  await standards.validateLint();
+
+  try {
+    // await standards.validatePackageJson();
+    await standards.validateAll();
+  } catch (error) {
+    console.log(error);
+    
+  }
   // console.log(res);
 
   const end = performance.now()
