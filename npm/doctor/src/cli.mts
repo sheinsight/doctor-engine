@@ -1,6 +1,6 @@
 
 import { cac } from "cac";
-import { initializeLogger, Standards } from "@shined/doctor-binding"
+import { initializeLogger, JsSpecifications } from "@shined/doctor-binding"
 import { performance } from "node:perf_hooks"
 const cli = cac("doctor");
 
@@ -16,7 +16,10 @@ cli.command('','check project health')
 
     const cwd = options.cwd || process.cwd();
 
-    const standards = await Standards.create(cwd);
+    const standards = await JsSpecifications.create(cwd,{
+      quiet: false,
+      withDashboard:true,
+    });
 
     const res = await standards.validateAll();
 
