@@ -9,7 +9,6 @@ rust-version.workspace = true
 version                = "0.1.0"
 
 [dependencies]
-biome_rowan         = "=0.5.7"
 miette              = { workspace = true, features = ["fancy"] }
 node-semver         = { workspace = true }
 oxc_diagnostics     = { workspace = true }

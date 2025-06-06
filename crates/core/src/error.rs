@@ -17,9 +17,6 @@ pub enum ValidatorError {
   PackageJsonParserError(#[from] ErrorKind),
 
   #[error(transparent)]
-  JsonSyntaxError(#[from] biome_rowan::SyntaxError),
-
-  #[error(transparent)]
   OxcConfigBuilderError(#[from] oxc_linter::ConfigBuilderError),
 
   #[error(transparent)]

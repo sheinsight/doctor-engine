@@ -29,14 +29,14 @@ import {
     max_render_count: 10,
   });
 
-  // await standards.validateAll(); 
+  // await spec.validateAll(); 
 
-  //  await standards.validateLint();
+  //  await spec.validateLint();
 
   try {
     // 规范
-    // await standards.validatePackageJson();
-    await spec.validateLint();
+    await spec.validatePackageJson();
+    // await spec.validateLint();
   } catch (error) {
     console.log(error);
     

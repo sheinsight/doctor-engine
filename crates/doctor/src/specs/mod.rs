@@ -70,7 +70,7 @@ impl Specifications {
   }
 
   pub fn render(&self, messages: &Vec<Messages>, opts: SpecificationsRenderOpts) -> Vec<String> {
-    miette::set_hook(Box::new(|_| {
+    let _ = miette::set_hook(Box::new(|_| {
       Box::new(
         miette::MietteHandlerOpts::new()
           .unicode(true)
@@ -80,8 +80,7 @@ impl Specifications {
           .break_words(true)
           .build(),
       )
-    }))
-    .unwrap();
+    }));
 
     let messages: Vec<Messages> = messages
       .iter()

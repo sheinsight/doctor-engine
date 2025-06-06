@@ -5,7 +5,7 @@ use doctor_core::{
 use jsonc_parser::{CollectOptions, ParseOptions, common::Ranged, parse_to_ast};
 use miette::MietteDiagnostic;
 use package_json_parser::PackageJsonParser;
-use std::path::Path;
+use std::{fs::read_to_string, path::Path};
 use typed_builder::TypedBuilder;
 
 use crate::diagnostics::DiagnosticFactory;
@@ -267,21 +267,41 @@ where
       ]);
     }
 
-    let package_json = package_json_parser::PackageJsonParser::parse(path).map_err(|e| {
-      eprintln!("error: {:?}", e);
-
-      if let Ok(e) = e.downcast::<package_json_parser::ErrorKind>() {
-        return ValidatorError::PackageJsonParserError(e);
-      } else {
-        unreachable!()
-      }
-    })?;
+    let raw = read_to_string(path)?;
 
     let mut messages = Messages::builder()
-      .source_code(package_json.__raw_source.clone().unwrap_or_default())
+      .source_code(raw)
       .source_path(path.to_string_owned())
       .diagnostics(vec![])
       .build();
+
+    let package_json = match package_json_parser::PackageJsonParser::parse(path) {
+      Ok(package_json) => package_json,
+      Err(e) => match e.downcast::<package_json_parser::ErrorKind>() {
+        Ok(package_json_parser::ErrorKind::JsonParseError {
+          primary_span,
+          other_spans,
+          ..
+        }) => {
+          let mut labels = other_spans.clone();
+
+          if let Some(span) = primary_span {
+            labels.push(miette::LabeledSpan::at(span, ""));
+          }
+
+          let diagnostic = DiagnosticFactory::at_private_type_error(labels);
+          messages.diagnostics.push(diagnostic);
+
+          return Ok(vec![messages]);
+        }
+        Ok(e) => {
+          return Err(ValidatorError::PackageJsonParserError(e.into()));
+        }
+        Err(e) => {
+          return Err(ValidatorError::Unknown(e.to_string().into()));
+        }
+      },
+    };
 
     let diagnostics = self.validate_name(&package_json)?;
     messages.diagnostics.extend(diagnostics.into_iter());

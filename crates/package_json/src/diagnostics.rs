@@ -85,4 +85,17 @@ This ensures the package cannot be accidentally published to npm."#;
       "The 'private' field in package.json must be set to true",
     )
   }
+
+  pub fn at_private_type_error(labels: Vec<LabeledSpan>) -> MietteDiagnostic {
+    let message = "The 'private' field in package.json must be a boolean";
+    let b = MietteDiagnostic::new(message)
+      .with_labels(labels)
+      .with_help(
+        r#"Update your package.json to include: "private": true
+This ensures the package cannot be accidentally published to npm."#,
+      )
+      .with_code("shined(package-json:private-type-error)")
+      .with_severity(miette::Severity::Error);
+    b
+  }
 }
