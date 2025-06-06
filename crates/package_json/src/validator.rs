@@ -269,8 +269,12 @@ where
 
     let package_json = package_json_parser::PackageJsonParser::parse(path).map_err(|e| {
       eprintln!("error: {:?}", e);
-      let e = e.downcast::<serde_json::Error>().unwrap();
-      ValidatorError::SerdeJsonError(e)
+
+      if let Ok(e) = e.downcast::<package_json_parser::ErrorKind>() {
+        return ValidatorError::PackageJsonParserError(e);
+      } else {
+        unreachable!()
+      }
     })?;
 
     let mut messages = Messages::builder()

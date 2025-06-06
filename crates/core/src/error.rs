@@ -1,3 +1,5 @@
+use package_json_parser::ErrorKind;
+
 #[derive(Debug, thiserror::Error)]
 pub enum ValidatorError {
   #[error(transparent)]
@@ -9,8 +11,10 @@ pub enum ValidatorError {
   #[error(transparent)]
   SerdeIniError(#[from] serde_ini::de::Error),
 
+  // #[error(transparent)]
+  // SerdeJsonError(#[from] serde_json::Error),
   #[error(transparent)]
-  SerdeJsonError(#[from] serde_json::Error),
+  PackageJsonParserError(#[from] ErrorKind),
 
   #[error(transparent)]
   JsonSyntaxError(#[from] biome_rowan::SyntaxError),
