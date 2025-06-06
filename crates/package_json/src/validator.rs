@@ -397,12 +397,14 @@ mod tests {
       .config_path("fixtures/str_private.json")
       .with_validate_private(ValidatePrivate::True)
       .build()
-      .validate();
+      .validate()
+      .unwrap();
 
-    println!("{:?}", result);
-
-    assert!(!result.is_ok());
-
-    assert!(matches!(result, Err(ValidatorError::IoError(_))));
+    for msg in result {
+      assert!(msg.has_error());
+      msg.render();
+      assert!(msg.diagnostics.len() == 1);
+      assert!(msg.diagnostics[0].code == Some("shined(package-json:private-type-error)".into()));
+    }
   }
 }
