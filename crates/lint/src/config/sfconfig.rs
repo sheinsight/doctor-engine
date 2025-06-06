@@ -16,7 +16,8 @@ pub struct Sfconfig {
 impl Sfconfig {
   pub fn parse<P: AsRef<Path>>(path: P) -> Result<Self, ValidatorError> {
     if let Ok(config) = read_to_string(path) {
-      let config = serde_json::from_str::<Sfconfig>(&config)?;
+      let config = serde_json::from_str::<Sfconfig>(&config)
+        .map_err(|e| ValidatorError::Unknown(Box::new(e)))?;
       return Ok(config);
     }
 

@@ -69,7 +69,7 @@ impl Specifications {
     Ok(messages)
   }
 
-  pub fn render(&self, messages: &Vec<Messages>, opts: SpecificationsRenderOpts) {
+  pub fn render(&self, messages: &Vec<Messages>, opts: SpecificationsRenderOpts) -> Vec<String> {
     miette::set_hook(Box::new(|_| {
       Box::new(
         miette::MietteHandlerOpts::new()
@@ -89,25 +89,31 @@ impl Specifications {
       .cloned()
       .collect();
 
+    let mut reports = Vec::new();
+
     if messages.is_empty() {
-      println!("🚀 Ship it! Everything looks perfect.");
+      let success_str = "🚀 Ship it! Everything looks perfect.";
+      reports.push(success_str.to_string());
+      println!("{}", success_str);
     }
 
     if let Some(max_render_count) = opts.max_render_count {
       let end = max_render_count.min(messages.len() as u32) as usize;
       let render_messages = messages.get(0..end).unwrap_or(&messages);
       for message in render_messages {
-        message.render();
+        reports.extend(message.render());
       }
     } else {
       for message in messages.iter() {
-        message.render();
+        reports.extend(message.render());
       }
     }
 
     if opts.with_dashboard {
       let dashboard = MessagesDashboard::new(&messages);
-      dashboard.render();
+      reports.extend(dashboard.render());
     }
+
+    return reports;
   }
 }

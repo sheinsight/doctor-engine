@@ -1,5 +1,5 @@
-mod scheduler;
-pub use scheduler::*;
+mod dashboard;
+pub use dashboard::*;
 pub mod specs;
 
 pub mod cloc {

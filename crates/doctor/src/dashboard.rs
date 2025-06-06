@@ -18,7 +18,9 @@ impl<'a> MessagesDashboard<'a> {
     Self(messages)
   }
 
-  pub fn render(&self) {
+  pub fn render(&self) -> Vec<String> {
+    let mut reports = Vec::new();
+
     let mut count_map = HashMap::new();
     for msg in self.0 {
       if msg.has_error() {
@@ -40,8 +42,12 @@ impl<'a> MessagesDashboard<'a> {
 
     if !ts.is_empty() {
       let table = Table::new(ts);
+      let table_str = format!("{}", table);
+      reports.push(table_str);
       println!("{}", table);
     }
+
+    return reports;
   }
 }
 
