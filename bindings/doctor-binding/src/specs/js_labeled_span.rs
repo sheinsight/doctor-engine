@@ -2,7 +2,7 @@ use doctor_core::loc::Location;
 use miette::LabeledSpan;
 use napi_derive::napi;
 
-use super::{location::JsSourceLocation, source_span::JsSourceSpan};
+use super::{js_location::JsSourceLocation, js_source_span::JsSourceSpan};
 
 #[napi(object)]
 pub struct JsLabeledSpan {

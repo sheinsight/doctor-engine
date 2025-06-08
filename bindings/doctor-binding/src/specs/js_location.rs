@@ -1,6 +1,6 @@
 use napi_derive::napi;
 
-use super::position::JsSourcePosition;
+use super::js_position::JsSourcePosition;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[napi(object)]

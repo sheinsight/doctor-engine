@@ -1,50 +1,24 @@
-use doctor::specs::SpecificationsRenderOpts;
-use messages::JsMessages;
+use js_messages::JsMessages;
 use napi::Result;
 use napi_derive::napi;
 
-mod diagnostics;
-mod labeled_span;
-mod location;
-mod messages;
-mod position;
-mod severity;
-mod source_span;
+use crate::specs::raw_specifications_render_opts::RawSpecificationsRenderOpts;
 
-#[napi(object)]
-#[derive(Clone, Debug)]
-pub struct JsSpecificationsRenderOpts {
-  pub with_dashboard: Option<bool>,
-  pub max_render_count: Option<u32>,
-  pub quiet: Option<bool>,
-}
-
-impl Default for JsSpecificationsRenderOpts {
-  fn default() -> Self {
-    Self {
-      with_dashboard: Some(true),
-      max_render_count: None,
-      quiet: Some(false),
-    }
-  }
-}
-
-impl Into<SpecificationsRenderOpts> for JsSpecificationsRenderOpts {
-  fn into(self) -> SpecificationsRenderOpts {
-    SpecificationsRenderOpts {
-      with_dashboard: self.with_dashboard.unwrap_or(false),
-      max_render_count: self.max_render_count,
-      ..Default::default()
-    }
-  }
-}
+mod js_diagnostics;
+mod js_labeled_span;
+mod js_location;
+mod js_messages;
+mod js_position;
+mod js_severity;
+mod js_source_span;
+mod raw_specifications_render_opts;
 
 #[napi]
 pub struct JsSpecifications {
   #[napi(skip)]
   pub standards: doctor::specs::Specifications,
 
-  opts: Option<JsSpecificationsRenderOpts>,
+  opts: Option<RawSpecificationsRenderOpts>,
 }
 
 impl JsSpecifications {
@@ -70,7 +44,7 @@ impl JsSpecifications {
 #[napi]
 impl JsSpecifications {
   #[napi(factory)]
-  pub fn create(cwd: String, opts: Option<JsSpecificationsRenderOpts>) -> JsSpecifications {
+  pub fn create(cwd: String, opts: Option<RawSpecificationsRenderOpts>) -> JsSpecifications {
     let standards = doctor::specs::Specifications::create(cwd);
     JsSpecifications { standards, opts }
   }

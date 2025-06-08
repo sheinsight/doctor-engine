@@ -2,7 +2,7 @@ use doctor_core::loc::get_source_location;
 use miette::MietteDiagnostic;
 use napi_derive::napi;
 
-use super::{labeled_span::JsLabeledSpan, severity::JsSeverity};
+use super::{js_labeled_span::JsLabeledSpan, js_severity::JsSeverity};
 
 #[napi(object)]
 pub struct JsDiagnostics {

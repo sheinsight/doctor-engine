@@ -1,7 +1,7 @@
 use doctor_core::Messages;
 use napi_derive::napi;
 
-use super::diagnostics::JsDiagnostics;
+use super::js_diagnostics::JsDiagnostics;
 
 #[napi(object)]
 pub struct JsMessages {
