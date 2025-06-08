@@ -9,7 +9,7 @@ export declare class JsSpecifications {
   validateAll(): Promise<Array<JsMessages>>
 }
 
-export declare function cloc(paths: Array<string>, opts?: JsClocOpts | undefined | null): Array<JsLanguageStats>
+export declare function cloc(paths: Array<string>, opts?: RawClocOpts | undefined | null): Array<JsLanguageStats>
 
 export interface Diagnostic {
   fileName: string
@@ -30,10 +30,6 @@ export interface GlobJsArgs {
 }
 
 export declare function initializeLogger(level?: LogLevel | undefined | null): void
-
-export interface JsClocOpts {
-  ignore?: Array<string>
-}
 
 export interface JsDiagnostics {
   message: string
@@ -338,6 +334,10 @@ export declare const enum NaPiCategory {
 export interface Position {
   line: number
   col: number
+}
+
+export interface RawClocOpts {
+  ignore?: Array<string>
 }
 
 export interface RawSpecificationsRenderOpts {

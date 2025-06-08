@@ -1,16 +1,16 @@
 use doctor_core::Ignore;
 use napi::Result;
 use napi_derive::napi;
-mod language_stats;
-mod language_type;
-mod opts;
+mod js_language_stats;
+mod js_language_type;
+mod raw_opts;
 
-pub use language_stats::*;
-pub use language_type::*;
-pub use opts::*;
+pub use js_language_stats::*;
+pub use js_language_type::*;
+pub use raw_opts::*;
 
 #[napi]
-pub fn cloc(paths: Vec<String>, opts: Option<JsClocOpts>) -> Result<Vec<JsLanguageStats>> {
+pub fn cloc(paths: Vec<String>, opts: Option<RawClocOpts>) -> Result<Vec<JsLanguageStats>> {
   let ignore = opts
     .and_then(|o| o.ignore)
     .map(Ignore::from)
