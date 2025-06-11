@@ -1,6 +1,6 @@
 use std::{fs::read_to_string, path::PathBuf};
 
-use doctor_core::{Ignore, Messages, traits::Validator};
+use doctor_core::{Ignore, Messages, hack_source_type_from_path, traits::Validator};
 use doctor_walk::{WalkError, WalkParallelJs};
 use miette::MietteDiagnostic;
 use oxc_allocator::Allocator;
@@ -29,8 +29,7 @@ impl Validator for SyntaxValidator {
 
         let allocator = Allocator::default();
 
-        let source_type =
-          oxc_span::SourceType::from_path(&path).map_err(|e| WalkError::Unknown(e.to_string()))?;
+        let source_type = hack_source_type_from_path(&path);
 
         let parser = Parser::new(&allocator, &source_code, source_type);
 

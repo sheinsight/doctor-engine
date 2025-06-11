@@ -647,6 +647,7 @@ dependencies = [
  "node-semver",
  "oxc_diagnostics",
  "oxc_linter",
+ "oxc_span",
  "package_json_parser",
  "ropey",
  "serde",
