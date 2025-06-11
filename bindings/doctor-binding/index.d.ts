@@ -6,6 +6,7 @@ export declare class JsSpecifications {
   validateNodeVersion(): Promise<Array<JsMessages>>
   validatePackageJson(): Promise<Array<JsMessages>>
   validateLint(): Promise<Array<JsMessages>>
+  validateSyntax(): Promise<Array<JsMessages>>
   validateAll(): Promise<Array<JsMessages>>
 }
 
