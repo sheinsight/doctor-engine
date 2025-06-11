@@ -726,6 +726,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "doctor_syntax"
+version = "0.1.0"
+dependencies = [
+ "doctor_core",
+ "doctor_walk",
+ "miette",
+ "oxc_allocator",
+ "oxc_diagnostics",
+ "oxc_parser",
+ "oxc_semantic",
+ "oxc_span",
+ "typed-builder",
+]
+
+[[package]]
 name = "doctor_walk"
 version = "0.1.0"
 dependencies = [

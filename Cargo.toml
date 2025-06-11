@@ -9,6 +9,7 @@ members = [
   "crates/package_json",
   "crates/walk",
   "bindings/doctor-binding",
+  "crates/syntax",
 ]
 resolver = "3"
 
@@ -83,6 +84,7 @@ doctor_lint         = { path = "crates/lint" }
 doctor_node         = { path = "crates/node" }
 doctor_npmrc        = { path = "crates/npmrc" }
 doctor_package_json = { path = "crates/package_json" }
+doctor_syntax       = { path = "crates/syntax" }
 doctor_walk         = { path = "crates/walk" }
 
 [profile.release]
