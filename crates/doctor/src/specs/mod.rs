@@ -61,7 +61,9 @@ impl Specifications {
   }
 
   pub fn validate_syntax(&self) -> Result<Vec<Messages>, ValidatorError> {
-    let syntax_builder = register::register_syntax(self.cwd.clone());
+    let file = self.cwd.join(".sfconfig").join("spec.json");
+    let sfconfig = Sfconfig::parse(file)?;
+    let syntax_builder = register::register_syntax(self.cwd.clone(), sfconfig);
     let message = syntax_builder.validate()?;
     Ok(message)
   }

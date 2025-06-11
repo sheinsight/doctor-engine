@@ -72,9 +72,10 @@ pub fn register_package_json(cwd: impl AsRef<Path>) -> Box<dyn Validator> {
   Box::new(validator)
 }
 
-pub fn register_syntax(cwd: impl AsRef<Path>) -> Box<dyn Validator> {
+pub fn register_syntax(cwd: impl AsRef<Path>, sfconfig: Sfconfig) -> Box<dyn Validator> {
   let validator = SyntaxValidator::builder()
     .cwd(cwd.as_ref().to_path_buf())
+    .ignore(sfconfig.ignore)
     .build();
   Box::new(validator)
 }
