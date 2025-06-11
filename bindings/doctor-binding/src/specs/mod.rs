@@ -98,6 +98,18 @@ impl JsSpecifications {
   }
 
   #[napi]
+  pub async fn validate_syntax(&self) -> Result<Vec<JsMessages>> {
+    let res = self
+      .standards
+      .validate_syntax()
+      .map_err(Self::to_napi_error)?;
+
+    self.render_messages(&res);
+
+    Ok(Self::convert_messages(res))
+  }
+
+  #[napi]
   pub async fn validate_all(&self) -> Result<Vec<JsMessages>> {
     let res = self.standards.validate_all().map_err(Self::to_napi_error)?;
 
