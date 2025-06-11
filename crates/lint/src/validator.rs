@@ -6,7 +6,6 @@ use std::{
 
 use doctor_core::{Ignore, Messages, ValidatorError, traits::Validator};
 use doctor_walk::{WalkError, WalkParallelJs};
-use miette::MietteDiagnostic;
 use oxc_allocator::Allocator;
 use oxc_linter::{ConfigStoreBuilder, Oxlintrc};
 use oxc_parser::Parser;
@@ -95,59 +94,10 @@ impl Validator for LintValidator {
 
           for msg in res {
             let error = msg.error;
-            let mut diagnostic = MietteDiagnostic::new(error.message.clone());
 
-            if let Some(help) = &error.help {
-              diagnostic = diagnostic.with_help(help.to_string());
-            }
+            let diagnostic = doctor_core::Diagnostic::from(error);
 
-            let code = error
-              .code
-              .scope
-              .as_ref()
-              .map_or(String::new(), |s| s.to_string());
-
-            let number = error
-              .code
-              .number
-              .as_ref()
-              .map_or(String::new(), |s| s.to_string());
-
-            diagnostic = diagnostic.with_code(format!("{code}({number})"));
-
-            match error.severity {
-              oxc_diagnostics::Severity::Error => {
-                diagnostic = diagnostic.with_severity(miette::Severity::Error)
-              }
-              oxc_diagnostics::Severity::Warning => {
-                diagnostic = diagnostic.with_severity(miette::Severity::Warning)
-              }
-              oxc_diagnostics::Severity::Advice => {
-                diagnostic = diagnostic.with_severity(miette::Severity::Advice)
-              }
-            }
-
-            let labels = error.labels.as_ref().map(|labels| {
-              labels
-                .iter()
-                .map(|label| {
-                  let label_text = label.label().map(|s| s.to_string());
-                  let miette_label =
-                    miette::LabeledSpan::new(label_text, label.offset(), label.len());
-                  miette_label
-                })
-                .collect::<Vec<_>>()
-            });
-
-            if let Some(labels) = labels {
-              diagnostic = diagnostic.with_labels(labels);
-            }
-
-            if let Some(url) = &error.url {
-              diagnostic = diagnostic.with_url(url.to_string());
-            }
-
-            messages.push(diagnostic);
+            messages.push(diagnostic.into());
           }
 
           Ok(messages)
