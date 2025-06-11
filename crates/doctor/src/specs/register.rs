@@ -11,6 +11,7 @@ use doctor_npmrc::validator::NpmrcValidator;
 use doctor_package_json::validator::{
   PackageJsonValidator, ValidateName, ValidatePackageManager, ValidatePrivate,
 };
+use doctor_syntax::SyntaxValidator;
 
 const ENCODED: [&str; 36] = [
   "a", "H", "R", "0", "c", "H", "M", "6", "L", "y", "9", "u", "c", "G", "1", "q", "c", "y", "5",
@@ -68,5 +69,12 @@ pub fn register_package_json(cwd: impl AsRef<Path>) -> Box<dyn Validator> {
     .with_validate_package_manager(ValidatePackageManager::Exist)
     .build();
 
+  Box::new(validator)
+}
+
+pub fn register_syntax(cwd: impl AsRef<Path>) -> Box<dyn Validator> {
+  let validator = SyntaxValidator::builder()
+    .cwd(cwd.as_ref().to_path_buf())
+    .build();
   Box::new(validator)
 }

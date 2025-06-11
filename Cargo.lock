@@ -592,6 +592,7 @@ dependencies = [
  "doctor_node",
  "doctor_npmrc",
  "doctor_package_json",
+ "doctor_syntax",
  "doctor_walk",
  "miette",
  "rustc-hash",

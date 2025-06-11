@@ -16,6 +16,7 @@ doctor_lint         = { workspace = true }
 doctor_node         = { workspace = true }
 doctor_npmrc        = { workspace = true }
 doctor_package_json = { workspace = true }
+doctor_syntax       = { workspace = true }
 doctor_walk         = { workspace = true }
 miette              = { workspace = true }
 rustc-hash          = { workspace = true }

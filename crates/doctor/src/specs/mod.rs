@@ -60,12 +60,19 @@ impl Specifications {
     Ok(message)
   }
 
+  pub fn validate_syntax(&self) -> Result<Vec<Messages>, ValidatorError> {
+    let syntax_builder = register::register_syntax(self.cwd.clone());
+    let message = syntax_builder.validate()?;
+    Ok(message)
+  }
+
   pub fn validate_all(&self) -> Result<Vec<Messages>, ValidatorError> {
     let mut messages = Vec::new();
     messages.extend(self.validate_npmrc()?);
     messages.extend(self.validate_node_version()?);
     messages.extend(self.validate_package_json()?);
     messages.extend(self.validate_lint()?);
+    messages.extend(self.validate_syntax()?);
     Ok(messages)
   }
 
