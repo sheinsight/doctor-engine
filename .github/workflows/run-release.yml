@@ -17,8 +17,8 @@ on:
       push_tags:
         type: boolean
         description: "push tags to github"
-        required: false
-        default: false
+        required: true
+        default: true
 
 permissions:
   # To publish packages with provenance
