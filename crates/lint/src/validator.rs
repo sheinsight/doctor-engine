@@ -6,10 +6,14 @@ use std::{
 
 use doctor_core::{Ignore, Messages, ValidatorError, traits::Validator};
 use doctor_walk::{WalkError, WalkParallelJs};
-use oxc_allocator::Allocator;
+use oxc::{
+  allocator::Allocator,
+  diagnostics::{GraphicalReportHandler, NamedSource},
+  parser::Parser,
+  semantic::SemanticBuilder,
+  span::SourceType,
+};
 use oxc_linter::{ConfigStoreBuilder, Oxlintrc};
-use oxc_parser::Parser;
-use oxc_semantic::SemanticBuilder;
 use rustc_hash::FxHashMap;
 use typed_builder::TypedBuilder;
 
@@ -64,7 +68,7 @@ impl Validator for LintValidator {
           .build();
 
         let source_type =
-          oxc_span::SourceType::from_path(path).map_err(|e| WalkError::Unknown(e.to_string()))?;
+          SourceType::from_path(path).map_err(|e| WalkError::Unknown(e.to_string()))?;
 
         let allocator = Allocator::default();
 
@@ -141,7 +145,7 @@ impl LintValidator {
         let named_source = named_source::PathWithSource::try_from(path.clone())?;
 
         let source_type =
-          oxc_span::SourceType::from_path(path).map_err(|e| WalkError::Unknown(e.to_string()))?;
+          SourceType::from_path(path).map_err(|e| WalkError::Unknown(e.to_string()))?;
 
         let allocator = Allocator::default();
 
@@ -199,10 +203,9 @@ impl LintValidator {
     source_code: &str,
   ) -> Result<(), LintError> {
     if !diagnostic.diagnostics.is_empty() {
-      let handler = oxc_diagnostics::GraphicalReportHandler::new().with_links(true);
+      let handler = GraphicalReportHandler::new().with_links(true);
 
-      let named_source =
-        oxc_diagnostics::NamedSource::new(&diagnostic.file_path, source_code.to_string());
+      let named_source = NamedSource::new(&diagnostic.file_path, source_code.to_string());
 
       let mut output = String::with_capacity(1024 * 1024);
       for diag in &diagnostic.diagnostics {

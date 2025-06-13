@@ -1,4 +1,4 @@
-use oxc_diagnostics::OxcDiagnostic;
+use oxc::diagnostics::OxcDiagnostic;
 
 #[derive(Debug)]
 pub struct FileDiagnostic {

@@ -21,9 +21,8 @@ log             = { workspace = true }
 miette          = { workspace = true }
 napi            = { workspace = true }
 napi-derive     = { workspace = true }
-oxc_diagnostics = { workspace = true }
 oxc_linter      = { workspace = true }
-oxc_span        = { workspace = true }
+oxc = { workspace = true }
 pathdiff        = { workspace = true }
 ropey           = { workspace = true }
 serde           = { workspace = true }

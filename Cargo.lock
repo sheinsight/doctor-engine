@@ -619,9 +619,8 @@ dependencies = [
  "napi",
  "napi-build 3.0.0-beta.0",
  "napi-derive",
- "oxc_diagnostics",
+ "oxc",
  "oxc_linter",
- "oxc_span",
  "pathdiff",
  "ropey",
  "serde",
@@ -646,9 +645,8 @@ version = "0.1.0"
 dependencies = [
  "miette",
  "node-semver",
- "oxc_diagnostics",
+ "oxc",
  "oxc_linter",
- "oxc_span",
  "package_json_parser",
  "ropey",
  "serde",
@@ -668,12 +666,8 @@ dependencies = [
  "doctor_walk",
  "ignore",
  "miette",
- "oxc_allocator",
- "oxc_diagnostics",
+ "oxc",
  "oxc_linter",
- "oxc_parser",
- "oxc_semantic",
- "oxc_span",
  "rayon",
  "rustc-hash",
  "serde",
@@ -735,11 +729,7 @@ dependencies = [
  "doctor_core",
  "doctor_walk",
  "miette",
- "oxc_allocator",
- "oxc_diagnostics",
- "oxc_parser",
- "oxc_semantic",
- "oxc_span",
+ "oxc",
  "typed-builder",
 ]
 
@@ -1547,6 +1537,21 @@ name = "owo-colors"
 version = "4.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "26995317201fa17f3656c36716aed4a7c81743a9634ac4c99c0eeda495db0cec"
+
+[[package]]
+name = "oxc"
+version = "0.72.3"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.1.0#a50696d7dc23915b5b08018ac7b185a68495b178"
+dependencies = [
+ "oxc_allocator",
+ "oxc_ast",
+ "oxc_diagnostics",
+ "oxc_parser",
+ "oxc_regular_expression",
+ "oxc_semantic",
+ "oxc_span",
+ "oxc_syntax",
+]
 
 [[package]]
 name = "oxc-miette"

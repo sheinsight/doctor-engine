@@ -1,3 +1,4 @@
+use oxc::diagnostics::OxcDiagnostic;
 use package_json_parser::ErrorKind;
 
 #[derive(Debug, thiserror::Error)]
@@ -23,7 +24,7 @@ pub enum ValidatorError {
   MietteInstallError(#[from] miette::InstallError),
 
   #[error(transparent)]
-  FailedToBuildConfigStore(#[from] oxc_diagnostics::OxcDiagnostic),
+  FailedToBuildConfigStore(#[from] OxcDiagnostic),
 
   #[error("unknown error {0}")]
   Unknown(#[from] Box<dyn std::error::Error + Send + Sync>),

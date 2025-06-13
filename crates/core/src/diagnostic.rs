@@ -1,6 +1,7 @@
 use std::ops::{Deref, DerefMut};
 
 use miette::MietteDiagnostic;
+use oxc::diagnostics::{OxcDiagnostic, Severity};
 
 pub struct Diagnostic(pub MietteDiagnostic);
 
@@ -30,8 +31,8 @@ impl From<MietteDiagnostic> for Diagnostic {
   }
 }
 
-impl From<oxc_diagnostics::OxcDiagnostic> for Diagnostic {
-  fn from(oxc_diagnostics: oxc_diagnostics::OxcDiagnostic) -> Self {
+impl From<OxcDiagnostic> for Diagnostic {
+  fn from(oxc_diagnostics: OxcDiagnostic) -> Self {
     let mut diagnostic = MietteDiagnostic::new(oxc_diagnostics.message.to_string());
 
     if let Some(help) = &oxc_diagnostics.help {
@@ -53,15 +54,9 @@ impl From<oxc_diagnostics::OxcDiagnostic> for Diagnostic {
     diagnostic = diagnostic.with_code(format!("{code}({number})"));
 
     match oxc_diagnostics.severity {
-      oxc_diagnostics::Severity::Error => {
-        diagnostic = diagnostic.with_severity(miette::Severity::Error)
-      }
-      oxc_diagnostics::Severity::Warning => {
-        diagnostic = diagnostic.with_severity(miette::Severity::Warning)
-      }
-      oxc_diagnostics::Severity::Advice => {
-        diagnostic = diagnostic.with_severity(miette::Severity::Advice)
-      }
+      Severity::Error => diagnostic = diagnostic.with_severity(miette::Severity::Error),
+      Severity::Warning => diagnostic = diagnostic.with_severity(miette::Severity::Warning),
+      Severity::Advice => diagnostic = diagnostic.with_severity(miette::Severity::Advice),
     }
 
     let labels = oxc_diagnostics.labels.as_ref().map(|labels| {

@@ -3,8 +3,7 @@ use std::{fs::read_to_string, path::PathBuf};
 use doctor_core::{Ignore, Messages, hack_source_type_from_path, traits::Validator};
 use doctor_walk::{WalkError, WalkParallelJs};
 use miette::MietteDiagnostic;
-use oxc_allocator::Allocator;
-use oxc_parser::Parser;
+use oxc::{allocator::Allocator, parser::Parser};
 use typed_builder::TypedBuilder;
 
 #[derive(Debug, TypedBuilder)]

@@ -1,6 +1,6 @@
 use doctor_lint::FileDiagnostic;
 use napi_derive::napi;
-use oxc_diagnostics::Severity;
+use oxc::diagnostics::Severity;
 
 use super::LabeledLoc;
 

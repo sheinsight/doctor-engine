@@ -71,6 +71,7 @@
     "serviceworker",
     "sfconfig",
     "shelljs",
+    "smallvec",
     "softprops",
     "Specfile",
     "Specman",

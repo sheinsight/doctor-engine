@@ -1,4 +1,5 @@
 use napi_derive::napi;
+use oxc::diagnostics::LabeledSpan;
 use serde::{Deserialize, Serialize};
 
 #[napi(object, js_name = "Span")]
@@ -19,8 +20,8 @@ impl Span {
   }
 }
 
-impl From<oxc_diagnostics::LabeledSpan> for Span {
-  fn from(value: oxc_diagnostics::LabeledSpan) -> Self {
+impl From<LabeledSpan> for Span {
+  fn from(value: LabeledSpan) -> Self {
     Self {
       offset: value.offset() as u32,
       length: value.offset() as u32 + value.len() as u32,

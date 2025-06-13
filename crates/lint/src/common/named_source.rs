@@ -1,5 +1,7 @@
 use std::path::Path;
 
+use oxc::diagnostics::NamedSource;
+
 #[derive(Debug, Clone)]
 pub struct PathWithSource {
   pub file_path: String,
@@ -18,8 +20,8 @@ impl PathWithSource {
   }
 }
 
-impl Into<oxc_diagnostics::NamedSource<String>> for PathWithSource {
-  fn into(self) -> oxc_diagnostics::NamedSource<String> {
-    oxc_diagnostics::NamedSource::new(self.file_path, self.source_code)
+impl Into<NamedSource<String>> for PathWithSource {
+  fn into(self) -> NamedSource<String> {
+    NamedSource::new(self.file_path, self.source_code)
   }
 }

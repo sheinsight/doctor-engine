@@ -9,12 +9,8 @@ rust-version.workspace = true
 version                = "0.1.0"
 
 [dependencies]
-doctor_core     = { workspace = true }
-doctor_walk     = { workspace = true }
-miette          = { workspace = true }
-oxc_allocator   = { workspace = true }
-oxc_diagnostics = { workspace = true }
-oxc_parser      = { workspace = true }
-oxc_semantic    = { workspace = true }
-oxc_span        = { workspace = true }
-typed-builder   = { workspace = true }
+doctor_core   = { workspace = true }
+doctor_walk   = { workspace = true }
+miette        = { workspace = true }
+oxc           = { workspace = true }
+typed-builder = { workspace = true }

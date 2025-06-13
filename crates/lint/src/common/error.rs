@@ -1,3 +1,4 @@
+use oxc::diagnostics::OxcDiagnostic;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -15,7 +16,7 @@ pub enum LintError {
   FailedToBuildConfigStoreBuilder(#[from] oxc_linter::ConfigBuilderError),
 
   #[error("Failed to build config store: {0}")]
-  FailedToBuildConfigStore(#[from] oxc_diagnostics::OxcDiagnostic),
+  FailedToBuildConfigStore(#[from] OxcDiagnostic),
 
   #[error("Unknown error: {0}")]
   Unknown(String),
