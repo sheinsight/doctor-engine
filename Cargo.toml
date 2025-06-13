@@ -43,18 +43,18 @@ napi-build  = "=2.2.0"
 napi-derive = "=3.0.0-beta.0"
 
 lazy-regex = "3.4.1"
-ropey      = "1.6.1"
+ropey      = "^1.6.1"
 
 typed-builder = "0.21.0"
 
 
 # lint
-oxc_allocator   = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v0.16.12", package = "oxc_allocator" }
-oxc_diagnostics = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v0.16.12", package = "oxc_diagnostics" }
-oxc_linter      = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v0.16.12", package = "oxc_linter" }
-oxc_parser      = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v0.16.12", package = "oxc_parser" }
-oxc_semantic    = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v0.16.12", package = "oxc_semantic" }
-oxc_span        = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v0.16.12", package = "oxc_span" }
+oxc_allocator   = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v1.1.0", package = "oxc_allocator" }
+oxc_diagnostics = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v1.1.0", package = "oxc_diagnostics" }
+oxc_linter      = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v1.1.0", package = "oxc_linter" }
+oxc_parser      = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v1.1.0", package = "oxc_parser" }
+oxc_semantic    = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v1.1.0", package = "oxc_semantic" }
+oxc_span        = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v1.1.0", package = "oxc_span" }
 
 tabled = "0.19.0"
 # glob
@@ -74,6 +74,7 @@ base64 = "0.22.1"
 insta  = "1.36.1"
 
 jsonc-parser = "0.26.2"
+smallvec     = "^1.15.1"
 tokei        = "12.1.2"
 
 doctor              = { path = "crates/doctor" }
