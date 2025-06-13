@@ -1,4 +1,4 @@
-name: Run Debug Build
+name: Publish Npm Package
 
 on:
   workflow_dispatch:
