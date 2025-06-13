@@ -13,7 +13,7 @@ anyhow        = { workspace = true }
 bitflags      = { workspace = true }
 ignore        = { workspace = true }
 miette        = { workspace = true, features = ["fancy"] }
-oxc           = { workspace = true }
+oxc           = { workspace = true, features = ["semantic"] }
 oxc_linter    = { workspace = true }
 rayon         = { workspace = true }
 rustc-hash    = { workspace = true }
