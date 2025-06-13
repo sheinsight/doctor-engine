@@ -1,4 +1,4 @@
-name: debug
+name: Debug
 env:
   DEBUG: napi:*
   APP_NAME: doctor
@@ -10,9 +10,7 @@ permissions:
   id-token: write
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
