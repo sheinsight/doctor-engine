@@ -1,0 +1,36 @@
+name: Run Debug Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      npm_tag:
+        type: choice
+        description: "Release Npm Tag"
+        required: true
+        default: "latest"
+        options:
+          - canary
+          - nightly
+          - latest
+          - beta
+          - alpha
+      push_tags:
+        type: boolean
+        description: "push tags to github"
+        required: false
+        default: false
+
+permissions:
+  # To publish packages with provenance
+  id-token: write
+  contents: write 
+  # Allow commenting on issues for `reusable-build.yml`
+  issues: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+     
