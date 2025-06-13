@@ -3,6 +3,18 @@ name: Publish Npm Package
 on:
   workflow_dispatch:
     inputs:
+      version:
+        type: choice
+        description: "Release Version"
+        required: true
+        options:
+          - major
+          - minor
+          - patch
+          - premajor
+          - preminor
+          - prepatch
+          - prerelease
       npm_tag:
         type: choice
         description: "Release Npm Tag"

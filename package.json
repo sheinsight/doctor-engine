@@ -5,9 +5,13 @@
 	"packageManager": "pnpm@10.11.0",
 	"scripts": {
 		"test": "vitest run",
-		"release": "node --experimental-strip-types --no-warnings release.mts "
+		"release": "node --experimental-strip-types --no-warnings release.mts ",
+		"ci": "node --experimental-strip-types --no-warnings ci.mts publish --tag alpha --push-tags"
 	},
 	"license": "MIT",
+	"dependencies": {
+		"cac": "^6.7.10"
+	},
 	"devDependencies": {
 		"@tsconfig/node-ts": "^23.6.1",
 		"@tsconfig/node22": "^22.0.1",
