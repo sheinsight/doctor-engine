@@ -42,7 +42,7 @@
 	],
 	"license": "MIT",
 	"devDependencies": {
-		"@napi-rs/cli": "^3.0.0-alpha.79",
+		"@napi-rs/cli": "^3.0.0-alpha.89",
 		"clean-pkg-json": "^1.2.1",
 		"vitest": "^3.1.1"
 	},
