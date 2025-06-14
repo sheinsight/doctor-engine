@@ -9,16 +9,16 @@
 	},
 	"license": "MIT",
 	"dependencies": {
-		"cac": "^6.7.10"
+		"cac": "^6.7.14"
 	},
 	"devDependencies": {
 		"@tsconfig/node-ts": "^23.6.1",
-		"@tsconfig/node22": "^22.0.1",
-		"@types/node": "^22.15.18",
+		"@tsconfig/node22": "^22.0.2",
+		"@types/node": "^22.15.31",
 		"@types/semver": "^7.7.0",
 		"consola": "^3.4.2",
 		"enquirer": "^2.4.1",
-		"execa": "^9.5.3",
+		"execa": "^9.6.0",
 		"find-packages": "^10.0.4",
 		"read-pkg": "^9.0.1",
 		"read-yaml-file": "^2.1.0",
