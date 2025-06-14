@@ -3,12 +3,12 @@
 
 
 import { expect, test } from 'vitest'
-import { innerDebugLint, initializeLogger,innerLint, NaPiCategory } from '../index.ts'
+import { unSafeInnerDebugLint, initializeLogger } from '../es/index.mjs'
 
 
 test('adds 1 + 2 to equal 3', async () => {
   initializeLogger()
-  const res = await innerDebugLint(
+  const res = await unSafeInnerDebugLint(
     JSON.stringify({
       env: {
         amd: true,
