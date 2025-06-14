@@ -43,7 +43,7 @@ jobs:
             target: aarch64-pc-windows-msvc
 
     name: Test ${{ matrix.platform.target }}
-    uses: ./.github/workflows/reusable-napi-build.yml
+    uses: ./.github/workflows/reusable-cargo-test.yml
     with:
       host: ${{ matrix.platform.host }}
       target: ${{ matrix.platform.target }}
