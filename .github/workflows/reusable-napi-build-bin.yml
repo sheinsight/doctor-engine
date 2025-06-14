@@ -97,10 +97,10 @@ jobs:
         run: |
           ls -l ${{ inputs.binding_dir }}
 
-      - name: Build npm
-        shell: bash
-        run: |
-          pnpm --filter @shined/doctor build
+      # - name: Build npm
+      #   shell: bash
+      #   run: |
+      #     pnpm --filter @shined/doctor build
         
       - name: Upload artifact
         uses: actions/upload-artifact@v4
