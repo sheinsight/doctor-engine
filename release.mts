@@ -39,7 +39,7 @@ const versionType = [
 
 const choices = versionType.map((type) => {
    
-  const value = semver.inc(packageJson.version, type, 'snapshot')!;
+  const value = semver.inc(packageJson.version, type, 'canary')!;
   return {
     name: value,
     message: type,
@@ -63,7 +63,7 @@ const { isSure } = await enquirer.prompt<{ isSure: boolean }>({
 });
 
 if (isSure) {
-  const tag = /^\d+\.\d+\.\d+$/.test(v) ? "latest" : "snapshot";
+  const tag = /^\d+\.\d+\.\d+$/.test(v) ? "latest" : "canary";
 
   console.log(v,tag);
   packageJson.version = v;
