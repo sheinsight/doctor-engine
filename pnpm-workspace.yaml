@@ -1,5 +1,5 @@
 packages:
   - 'packages/**'
-  - 'bindings/**'
+  - 'crates/binding'
 
 sharedWorkspaceLockfile: false

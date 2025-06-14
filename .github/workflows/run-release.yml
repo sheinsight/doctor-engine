@@ -5,7 +5,7 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   # MACOSX_DEPLOYMENT_TARGET: '10.13'
   # CARGO_INCREMENTAL: '1'
-  NAPI_DIR: bindings/doctor-binding
+  NAPI_DIR: crates/binding
   CARGO_PROFILE_RELEASE_BUILD_OVERRIDE_DEBUG: true
 permissions:
   # To publish packages with provenance
@@ -82,7 +82,7 @@ jobs:
       host: ${{ matrix.platform.host }}
       target: ${{ matrix.platform.target }}
       docker: ${{ matrix.platform.docker }}
-      binding_dir: bindings/doctor-binding
+      binding_dir: crates/binding
       binding_name: doctor-binding
       npm_package_name: '@shined/doctor-binding'
 
@@ -90,7 +90,7 @@ jobs:
     needs: [build-platforms]
     uses: ./.github/workflows/napi-publish.yml
     with:
-      binding_dir: bindings/doctor-binding
+      binding_dir: crates/binding
       npm_package_name: '@shined/doctor-binding'
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -100,7 +100,7 @@ jobs:
     needs: [napi-publish]
     uses: ./.github/workflows/npm-publish.yml
     with:
-      binding_dir: bindings/doctor-binding
+      binding_dir: crates/binding
       npm_package_name: '@shined/doctor'
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
