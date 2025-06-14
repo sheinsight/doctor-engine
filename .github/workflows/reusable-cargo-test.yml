@@ -12,15 +12,6 @@ on:
       docker:
         required: false
         type: string
-      binding_dir:
-        required: true
-        type: string
-      binding_name:
-        required: true
-        type: string
-      npm_package_name:
-        required: true
-        type: string
 
 jobs:
   build:
@@ -66,19 +57,12 @@ jobs:
           run: |
             set -e 
             rustup target add ${{ inputs.target }}
-            cd ${{ inputs.binding_dir }}
             cargo test
-            
             
       - name: Cargo test
         if: ${{ !inputs.docker }}
         shell: bash
         run: |
-          # npm run build -- --target ${{ inputs.target }}
           cargo test
-
-      - name: Show binary
-        shell: bash
-        run: |
-          ls -l ${{ inputs.binding_dir }}
+ 
  

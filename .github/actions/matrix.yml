@@ -1,0 +1,12 @@
+
+name: 'Platform Matrix'
+description: 'Reusable platform matrix configuration'
+outputs:
+  matrix: ${{ steps.set-matrix.outputs.matrix }}
+runs:
+  using: "composite"
+  steps:
+    - id: set-matrix
+      shell: bash
+      run: |
+        echo "matrix={\"platform\":[{\"host\":\"ubuntu-latest\",\"target\":\"x86_64-unknown-linux-gnu\",\"docker\":\"ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian\"},{\"host\":\"macos-latest\",\"target\":\"x86_64-apple-darwin\"}]}" >> $GITHUB_OUTPUT

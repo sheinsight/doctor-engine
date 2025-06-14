@@ -48,9 +48,6 @@ jobs:
       host: ${{ matrix.platform.host }}
       target: ${{ matrix.platform.target }}
       docker: ${{ matrix.platform.docker }}
-      binding_dir: crates/binding
-      binding_name: doctor-binding
-      npm_package_name: '@shined/doctor-binding'
         
   build-platforms:
     strategy:
