@@ -5,8 +5,7 @@
 	"packageManager": "pnpm@10.11.0",
 	"scripts": {
 		"test": "vitest run",
-		"release": "node --experimental-strip-types --no-warnings release.mts ",
-		"ci": "node --experimental-strip-types --no-warnings ci.mts publish --tag alpha --push-tags"
+		"release": "node --experimental-strip-types --no-warnings release.mts "
 	},
 	"license": "MIT",
 	"dependencies": {
