@@ -44,7 +44,7 @@ jobs:
             target: aarch64-pc-windows-msvc
     
     name: Build ${{ matrix.platform.target }}
-    uses: ./.github/workflows/napi-build-bin.yml
+    uses: ./.github/reusable/napi-build-bin.yml
     with:
       host: ${{ matrix.platform.host }}
       target: ${{ matrix.platform.target }}
