@@ -1,4 +1,4 @@
-name: debug-cross-platform
+name: Cross Platform CI
 env:
   DEBUG: napi:*
   APP_NAME: doctor
