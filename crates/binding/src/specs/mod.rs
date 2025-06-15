@@ -1,3 +1,4 @@
+use doctor::core::{Messages, ValidatorError};
 use js_messages::JsMessages;
 use napi::Result;
 use napi_derive::napi;
@@ -23,15 +24,15 @@ pub struct JsSpecifications {
 
 impl JsSpecifications {
   // 简单的辅助函数，避免生命周期问题
-  fn to_napi_error(err: doctor_core::ValidatorError) -> napi::Error {
+  fn to_napi_error(err: ValidatorError) -> napi::Error {
     napi::Error::new(napi::Status::GenericFailure, err.to_string())
   }
 
-  fn convert_messages(messages: Vec<doctor_core::Messages>) -> Vec<JsMessages> {
+  fn convert_messages(messages: Vec<Messages>) -> Vec<JsMessages> {
     messages.into_iter().map(JsMessages::from).collect()
   }
 
-  fn render_messages(&self, messages: &Vec<doctor_core::Messages>) {
+  fn render_messages(&self, messages: &Vec<Messages>) {
     if let Some(opts) = self.opts.as_ref() {
       let quiet = opts.quiet.unwrap_or(false);
       if !quiet {

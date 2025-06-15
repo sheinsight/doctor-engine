@@ -1,4 +1,4 @@
-use doctor_lint::FileDiagnostic;
+use doctor::lint::FileDiagnostic;
 use napi_derive::napi;
 use oxc::diagnostics::Severity;
 

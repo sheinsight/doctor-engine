@@ -1,3 +1,4 @@
+use doctor::core::loc::Location;
 use napi_derive::napi;
 
 use super::js_position::JsSourcePosition;
@@ -9,8 +10,8 @@ pub struct JsSourceLocation {
   pub end: JsSourcePosition,
 }
 
-impl From<doctor_core::loc::Location> for JsSourceLocation {
-  fn from(location: doctor_core::loc::Location) -> Self {
+impl From<Location> for JsSourceLocation {
+  fn from(location: Location) -> Self {
     JsSourceLocation {
       start: location.start.into(),
       end: location.end.into(),

@@ -1,4 +1,4 @@
-use doctor_core::Ignore;
+use doctor::core::Ignore;
 use napi::Result;
 use napi_derive::napi;
 mod js_language_stats;

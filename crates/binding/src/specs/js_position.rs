@@ -1,3 +1,4 @@
+use doctor::core::loc::Position;
 use napi_derive::napi;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -7,8 +8,8 @@ pub struct JsSourcePosition {
   pub col: u32,
 }
 
-impl From<doctor_core::loc::Position> for JsSourcePosition {
-  fn from(position: doctor_core::loc::Position) -> Self {
+impl From<Position> for JsSourcePosition {
+  fn from(position: Position) -> Self {
     JsSourcePosition {
       row: position.row as u32,
       col: position.col as u32,

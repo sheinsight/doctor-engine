@@ -1,4 +1,4 @@
-use doctor_core::Messages;
+use doctor::core::Messages;
 use napi_derive::napi;
 
 use super::js_diagnostics::JsDiagnostics;

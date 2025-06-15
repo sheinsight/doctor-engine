@@ -1,4 +1,4 @@
-use doctor_core::Ignore;
+use doctor::core::Ignore;
 use napi_derive::napi;
 
 #[derive(Debug, Clone)]

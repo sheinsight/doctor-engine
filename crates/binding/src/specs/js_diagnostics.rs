@@ -1,4 +1,4 @@
-use doctor_core::loc::get_source_location;
+use doctor::core::loc::get_source_location;
 use miette::MietteDiagnostic;
 use napi_derive::napi;
 

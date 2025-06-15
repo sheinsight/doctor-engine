@@ -1,4 +1,4 @@
-use doctor_core::loc::Location;
+use doctor::core::loc::Location;
 use miette::LabeledSpan;
 use napi_derive::napi;
 
