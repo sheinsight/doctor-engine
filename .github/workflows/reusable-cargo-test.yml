@@ -46,23 +46,6 @@ jobs:
         run: |
           git config --system core.longpaths true
         
-      # - name: Cargo test in docker
-      #   uses: addnab/docker-run-action@v3
-      #   if: ${{ inputs.docker }}
-      #   with:
-      #     image: ${{ inputs.docker }}
-      #     # options: '--user 0:0 -v ${{ github.workspace }}/.cargo-cache/git/db:/usr/local/cargo/git/db -v ${{ github.workspace }}/.cargo/registry/cache:/usr/local/cargo/registry/cache -v ${{ github.workspace }}/.cargo/registry/index:/usr/local/cargo/registry/index -v ${{ github.workspace }}:/build -w /build'
-      #     options: | 
-      #       --user 0:0 
-      #       -v ${{ github.workspace }}/.cargo-cache/git/db:/usr/local/cargo/git/db 
-      #       -v ${{ github.workspace }}/.cargo/registry/cache:/usr/local/cargo/registry/cache 
-      #       -v ${{ github.workspace }}/.cargo/registry/index:/usr/local/cargo/registry/index 
-      #       -v ${{ github.workspace }}:/build 
-      #       -w /build
-      #     run: |
-      #       set -e 
-      #       rustup target add ${{ inputs.target }}
-      #       cargo test --target ${{ inputs.target }}
       - name: Cargo test
         shell: bash
         run: |
