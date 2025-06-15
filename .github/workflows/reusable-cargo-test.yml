@@ -34,7 +34,6 @@ jobs:
           key: ${{ inputs.target }}-cargo-${{ inputs.host }}
           
       - name: Install rust toolchain
-        if: ${{ !inputs.docker }}
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           target: ${{ inputs.target }}
