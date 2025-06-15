@@ -5,6 +5,8 @@ import { performance } from "node:perf_hooks"
 const cli = cac("doctor");
 
 
+
+
 cli.command('','check project health')
   .option('-v, --verbose', 'Verbose output')
   .option('--cwd <path>', 'Current working directory')
