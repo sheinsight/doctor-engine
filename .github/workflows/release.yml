@@ -1,4 +1,4 @@
-name: Publish Npm Package
+name: Release
 env:
   DEBUG: napi:*
   # 如果没有的话 napi prepublish 会报错
