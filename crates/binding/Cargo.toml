@@ -15,6 +15,7 @@ crate-type = ["cdylib"]
 napi-build = { workspace = true }
 
 [dependencies]
+anyhow       = { workspace = true }
 base64       = { workspace = true }
 env_logger   = { workspace = true }
 log          = { workspace = true }
@@ -30,14 +31,6 @@ serde_json   = { workspace = true }
 smallvec     = { workspace = true }
 strum        = { workspace = true }
 strum_macros = { workspace = true }
-
-anyhow = { workspace = true }
-tabled = { workspace = true }
+tabled       = { workspace = true }
 
 doctor = { workspace = true }
-# doctor_core         = { workspace = true }
-# doctor_lint         = { workspace = true }
-# doctor_node         = { workspace = true }
-# doctor_npmrc        = { workspace = true }
-# doctor_package_json = { workspace = true }
-doctor_walk = { workspace = true }

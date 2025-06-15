@@ -607,7 +607,6 @@ dependencies = [
  "anyhow",
  "base64 0.22.1",
  "doctor",
- "doctor_walk",
  "env_logger 0.11.8",
  "log",
  "miette",
