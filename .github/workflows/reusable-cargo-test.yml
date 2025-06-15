@@ -57,7 +57,7 @@ jobs:
           run: |
             set -e 
             rustup target add ${{ inputs.target }}
-            cargo test
+            cargo test --target ${{ inputs.target }}
             
       - name: Cargo test
         if: ${{ !inputs.docker }}
