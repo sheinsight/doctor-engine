@@ -4,6 +4,17 @@
 
 import { expect, test } from 'vitest'
 import { unSafeInnerDebugLint, initializeLogger } from '../es/index.mjs'
+// import { spawnSync } from "node:child_process"
+
+
+// test('test', async () => {
+//   const res = spawnSync("node --experimental-strip-types --no-warnings packages/doctor/src/cli.mts --cwd packages/doctor/tests/fixtures",{
+//     stdio: "inherit",
+//     encoding:"utf8"
+//   })
+//   console.log(res)
+//   expect(res.status).toBe(1)
+// })
 
 
 test('adds 1 + 2 to equal 3', async () => {
