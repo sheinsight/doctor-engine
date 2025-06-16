@@ -68,12 +68,12 @@ impl WalkParallelJs {
           return false;
         };
 
-        if extension == "js" {
-          if is_minified_by_characteristics(path) {
-            log::warn!("Ignore minified js file: {:?}", path);
-            return false;
-          }
-        }
+        // if extension == "js" {
+        //   if is_minified_by_characteristics(path) {
+        //     log::warn!("Ignore minified js file: {:?}", path);
+        //     return false;
+        //   }
+        // }
 
         if extension == "ts" {
           if is_ts_video(path) {
@@ -117,46 +117,46 @@ pub fn is_ts_video(path: &Path) -> bool {
   false
 }
 
-fn is_minified_by_characteristics(path: &Path) -> bool {
-  let Some(file_name) = path.file_name() else {
-    return false;
-  };
+// fn is_minified_by_characteristics(path: &Path) -> bool {
+//   let Some(file_name) = path.file_name() else {
+//     return false;
+//   };
 
-  if [".min.", "-min.", "_min."]
-    .iter()
-    .any(|e| file_name.to_string_lossy().contains(e))
-  {
-    return true;
-  }
+//   if [".min.", "-min.", "_min."]
+//     .iter()
+//     .any(|e| file_name.to_string_lossy().contains(e))
+//   {
+//     return true;
+//   }
 
-  if let Ok(content) = fs::read_to_string(path) {
-    if content.is_empty() {
-      return false;
-    }
+//   if let Ok(content) = fs::read_to_string(path) {
+//     if content.is_empty() {
+//       return false;
+//     }
 
-    // 1. 检查平均行长度
-    let lines: Vec<&str> = content.lines().collect();
-    let avg_line_length =
-      lines.iter().map(|line| line.len() as f64).sum::<f64>() / lines.len() as f64;
+//     // 1. 检查平均行长度
+//     let lines: Vec<&str> = content.lines().collect();
+//     let avg_line_length =
+//       lines.iter().map(|line| line.len() as f64).sum::<f64>() / lines.len() as f64;
 
-    // 2. 检查分号后面是否紧跟其他字符（压缩代码常见特征）
-    let semicolon_packed = content.contains(";var")
-      || content.contains(";function")
-      || content.contains(";const")
-      || content.contains(";let");
+//     // 2. 检查分号后面是否紧跟其他字符（压缩代码常见特征）
+//     let semicolon_packed = content.contains(";var")
+//       || content.contains(";function")
+//       || content.contains(";const")
+//       || content.contains(";let");
 
-    // 3. 检查是否存在很长的行（超过1000字符）
-    let has_long_lines = lines.iter().any(|line| line.len() > 1000);
+//     // 3. 检查是否存在很长的行（超过1000字符）
+//     let has_long_lines = lines.iter().any(|line| line.len() > 1000);
 
-    // 5. 检查是否包含 sourceMappingURL（压缩文件常有）
-    let has_source_map = content.contains("sourceMappingURL");
+//     // 5. 检查是否包含 sourceMappingURL（压缩文件常有）
+//     let has_source_map = content.contains("sourceMappingURL");
 
-    // 组合多个特征进行判断
-    avg_line_length > 500.0 || (semicolon_packed && has_long_lines) || has_source_map
-  } else {
-    false
-  }
-}
+//     // 组合多个特征进行判断
+//     avg_line_length > 500.0 || (semicolon_packed && has_long_lines) || has_source_map
+//   } else {
+//     false
+//   }
+// }
 
 #[cfg(test)]
 mod tests {
