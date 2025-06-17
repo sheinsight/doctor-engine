@@ -75,6 +75,17 @@ impl WalkParallelJs {
         //   }
         // }
 
+        // TODO https://github.com/oxc-project/oxc-miette/pull/20/files 临时忽略
+        if let Ok(content) = fs::read_to_string(path) {
+          if content
+            .lines()
+            .any(|line| line.len() as usize > u16::MAX as usize)
+          {
+            log::warn!("Ignore large line length file: {:?}", path);
+            return false;
+          }
+        }
+
         if extension == "ts" {
           if is_ts_video(path) {
             log::warn!("Ignore ts video file: {:?}", path);

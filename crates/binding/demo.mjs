@@ -23,7 +23,7 @@ import {
 
   const start = performance.now()
 
-  let spec = JsSpecifications.create("/Users/10015448/Git/gtms",{
+  let spec = JsSpecifications.create("/Users/10015448/Git/ccst-frontend",{
     quiet: false,
     with_dashboard: true,
     max_render_count: 10,
@@ -35,8 +35,8 @@ import {
 
   try {
     // 规范
-    await spec.validatePackageJson();
-    // await spec.validateLint();
+    // await spec.validatePackageJson();
+    await spec.validateLint();
   } catch (error) {
     console.log(error);
     

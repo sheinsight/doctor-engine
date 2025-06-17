@@ -15,12 +15,14 @@ impl NodeVersion {
     let raw_source = std::fs::read_to_string(path)?;
     let version = raw_source.trim().to_string();
 
+    let version = if version.is_empty() {
+      None
+    } else {
+      Some(version)
+    };
+
     Ok(Self {
-      version: if version.is_empty() {
-        None
-      } else {
-        Some(version)
-      },
+      version: version,
       __raw_source: Some(raw_source),
       __config_path: path.display().to_string(),
     })
