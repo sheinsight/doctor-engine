@@ -79,7 +79,8 @@ impl WalkParallelJs {
         if let Ok(content) = fs::read_to_string(path) {
           if content
             .lines()
-            .any(|line| line.len() as usize > u16::MAX as usize)
+            // .any(|line| line.len() as usize > u16::MAX as usize)
+            .any(|line| line.len() as usize > 2000)
           {
             log::warn!("Ignore large line length file: {:?}", path);
             return false;
