@@ -106,7 +106,7 @@ impl Specifications {
 
     if messages.is_empty() {
       let success_str = "🚀 Ship it! Everything looks perfect.";
-      println!("{}", success_str);
+      writer.write(success_str.to_string());
     }
 
     let messages = if let Some(max_render_count) = opts.max_render_count {
