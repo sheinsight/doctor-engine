@@ -42,6 +42,16 @@ impl Messages {
     return reports;
   }
 
+  pub fn get_report(&self) -> Vec<miette::Report> {
+    let mut reports = Vec::new();
+    for diagnostic in &self.diagnostics {
+      let source = miette::NamedSource::new(self.source_path.clone(), self.source_code.clone());
+      let report = miette::Report::new(diagnostic.to_owned()).with_source_code(source);
+      reports.push(report);
+    }
+    return reports;
+  }
+
   pub fn has_error(&self) -> bool {
     self.diagnostics.iter().any(|d| {
       if let Some(severity) = d.severity {

@@ -6,6 +6,9 @@ use doctor_lint::Sfconfig;
 use crate::MessagesDashboard;
 
 mod register;
+mod writer;
+
+pub use writer::{ConsoleWriter, StringWriter, Writer};
 
 pub struct SpecificationsRenderOpts {
   pub with_dashboard: bool,
@@ -76,6 +79,56 @@ impl Specifications {
     messages.extend(self.validate_lint()?);
     messages.extend(self.validate_syntax()?);
     Ok(messages)
+  }
+
+  pub fn render_with_writer(
+    &self,
+    messages: &Vec<Messages>,
+    writer: &mut impl Writer,
+    opts: SpecificationsRenderOpts,
+  ) {
+    let _ = miette::set_hook(Box::new(|_| {
+      Box::new(
+        miette::MietteHandlerOpts::new()
+          .unicode(true)
+          .force_graphical(true)
+          .context_lines(5)
+          .tab_width(2)
+          .break_words(true)
+          .build(),
+      )
+    }));
+    let messages: Vec<Messages> = messages
+      .iter()
+      .filter(|message| !message.is_empty())
+      .cloned()
+      .collect();
+
+    if messages.is_empty() {
+      let success_str = "🚀 Ship it! Everything looks perfect.";
+      println!("{}", success_str);
+    }
+
+    let messages = if let Some(max_render_count) = opts.max_render_count {
+      let end = max_render_count.min(messages.len() as u32) as usize;
+      let render_messages = messages.get(0..end).unwrap_or(&messages);
+      render_messages
+    } else {
+      messages.as_slice()
+    };
+
+    for message in messages {
+      for report in message.get_report() {
+        writer.write(format!("{:?}", report));
+      }
+    }
+
+    if opts.with_dashboard {
+      let dashboard = MessagesDashboard::new(&messages);
+      for report in dashboard.get_report() {
+        writer.write(report);
+      }
+    }
   }
 
   pub fn render(&self, messages: &Vec<Messages>, opts: SpecificationsRenderOpts) -> Vec<String> {

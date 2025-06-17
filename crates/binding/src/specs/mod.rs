@@ -36,7 +36,10 @@ impl JsSpecifications {
     if let Some(opts) = self.opts.as_ref() {
       let quiet = opts.quiet.unwrap_or(false);
       if !quiet {
-        self.standards.render(messages, opts.clone().into());
+        let mut writer = doctor::specs::ConsoleWriter::default();
+        self
+          .standards
+          .render_with_writer(messages, &mut writer, opts.clone().into());
       }
     }
   }
