@@ -53,9 +53,9 @@ serde_json = { version = "^1.0.140" }
 
 
 #napi
-napi        = { version = "3.0.0-beta.7", features = ["tokio_rt"] }
-napi-build  = { version = "3.0.0-beta.0" }
-napi-derive = { version = "3.0.0-beta.7" }
+napi        = { version = "=3.0.0", features = ["tokio_rt"] }
+napi-build  = { version = "=2.2.2" }
+napi-derive = { version = "=3.0.0" }
 
 strum        = { version = "^0.27.1" }
 strum_macros = { version = "^0.27.1" }
