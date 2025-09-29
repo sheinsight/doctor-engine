@@ -23,29 +23,29 @@ repository   = "https://github.com/sheinsight/doctor-engine"
 rust-version = "1.85.0"
 
 [workspace.dependencies]
-anyhow        = { version = "^1.0.98" }
+anyhow        = { version = "^1.0.100" }
 base64        = { version = "^0.22.1" }
-bitflags      = { version = "^2.9.0" }
-config        = { version = "^0.15.11" }
+bitflags      = { version = "^2.9.4" }
+config        = { version = "^0.15.17" }
 env_logger    = { version = "^0.11.8" }
-hashbrown     = { version = "^0.15.4" }
+hashbrown     = { version = "^0.16.0" }
 ignore        = { version = "^0.4.23" }
-insta         = { version = "^1.36.1" }
-jsonc-parser  = { version = "^0.26.2" }
+insta         = { version = "^1.43.2" }
+jsonc-parser  = { version = "^0.26.3" }
 lazy-regex    = { version = "^3.4.1" }
-log           = { version = "^0.4.27" }
+log           = { version = "^0.4.28" }
 miette        = { version = "^7.6.0", features = ["derive", "fancy"] }
 node-semver   = { version = "^2.2.0" }
 pathdiff      = { version = "^0.2.3" }
-rayon         = { version = "^1.10.0" }
+rayon         = { version = "^1.11.0" }
 ropey         = { version = "^1.6.1" }
 rustc-hash    = { version = "^2.1.1" }
 smallvec      = { version = "^1.15.1" }
 tabled        = { version = "^0.20.0" }
-thiserror     = { version = "^2.0.12" }
+thiserror     = { version = "^2.0.17" }
 tokei         = { version = "^12.1.2" }
-tokio         = { version = "^1.44.1", features = ["macros", "rt-multi-thread"] }
-typed-builder = { version = "^0.21.0" }
+tokio         = { version = "^1.47.0", features = ["macros", "rt-multi-thread"] }
+typed-builder = { version = "^0.22.0" }
 
 serde      = { version = "^1.0.219", features = ["derive"] }
 serde_ini  = { version = "^0.2.0" }
@@ -53,12 +53,12 @@ serde_json = { version = "^1.0.140" }
 
 
 #napi
-napi        = { version = "=3.0.0", features = ["tokio_rt"] }
-napi-build  = { version = "=2.2.2" }
-napi-derive = { version = "=3.0.0" }
+napi        = { version = "=3.3.0", features = ["tokio_rt"] }
+napi-build  = { version = "=2.2.3" }
+napi-derive = { version = "=3.2.5" }
 
-strum        = { version = "^0.27.1" }
-strum_macros = { version = "^0.27.1" }
+strum        = { version = "^0.27.2" }
+strum_macros = { version = "^0.27.2" }
 
 # lint
 oxc        = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v1.1.0", package = "oxc" }
