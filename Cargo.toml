@@ -43,7 +43,7 @@ rustc-hash    = { version = "^2.1.1" }
 smallvec      = { version = "^1.15.1" }
 tabled        = { version = "^0.20.0" }
 thiserror     = { version = "^2.0.17" }
-tokei         = { version = "^12.1.2" }
+tokei         = { version = "^12.0.0" }
 tokio         = { version = "^1.47.0", features = ["macros", "rt-multi-thread"] }
 typed-builder = { version = "^0.22.0" }
 
@@ -61,8 +61,8 @@ strum        = { version = "^0.27.2" }
 strum_macros = { version = "^0.27.2" }
 
 # lint
-oxc        = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v1.3.0", package = "oxc" }
-oxc_linter = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v1.3.0", package = "oxc_linter" }
+oxc        = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v1.4.0", package = "oxc" }
+oxc_linter = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v1.4.0", package = "oxc_linter" }
 
 
 # glob
