@@ -107,7 +107,12 @@ impl Validator for LintValidator {
             &semantic,
           ));
 
-          let res = lint.run(Path::new(&named_source.file_path), semantic, module_record);
+          let res = lint.run(
+            Path::new(&named_source.file_path),
+            semantic,
+            module_record,
+            &allocator,
+          );
 
           for msg in res {
             let error = msg.error;
@@ -192,7 +197,12 @@ impl LintValidator {
             &semantic,
           ));
 
-          let res = lint.run(Path::new(&named_source.file_path), semantic, module_record);
+          let res = lint.run(
+            Path::new(&named_source.file_path),
+            semantic,
+            module_record,
+            &allocator,
+          );
 
           let diag = FileDiagnostic {
             file_path: named_source.file_path.clone(),
