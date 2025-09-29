@@ -13,7 +13,10 @@ use oxc::{
   semantic::SemanticBuilder,
   span::SourceType,
 };
-use oxc_linter::{ConfigStoreBuilder, Oxlintrc};
+use oxc_linter::{
+  AllowWarnDeny, ConfigStore, ConfigStoreBuilder, ExternalPluginStore, FixKind, FrameworkFlags,
+  LintOptions, Linter, Oxlintrc,
+};
 use rustc_hash::FxHashMap;
 use typed_builder::TypedBuilder;
 
@@ -36,11 +39,20 @@ pub struct LintValidator {
 
 impl Validator for LintValidator {
   fn validate(&self) -> Result<Vec<Messages>, ValidatorError> {
-    let config = ConfigStoreBuilder::from_oxlintrc(true, self.oxlintrc.clone(), None)?.build();
+    let mut external_plugin_store = ExternalPluginStore::default();
 
-    let config_store = oxc_linter::ConfigStore::new(config, FxHashMap::default());
+    let config = ConfigStoreBuilder::from_oxlintrc(
+      true,
+      self.oxlintrc.clone(),
+      None,
+      &mut external_plugin_store,
+    )?
+    .build();
 
-    let lint = oxc_linter::Linter::new(
+    let config_store =
+      oxc_linter::ConfigStore::new(config, FxHashMap::default(), external_plugin_store);
+
+    let lint = Linter::new(
       oxc_linter::LintOptions {
         fix: oxc_linter::FixKind::None,
         framework_hints: oxc_linter::FrameworkFlags::empty(),
@@ -48,6 +60,7 @@ impl Validator for LintValidator {
         report_unused_directive: Some(oxc_linter::AllowWarnDeny::Allow),
       },
       config_store,
+      None,
     );
 
     let parallel = WalkParallelJs::builder()
@@ -119,18 +132,26 @@ impl Validator for LintValidator {
 
 impl LintValidator {
   pub fn run(&self) -> Result<Vec<Result<FileDiagnostic, WalkError>>, LintError> {
-    let config = ConfigStoreBuilder::from_oxlintrc(true, self.oxlintrc.clone(), None)?.build();
+    let mut external_plugin_store = ExternalPluginStore::default();
+    let config = ConfigStoreBuilder::from_oxlintrc(
+      true,
+      self.oxlintrc.clone(),
+      None,
+      &mut external_plugin_store,
+    )?
+    .build();
 
-    let config_store = oxc_linter::ConfigStore::new(config, FxHashMap::default());
+    let config_store = ConfigStore::new(config, FxHashMap::default(), external_plugin_store);
 
-    let lint = oxc_linter::Linter::new(
-      oxc_linter::LintOptions {
-        fix: oxc_linter::FixKind::None,
-        framework_hints: oxc_linter::FrameworkFlags::empty(),
+    let lint = Linter::new(
+      LintOptions {
+        fix: FixKind::None,
+        framework_hints: FrameworkFlags::empty(),
         // report_unused_directive: Some(AllowWarnDeny::Deny),
-        report_unused_directive: Some(oxc_linter::AllowWarnDeny::Allow),
+        report_unused_directive: Some(AllowWarnDeny::Allow),
       },
       config_store,
+      None,
     );
 
     let parallel = WalkParallelJs::builder()

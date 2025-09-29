@@ -1660,8 +1660,8 @@ checksum = "26995317201fa17f3656c36716aed4a7c81743a9634ac4c99c0eeda495db0cec"
 
 [[package]]
 name = "oxc"
-version = "0.75.1"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.6.0#2594d300117443acf079c4a80571808b14409239"
+version = "0.77.1"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.7.0#b144048cc1e28a69b124dfd4c5c7e2d1da4a38db"
 dependencies = [
  "oxc_allocator",
  "oxc_ast",
@@ -1713,8 +1713,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_allocator"
-version = "0.75.1"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.6.0#2594d300117443acf079c4a80571808b14409239"
+version = "0.77.1"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.7.0#b144048cc1e28a69b124dfd4c5c7e2d1da4a38db"
 dependencies = [
  "allocator-api2",
  "bumpalo",
@@ -1725,8 +1725,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_ast"
-version = "0.75.1"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.6.0#2594d300117443acf079c4a80571808b14409239"
+version = "0.77.1"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.7.0#b144048cc1e28a69b124dfd4c5c7e2d1da4a38db"
 dependencies = [
  "bitflags 2.9.4",
  "oxc_allocator",
@@ -1740,8 +1740,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_ast_macros"
-version = "0.75.1"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.6.0#2594d300117443acf079c4a80571808b14409239"
+version = "0.77.1"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.7.0#b144048cc1e28a69b124dfd4c5c7e2d1da4a38db"
 dependencies = [
  "phf 0.12.1",
  "proc-macro2",
@@ -1751,8 +1751,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_ast_visit"
-version = "0.75.1"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.6.0#2594d300117443acf079c4a80571808b14409239"
+version = "0.77.1"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.7.0#b144048cc1e28a69b124dfd4c5c7e2d1da4a38db"
 dependencies = [
  "oxc_allocator",
  "oxc_ast",
@@ -1762,8 +1762,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_cfg"
-version = "0.75.1"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.6.0#2594d300117443acf079c4a80571808b14409239"
+version = "0.77.1"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.7.0#b144048cc1e28a69b124dfd4c5c7e2d1da4a38db"
 dependencies = [
  "bitflags 2.9.4",
  "itertools 0.14.0",
@@ -1776,8 +1776,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_codegen"
-version = "0.75.1"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.6.0#2594d300117443acf079c4a80571808b14409239"
+version = "0.77.1"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.7.0#b144048cc1e28a69b124dfd4c5c7e2d1da4a38db"
 dependencies = [
  "bitflags 2.9.4",
  "cow-utils",
@@ -1796,16 +1796,16 @@ dependencies = [
 
 [[package]]
 name = "oxc_data_structures"
-version = "0.75.1"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.6.0#2594d300117443acf079c4a80571808b14409239"
+version = "0.77.1"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.7.0#b144048cc1e28a69b124dfd4c5c7e2d1da4a38db"
 dependencies = [
  "rustversion",
 ]
 
 [[package]]
 name = "oxc_diagnostics"
-version = "0.75.1"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.6.0#2594d300117443acf079c4a80571808b14409239"
+version = "0.77.1"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.7.0#b144048cc1e28a69b124dfd4c5c7e2d1da4a38db"
 dependencies = [
  "cow-utils",
  "oxc-miette",
@@ -1814,8 +1814,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_ecmascript"
-version = "0.75.1"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.6.0#2594d300117443acf079c4a80571808b14409239"
+version = "0.77.1"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.7.0#b144048cc1e28a69b124dfd4c5c7e2d1da4a38db"
 dependencies = [
  "num-bigint",
  "num-traits",
@@ -1826,8 +1826,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_estree"
-version = "0.75.1"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.6.0#2594d300117443acf079c4a80571808b14409239"
+version = "0.77.1"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.7.0#b144048cc1e28a69b124dfd4c5c7e2d1da4a38db"
 dependencies = [
  "itoa",
  "oxc_data_structures",
@@ -1845,8 +1845,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_linter"
-version = "1.6.0"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.6.0#2594d300117443acf079c4a80571808b14409239"
+version = "1.7.0"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.7.0#b144048cc1e28a69b124dfd4c5c7e2d1da4a38db"
 dependencies = [
  "bitflags 2.9.4",
  "constcat",
@@ -1894,7 +1894,7 @@ dependencies = [
 [[package]]
 name = "oxc_macros"
 version = "0.0.0"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.6.0#2594d300117443acf079c4a80571808b14409239"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.7.0#b144048cc1e28a69b124dfd4c5c7e2d1da4a38db"
 dependencies = [
  "convert_case 0.8.0",
  "itertools 0.14.0",
@@ -1905,8 +1905,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_parser"
-version = "0.75.1"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.6.0#2594d300117443acf079c4a80571808b14409239"
+version = "0.77.1"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.7.0#b144048cc1e28a69b124dfd4c5c7e2d1da4a38db"
 dependencies = [
  "bitflags 2.9.4",
  "cow-utils",
@@ -1927,8 +1927,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_regular_expression"
-version = "0.75.1"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.6.0#2594d300117443acf079c4a80571808b14409239"
+version = "0.77.1"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.7.0#b144048cc1e28a69b124dfd4c5c7e2d1da4a38db"
 dependencies = [
  "bitflags 2.9.4",
  "oxc_allocator",
@@ -1973,8 +1973,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_semantic"
-version = "0.75.1"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.6.0#2594d300117443acf079c4a80571808b14409239"
+version = "0.77.1"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.7.0#b144048cc1e28a69b124dfd4c5c7e2d1da4a38db"
 dependencies = [
  "itertools 0.14.0",
  "oxc_allocator",
@@ -2008,8 +2008,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_span"
-version = "0.75.1"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.6.0#2594d300117443acf079c4a80571808b14409239"
+version = "0.77.1"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.7.0#b144048cc1e28a69b124dfd4c5c7e2d1da4a38db"
 dependencies = [
  "compact_str",
  "oxc-miette",
@@ -2022,8 +2022,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_syntax"
-version = "0.75.1"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.6.0#2594d300117443acf079c4a80571808b14409239"
+version = "0.77.1"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.7.0#b144048cc1e28a69b124dfd4c5c7e2d1da4a38db"
 dependencies = [
  "bitflags 2.9.4",
  "cow-utils",

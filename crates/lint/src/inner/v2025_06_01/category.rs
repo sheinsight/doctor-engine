@@ -1,4 +1,5 @@
-use oxc_linter::LintPlugins;
+use oxc_linter::{BuiltinLintPlugins, LintPlugins};
+use rustc_hash::FxHashSet;
 use serde_json::{Map, Value, json};
 use typed_builder::TypedBuilder;
 
@@ -48,65 +49,68 @@ impl CategoryGetter for Category20250601Inner {
   }
 
   fn get_ts_override(&self) -> Value {
+    let plugins = LintPlugins::new(BuiltinLintPlugins::TYPESCRIPT, FxHashSet::default());
     if let Some(typescript) = &self.typescript {
       let typescript = TypescriptRuleGetter::default().with_config(typescript.clone());
       json!({
           "files": ["*.{ts,tsx,cts,mts}"],
-          "plugins": LintPlugins::TYPESCRIPT,
+          "plugins": plugins,
           "rules": typescript.get_def()
       })
     } else {
       json!({
         "files": ["*.{ts,tsx,cts,mts}"],
-        "plugins": LintPlugins::TYPESCRIPT,
+        "plugins": plugins,
       })
     }
   }
 
   fn get_react_override(&self) -> Value {
+    let plugins = LintPlugins::new(BuiltinLintPlugins::REACT, FxHashSet::default());
     if let Some(react) = &self.react {
       let react = ReactRuleGetter::default().with_runtime(react.runtime.clone());
       json!({
           "files": ["*.{jsx,tsx}"],
-          "plugins": LintPlugins::REACT,
+          "plugins": plugins,
           "rules": react.get_def()
       })
     } else {
       json!({
         "files": ["*.{jsx,tsx}"],
-        "plugins": LintPlugins::REACT,
+        "plugins": plugins,
       })
     }
   }
 
   fn get_jest_override(&self) -> Value {
+    let plugins = LintPlugins::new(BuiltinLintPlugins::JEST, FxHashSet::default());
     json!({
         "files": [
             "*.{test,spec}.{js,jsx,ts,tsx}",
             "**/{test,tests,spec,specs}/**",
         ],
-        "plugins": LintPlugins::JEST,
+        "plugins": plugins,
         "env": EnvironmentFlags::Jest | EnvironmentFlags::Es2024,
         "rules": JestRuleGetter::default().get_def()
     })
   }
 
   fn get_def_plugins(&self) -> oxc_linter::LintPlugins {
-    let mut plugins = LintPlugins::ESLINT
-      | LintPlugins::UNICORN
-      | LintPlugins::IMPORT
-      | LintPlugins::PROMISE
-      | LintPlugins::OXC
-      | LintPlugins::JEST;
+    let mut builtin = BuiltinLintPlugins::ESLINT
+      | BuiltinLintPlugins::UNICORN
+      | BuiltinLintPlugins::IMPORT
+      | BuiltinLintPlugins::PROMISE
+      | BuiltinLintPlugins::OXC
+      | BuiltinLintPlugins::JEST;
 
     if self.typescript.is_some() {
-      plugins |= LintPlugins::TYPESCRIPT
+      builtin |= BuiltinLintPlugins::TYPESCRIPT
     }
 
     if self.react.is_some() {
-      plugins |= LintPlugins::REACT | LintPlugins::REACT_PERF
+      builtin |= BuiltinLintPlugins::REACT | BuiltinLintPlugins::REACT_PERF
     }
 
-    plugins
+    LintPlugins::new(builtin, FxHashSet::default())
   }
 }
