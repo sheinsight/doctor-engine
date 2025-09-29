@@ -36,7 +36,7 @@ pub struct LintValidator {
 
 impl Validator for LintValidator {
   fn validate(&self) -> Result<Vec<Messages>, ValidatorError> {
-    let config = ConfigStoreBuilder::from_oxlintrc(true, self.oxlintrc.clone())?.build();
+    let config = ConfigStoreBuilder::from_oxlintrc(true, self.oxlintrc.clone(), None)?.build();
 
     let config_store = oxc_linter::ConfigStore::new(config, FxHashMap::default());
 
@@ -119,7 +119,7 @@ impl Validator for LintValidator {
 
 impl LintValidator {
   pub fn run(&self) -> Result<Vec<Result<FileDiagnostic, WalkError>>, LintError> {
-    let config = ConfigStoreBuilder::from_oxlintrc(true, self.oxlintrc.clone())?.build();
+    let config = ConfigStoreBuilder::from_oxlintrc(true, self.oxlintrc.clone(), None)?.build();
 
     let config_store = oxc_linter::ConfigStore::new(config, FxHashMap::default());
 
