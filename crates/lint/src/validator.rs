@@ -1,6 +1,5 @@
 use std::{
   path::{Path, PathBuf},
-  rc::Rc,
   sync::Arc,
 };
 
@@ -99,8 +98,6 @@ impl Validator for LintValidator {
 
           let semantic = semantic_builder_return.semantic;
 
-          // let semantic = Rc::new(semantic);
-
           let module_record = Arc::new(oxc_linter::ModuleRecord::new(
             Path::new(&named_source.file_path),
             &parser_return.module_record,
@@ -189,8 +186,6 @@ impl LintValidator {
             .build(program);
 
           let semantic = semantic_builder_return.semantic;
-
-          // let semantic = Rc::new(semantic);
 
           let module_record = Arc::new(oxc_linter::ModuleRecord::new(
             Path::new(&named_source.file_path),
