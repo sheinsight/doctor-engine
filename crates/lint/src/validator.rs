@@ -47,7 +47,7 @@ impl Validator for LintValidator {
       None,
       &mut external_plugin_store,
     )?
-    .build();
+    .build(&external_plugin_store)?;
 
     let config_store =
       oxc_linter::ConfigStore::new(config, FxHashMap::default(), external_plugin_store);
@@ -144,7 +144,7 @@ impl LintValidator {
       None,
       &mut external_plugin_store,
     )?
-    .build();
+    .build(&external_plugin_store)?;
 
     let config_store = ConfigStore::new(config, FxHashMap::default(), external_plugin_store);
 

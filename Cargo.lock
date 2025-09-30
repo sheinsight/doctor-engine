@@ -749,6 +749,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "dragonbox_ecma"
+version = "0.0.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d742b56656e8b14d63e7ea9806597b1849ae25412584c8adf78c0f67bd985e66"
+
+[[package]]
 name = "dtor"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1669,8 +1675,8 @@ checksum = "26995317201fa17f3656c36716aed4a7c81743a9634ac4c99c0eeda495db0cec"
 
 [[package]]
 name = "oxc"
-version = "0.78.0"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.9.0#9220b0a43ee9591163fcb0961b0aec3ad483e3b0"
+version = "0.80.0"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.10.0#5f74a0b16069469fcb284b69fc13223edd0b4316"
 dependencies = [
  "oxc_allocator",
  "oxc_ast",
@@ -1723,8 +1729,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_allocator"
-version = "0.78.0"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.9.0#9220b0a43ee9591163fcb0961b0aec3ad483e3b0"
+version = "0.80.0"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.10.0#5f74a0b16069469fcb284b69fc13223edd0b4316"
 dependencies = [
  "allocator-api2",
  "bumpalo",
@@ -1735,8 +1741,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_ast"
-version = "0.78.0"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.9.0#9220b0a43ee9591163fcb0961b0aec3ad483e3b0"
+version = "0.80.0"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.10.0#5f74a0b16069469fcb284b69fc13223edd0b4316"
 dependencies = [
  "bitflags 2.9.4",
  "oxc_allocator",
@@ -1750,8 +1756,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_ast_macros"
-version = "0.78.0"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.9.0#9220b0a43ee9591163fcb0961b0aec3ad483e3b0"
+version = "0.80.0"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.10.0#5f74a0b16069469fcb284b69fc13223edd0b4316"
 dependencies = [
  "phf 0.12.1",
  "proc-macro2",
@@ -1761,8 +1767,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_ast_visit"
-version = "0.78.0"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.9.0#9220b0a43ee9591163fcb0961b0aec3ad483e3b0"
+version = "0.80.0"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.10.0#5f74a0b16069469fcb284b69fc13223edd0b4316"
 dependencies = [
  "oxc_allocator",
  "oxc_ast",
@@ -1772,8 +1778,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_cfg"
-version = "0.78.0"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.9.0#9220b0a43ee9591163fcb0961b0aec3ad483e3b0"
+version = "0.80.0"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.10.0#5f74a0b16069469fcb284b69fc13223edd0b4316"
 dependencies = [
  "bitflags 2.9.4",
  "itertools 0.14.0",
@@ -1786,11 +1792,12 @@ dependencies = [
 
 [[package]]
 name = "oxc_codegen"
-version = "0.78.0"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.9.0#9220b0a43ee9591163fcb0961b0aec3ad483e3b0"
+version = "0.80.0"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.10.0#5f74a0b16069469fcb284b69fc13223edd0b4316"
 dependencies = [
  "bitflags 2.9.4",
  "cow-utils",
+ "dragonbox_ecma",
  "nonmax",
  "oxc_allocator",
  "oxc_ast",
@@ -1801,21 +1808,20 @@ dependencies = [
  "oxc_span",
  "oxc_syntax",
  "rustc-hash",
- "ryu-js",
 ]
 
 [[package]]
 name = "oxc_data_structures"
-version = "0.78.0"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.9.0#9220b0a43ee9591163fcb0961b0aec3ad483e3b0"
+version = "0.80.0"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.10.0#5f74a0b16069469fcb284b69fc13223edd0b4316"
 dependencies = [
  "rustversion",
 ]
 
 [[package]]
 name = "oxc_diagnostics"
-version = "0.78.0"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.9.0#9220b0a43ee9591163fcb0961b0aec3ad483e3b0"
+version = "0.80.0"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.10.0#5f74a0b16069469fcb284b69fc13223edd0b4316"
 dependencies = [
  "cow-utils",
  "oxc-miette",
@@ -1824,11 +1830,13 @@ dependencies = [
 
 [[package]]
 name = "oxc_ecmascript"
-version = "0.78.0"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.9.0#9220b0a43ee9591163fcb0961b0aec3ad483e3b0"
+version = "0.80.0"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.10.0#5f74a0b16069469fcb284b69fc13223edd0b4316"
 dependencies = [
+ "cow-utils",
  "num-bigint",
  "num-traits",
+ "oxc_allocator",
  "oxc_ast",
  "oxc_span",
  "oxc_syntax",
@@ -1836,12 +1844,12 @@ dependencies = [
 
 [[package]]
 name = "oxc_estree"
-version = "0.78.0"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.9.0#9220b0a43ee9591163fcb0961b0aec3ad483e3b0"
+version = "0.80.0"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.10.0#5f74a0b16069469fcb284b69fc13223edd0b4316"
 dependencies = [
+ "dragonbox_ecma",
  "itoa",
  "oxc_data_structures",
- "ryu-js",
 ]
 
 [[package]]
@@ -1855,8 +1863,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_linter"
-version = "1.9.0"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.9.0#9220b0a43ee9591163fcb0961b0aec3ad483e3b0"
+version = "1.10.0"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.10.0#5f74a0b16069469fcb284b69fc13223edd0b4316"
 dependencies = [
  "bitflags 2.9.4",
  "constcat",
@@ -1871,7 +1879,6 @@ dependencies = [
  "json-strip-comments",
  "language-tags",
  "lazy-regex",
- "lazy_static",
  "memchr",
  "nonmax",
  "oxc-schemars",
@@ -1904,7 +1911,7 @@ dependencies = [
 [[package]]
 name = "oxc_macros"
 version = "0.0.0"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.9.0#9220b0a43ee9591163fcb0961b0aec3ad483e3b0"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.10.0#5f74a0b16069469fcb284b69fc13223edd0b4316"
 dependencies = [
  "convert_case 0.8.0",
  "itertools 0.14.0",
@@ -1915,8 +1922,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_parser"
-version = "0.78.0"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.9.0#9220b0a43ee9591163fcb0961b0aec3ad483e3b0"
+version = "0.80.0"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.10.0#5f74a0b16069469fcb284b69fc13223edd0b4316"
 dependencies = [
  "bitflags 2.9.4",
  "cow-utils",
@@ -1937,8 +1944,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_regular_expression"
-version = "0.78.0"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.9.0#9220b0a43ee9591163fcb0961b0aec3ad483e3b0"
+version = "0.80.0"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.10.0#5f74a0b16069469fcb284b69fc13223edd0b4316"
 dependencies = [
  "bitflags 2.9.4",
  "oxc_allocator",
@@ -1983,8 +1990,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_semantic"
-version = "0.78.0"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.9.0#9220b0a43ee9591163fcb0961b0aec3ad483e3b0"
+version = "0.80.0"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.10.0#5f74a0b16069469fcb284b69fc13223edd0b4316"
 dependencies = [
  "itertools 0.14.0",
  "oxc_allocator",
@@ -2017,8 +2024,8 @@ dependencies = [
 
 [[package]]
 name = "oxc_span"
-version = "0.78.0"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.9.0#9220b0a43ee9591163fcb0961b0aec3ad483e3b0"
+version = "0.80.0"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.10.0#5f74a0b16069469fcb284b69fc13223edd0b4316"
 dependencies = [
  "compact_str",
  "oxc-miette",
@@ -2031,11 +2038,12 @@ dependencies = [
 
 [[package]]
 name = "oxc_syntax"
-version = "0.78.0"
-source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.9.0#9220b0a43ee9591163fcb0961b0aec3ad483e3b0"
+version = "0.80.0"
+source = "git+https://github.com/oxc-project/oxc.git?tag=oxlint_v1.10.0#5f74a0b16069469fcb284b69fc13223edd0b4316"
 dependencies = [
  "bitflags 2.9.4",
  "cow-utils",
+ "dragonbox_ecma",
  "nonmax",
  "oxc_allocator",
  "oxc_ast_macros",
@@ -2045,7 +2053,6 @@ dependencies = [
  "oxc_span",
  "phf 0.12.1",
  "rustc-hash",
- "ryu-js",
  "serde",
  "unicode-id-start",
 ]
@@ -2553,12 +2560,6 @@ name = "ryu"
 version = "1.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "28d3b2b1366ec20994f1fd18c3c594f05c5dd4bc44d8bb0c1c632c8d6829481f"
-
-[[package]]
-name = "ryu-js"
-version = "1.0.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dd29631678d6fb0903b69223673e122c32e9ae559d0960a38d574695ebc0ea15"
 
 [[package]]
 name = "same-file"
