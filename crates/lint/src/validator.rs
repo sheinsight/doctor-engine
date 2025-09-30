@@ -14,8 +14,8 @@ use oxc::{
   span::SourceType,
 };
 use oxc_linter::{
-  AllowWarnDeny, ConfigStore, ConfigStoreBuilder, ExternalPluginStore, FixKind, FrameworkFlags,
-  LintOptions, Linter, Oxlintrc,
+  AllowWarnDeny, ConfigStore, ConfigStoreBuilder, ContextSubHost, ExternalPluginStore, FixKind,
+  FrameworkFlags, LintOptions, Linter, Oxlintrc,
 };
 use rustc_hash::FxHashMap;
 use typed_builder::TypedBuilder;
@@ -99,7 +99,7 @@ impl Validator for LintValidator {
 
           let semantic = semantic_builder_return.semantic;
 
-          let semantic = Rc::new(semantic);
+          // let semantic = Rc::new(semantic);
 
           let module_record = Arc::new(oxc_linter::ModuleRecord::new(
             Path::new(&named_source.file_path),
@@ -107,10 +107,11 @@ impl Validator for LintValidator {
             &semantic,
           ));
 
+          let context_sub_hosts = ContextSubHost::new(semantic, module_record, 0);
+
           let res = lint.run(
             Path::new(&named_source.file_path),
-            semantic,
-            module_record,
+            vec![context_sub_hosts],
             &allocator,
           );
 
@@ -189,7 +190,7 @@ impl LintValidator {
 
           let semantic = semantic_builder_return.semantic;
 
-          let semantic = Rc::new(semantic);
+          // let semantic = Rc::new(semantic);
 
           let module_record = Arc::new(oxc_linter::ModuleRecord::new(
             Path::new(&named_source.file_path),
@@ -197,10 +198,11 @@ impl LintValidator {
             &semantic,
           ));
 
+          let context_sub_hosts = ContextSubHost::new(semantic, module_record, 0);
+
           let res = lint.run(
             Path::new(&named_source.file_path),
-            semantic,
-            module_record,
+            vec![context_sub_hosts],
             &allocator,
           );
 
