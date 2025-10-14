@@ -25,13 +25,15 @@ fn decode_to_str(encoded: &str) -> String {
 
 pub fn register_lint(cwd: impl AsRef<Path>, sfconfig: Sfconfig) -> Box<dyn Validator> {
   let category = Category::V20250601Inner(Category20250601Inner::default());
-  let rc = OxlintrcBuilder::default()
-    .with_category(category)
-    .with_globals(sfconfig.globals)
-    .with_mode(LintMode::Production)
-    .with_envs(EnvironmentFlags::default())
-    .build()
-    .unwrap();
+
+  Category20250601Inner::builder()
+    .globals(sfconfig.globals)
+    .mode(LintMode::Production)
+    .envs(EnvironmentFlags::default())
+    .build();
+
+  let rc = OxlintrcBuilder::default().with_category(category).build();
+
   let validator = LintValidator::builder()
     .cwd(cwd.as_ref().to_path_buf())
     .ignore(sfconfig.ignore)

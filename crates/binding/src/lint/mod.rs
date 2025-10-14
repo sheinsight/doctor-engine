@@ -9,8 +9,7 @@ use std::collections::HashMap;
 pub use diagnostic::Diagnostic;
 use doctor::core::{Ignore, traits::PathExt};
 use doctor::lint::{
-  Category, EnvironmentFlags, GlobalValue, Globals, LintMode, LintValidator, OxlintrcBuilder,
-  inner::Category20250601Inner,
+  EnvironmentFlags, GlobalValue, Globals, LintMode, LintValidator, inner::Category20250601Inner,
 };
 pub use label::LabeledLoc;
 pub use location::Location;
@@ -96,10 +95,6 @@ pub async fn un_safe_inner_lint(
   glob_js_args: GlobJsArgs,
   category: NaPiCategory,
 ) -> Result<Vec<Diagnostic>> {
-  let category = match category {
-    NaPiCategory::V20250601Inner => Category::V20250601Inner(Category20250601Inner::default()),
-  };
-
   let mut ignore = Ignore::default();
   if let Some(ignore_patterns) = glob_js_args.ignore {
     ignore.extend(ignore_patterns);
@@ -120,19 +115,19 @@ pub async fn un_safe_inner_lint(
     }
   }
 
-  let rc = OxlintrcBuilder::default()
-    .with_category(category)
-    .with_mode(LintMode::Production)
-    .with_envs(EnvironmentFlags::default())
-    .with_globals(globals)
-    .build()
-    .map_err(to_napi_error)?;
+  let rc = match category {
+    NaPiCategory::V20250601Inner => Category20250601Inner::builder()
+      .mode(LintMode::Production)
+      .envs(EnvironmentFlags::default())
+      .globals(globals)
+      .build(),
+  };
 
   let linter_runner = LintValidator::builder()
     .cwd(glob_js_args.cwd.clone().into())
     .ignore(ignore)
     .with_show_report(glob_js_args.verbose.unwrap_or(false))
-    .oxlintrc(rc)
+    .oxlintrc(rc.into())
     .build();
 
   let file_diagnostics = linter_runner.run().map_err(to_napi_error)?;
