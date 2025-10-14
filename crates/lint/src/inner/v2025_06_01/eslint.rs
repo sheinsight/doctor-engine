@@ -34,7 +34,8 @@ impl RuleGetter for EslintRuleGetter {
         "eslint/no-empty-character-class":[2],
         "eslint/no-empty-pattern": [2],
         "eslint/no-ex-assign":[2],
-        "eslint/no-fallthrough":[2,{
+        // TODO 因为有 BUG 所以临时关闭
+        "eslint/no-fallthrough":[0,{
             "allowEmptyCase":true
         }],
         "eslint/no-func-assign":[2],
