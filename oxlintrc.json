@@ -9,6 +9,7 @@
     "react-perf",
     "promise"
   ],
+  "jsPlugins": null,
   "categories": {},
   "rules": {
     "constructor-super": "deny",
@@ -143,7 +144,8 @@
   "settings": {
     "jsx-a11y": {
       "polymorphicPropName": null,
-      "components": {}
+      "components": {},
+      "attributes": {}
     },
     "next": {
       "rootDir": []
@@ -175,13 +177,14 @@
   "overrides": [
     {
       "files": [
-        "*.{ts,tsx,cts,mts}"
+        "**/*.{ts,tsx,cts,mts}"
       ],
       "env": null,
       "globals": null,
       "plugins": [
         "typescript"
       ],
+      "jsPlugins": null,
       "rules": {
         "typescript/no-duplicate-enum-values": "deny",
         "typescript/no-extra-non-null-assertion": "deny",
@@ -195,13 +198,14 @@
     },
     {
       "files": [
-        "*.{jsx,tsx}"
+        "**/*.{jsx,tsx}"
       ],
       "env": null,
       "globals": null,
       "plugins": [
         "react"
       ],
+      "jsPlugins": null,
       "rules": {
         "react/jsx-no-duplicate-props": "deny",
         "react/jsx-no-target-blank": [
@@ -232,7 +236,7 @@
     },
     {
       "files": [
-        "*.{test,spec}.{js,jsx,ts,tsx}",
+        "**/*.{test,spec}.{js,jsx,ts,tsx}",
         "**/{test,tests,spec,specs}/**"
       ],
       "env": {
@@ -243,6 +247,7 @@
       "plugins": [
         "jest"
       ],
+      "jsPlugins": null,
       "rules": {}
     }
   ],
