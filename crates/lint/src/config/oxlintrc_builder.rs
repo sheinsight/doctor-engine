@@ -3,15 +3,9 @@ use std::ops::{Deref, DerefMut};
 use oxc_linter::Oxlintrc;
 use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
-use serde_json::json;
 use strum_macros::EnumString;
 
-use crate::{
-  category::Category,
-  common::{environments::EnvironmentFlags, error::LintError, lint_mode::LintMode},
-  ext::CategoryGetter,
-  inner::Category20250601Inner,
-};
+use crate::{category::Category, inner::Category20250601Inner};
 
 /**
  * 👍 1. 必须知道模块系统是什么 。 🤔 testing 需不需要独立配置 ？？？
@@ -69,61 +63,28 @@ impl DerefMut for Globals {
 
 #[derive(Debug, Clone)]
 pub struct OxlintrcBuilder {
-  mode: LintMode,
-  envs: EnvironmentFlags,
-  globals: Globals,
   category: Category,
 }
 
 impl Default for OxlintrcBuilder {
   fn default() -> Self {
     Self {
-      envs: EnvironmentFlags::default(),
-      mode: LintMode::Development,
-      globals: Globals::default(),
       category: Category::V20250601Inner(Category20250601Inner::builder().build()),
     }
   }
 }
 
 impl OxlintrcBuilder {
-  pub fn with_mode(mut self, mode: LintMode) -> Self {
-    self.mode = mode;
-    self
-  }
-
-  pub fn with_globals(mut self, globals: Globals) -> Self {
-    self.globals = globals;
-    self
-  }
-
-  pub fn with_envs(mut self, envs: EnvironmentFlags) -> Self {
-    self.envs = envs;
-    self
-  }
-
   pub fn with_category(mut self, category: Category) -> Self {
     self.category = category;
     self
   }
 
-  pub fn build(&self) -> Result<Oxlintrc, LintError> {
+  pub fn build(&self) -> Oxlintrc {
     let category = match &self.category {
       Category::V20250601Inner(category) => category.to_owned(),
     };
 
-    serde_json::from_value::<Oxlintrc>(json!({
-        "plugins": category.get_def_plugins(),
-        "env": self.envs,
-        "globals": self.globals,
-        "settings": {},
-        "rules": category.get_def(),
-        "overrides":[
-          category.get_ts_override(),
-          category.get_react_override(),
-          category.get_jest_override(),
-        ]
-    }))
-    .map_err(|e| LintError::FailedToBuildOxlintrc(e.to_string()))
+    category.into()
   }
 }
