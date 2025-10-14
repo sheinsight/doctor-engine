@@ -1,3 +1,4 @@
+use doctor_core::Ignore;
 use oxc_linter::Oxlintrc;
 use serde_json::json;
 use typed_builder::TypedBuilder;
@@ -21,6 +22,8 @@ pub struct Category20250601Inner {
   pub envs: EnvironmentFlags,
   #[builder(default = Globals::default())]
   pub globals: Globals,
+  #[builder(default = Ignore::default())]
+  pub ignore: Ignore,
 }
 
 impl Default for Category20250601Inner {
@@ -170,7 +173,7 @@ impl CategoryGetter for Category20250601Inner {
           }
         }
       ],
-      "ignorePatterns":[]
+      "ignorePatterns":self.ignore.iter().map(|s| s.as_str()).collect::<Vec<&str>>()
     });
 
     let config = serde_json::from_value::<Oxlintrc>(config).unwrap();
