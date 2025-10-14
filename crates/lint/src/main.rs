@@ -1,8 +1,5 @@
 use doctor_core::Ignore;
-use doctor_lint::{
-  Category, EnvironmentFlags, GlobalValue, Globals, LintMode, LintValidator,
-  config::OxlintrcBuilder, inner::Category20250601Inner,
-};
+use doctor_lint::{GlobalValue, Globals, LintValidator, inner::Category20250601Inner};
 
 use std::time::Instant;
 fn main() -> anyhow::Result<()> {
@@ -12,7 +9,12 @@ fn main() -> anyhow::Result<()> {
 
   eprintln!("1--->>>");
 
-  let category = Category::V20250601Inner(Category20250601Inner::default());
+  let category = Category20250601Inner::default();
+
+  // let config = category.get_config();
+  // std::fs::write("demo.json", serde_json::to_string_pretty(&config).unwrap()).unwrap();
+
+  // let category = Category::V20250601Inner(category);
 
   eprintln!("2--->>> 规范 ");
 
@@ -20,12 +22,7 @@ fn main() -> anyhow::Result<()> {
 
   globals.insert("a".to_string(), GlobalValue::Writable);
 
-  let rc = OxlintrcBuilder::default()
-    .with_category(category)
-    .with_globals(globals)
-    .with_mode(LintMode::Production)
-    .with_envs(EnvironmentFlags::default())
-    .build()?;
+  let rc = category.into();
 
   std::fs::write("oxlintrc.json", serde_json::to_string_pretty(&rc).unwrap())?;
 

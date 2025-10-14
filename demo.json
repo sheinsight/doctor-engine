@@ -3,14 +3,18 @@
     "react",
     "unicorn",
     "typescript",
-    "oxc",
-    "import",
-    "jest",
-    "react-perf",
-    "promise"
+    "oxc"
   ],
   "jsPlugins": null,
-  "categories": {},
+  "categories": {
+    "correctness": "allow",
+    "restriction": "allow",
+    "suspicious": "allow",
+    "perf": "allow",
+    "nursery": "allow",
+    "style": "allow",
+    "pedantic": "allow"
+  },
   "rules": {
     "constructor-super": "deny",
     "for-direction": "deny",
@@ -53,7 +57,7 @@
     "no-empty-pattern": "deny",
     "no-ex-assign": "deny",
     "no-fallthrough": [
-      "deny",
+      "allow",
       [
         {
           "allowEmptyCase": true
@@ -165,25 +169,16 @@
       "tagNamePreference": {}
     }
   },
-  "env": {
-    "browser": true,
-    "es2024": true,
-    "worker": true,
-    "serviceworker": true
-  },
-  "globals": {
-    "a": "writeable"
-  },
+  "env": {},
+  "globals": {},
   "overrides": [
     {
       "files": [
         "**/*.{ts,tsx,cts,mts}"
       ],
-      "env": null,
-      "globals": null,
-      "plugins": [
-        "typescript"
-      ],
+      "env": {},
+      "globals": {},
+      "plugins": [],
       "jsPlugins": null,
       "rules": {
         "typescript/no-duplicate-enum-values": "deny",
@@ -200,11 +195,9 @@
       "files": [
         "**/*.{jsx,tsx}"
       ],
-      "env": null,
-      "globals": null,
-      "plugins": [
-        "react"
-      ],
+      "env": {},
+      "globals": {},
+      "plugins": [],
       "jsPlugins": null,
       "rules": {
         "react/jsx-no-duplicate-props": "deny",
@@ -233,22 +226,6 @@
         "react/no-unescaped-entities": "deny",
         "react/react-in-jsx-scope": "allow"
       }
-    },
-    {
-      "files": [
-        "**/*.{test,spec}.{js,jsx,ts,tsx}",
-        "**/{test,tests,spec,specs}/**"
-      ],
-      "env": {
-        "es2024": true,
-        "jest": true
-      },
-      "globals": null,
-      "plugins": [
-        "jest"
-      ],
-      "jsPlugins": null,
-      "rules": {}
     }
   ],
   "ignorePatterns": []
