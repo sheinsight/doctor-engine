@@ -30,13 +30,14 @@ pub fn register_lint(cwd: impl AsRef<Path>, sfconfig: Sfconfig) -> Box<dyn Valid
     .globals(sfconfig.globals)
     .mode(LintMode::Production)
     .envs(EnvironmentFlags::default())
+    .ignore(sfconfig.ignore)
     .build();
 
   let rc = OxlintrcBuilder::default().with_category(category).build();
 
   let validator = LintValidator::builder()
     .cwd(cwd.as_ref().to_path_buf())
-    .ignore(sfconfig.ignore)
+    .ignore(sfconfig.ignore.clone())
     .with_show_report(false)
     .oxlintrc(rc)
     .build();
