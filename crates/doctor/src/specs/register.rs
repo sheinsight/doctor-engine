@@ -24,14 +24,14 @@ fn decode_to_str(encoded: &str) -> String {
 }
 
 pub fn register_lint(cwd: impl AsRef<Path>, sfconfig: Sfconfig) -> Box<dyn Validator> {
-  let category = Category::V20250601Inner(Category20250601Inner::default());
-
-  Category20250601Inner::builder()
+  let category = Category20250601Inner::builder()
     .globals(sfconfig.globals)
     .mode(LintMode::Production)
     .envs(EnvironmentFlags::default())
-    .ignore(sfconfig.ignore)
+    .ignore(sfconfig.ignore.clone())
     .build();
+
+  let category = Category::V20250601Inner(category);
 
   let rc = OxlintrcBuilder::default().with_category(category).build();
 
