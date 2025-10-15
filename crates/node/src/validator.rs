@@ -158,6 +158,10 @@ where
 
     Ok(vec![messages])
   }
+
+  fn fix(&self) -> Result<Vec<Messages>, ValidatorError> {
+    todo!()
+  }
 }
 
 #[cfg(test)]

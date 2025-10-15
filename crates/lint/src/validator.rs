@@ -38,6 +38,69 @@ pub struct LintValidator {
 }
 
 impl LintValidator {
+  fn create_linter(&self, fix_kind: FixKind) -> Result<Linter, LintError> {
+    let mut external_plugin_store = ExternalPluginStore::default();
+    let config = ConfigStoreBuilder::from_oxlintrc(
+      true,
+      self.oxlintrc.clone(),
+      None,
+      &mut external_plugin_store,
+    )?
+    .build(&external_plugin_store)?;
+    let config_store = ConfigStore::new(config, FxHashMap::default(), external_plugin_store);
+
+    let linter = Linter::new(
+      LintOptions {
+        fix: fix_kind,
+        framework_hints: FrameworkFlags::empty(),
+        report_unused_directive: Some(AllowWarnDeny::Allow),
+      },
+      config_store,
+      None,
+    );
+
+    Ok(linter)
+  }
+
+  fn process_file(
+    &self,
+    linter: &Linter,
+    path: &Path,
+  ) -> Result<(named_source::PathWithSource, Vec<Message>), WalkError> {
+    let named_source = named_source::PathWithSource::try_from(path)?;
+    let source_type = SourceType::from_path(path).map_err(|e| WalkError::Unknown(e.to_string()))?;
+
+    let allocator = Allocator::default();
+    let parser = Parser::new(&allocator, &named_source.source_code, source_type);
+    let parser_return = parser.parse();
+
+    if parser_return.panicked {
+      return Ok((named_source, vec![]));
+    }
+
+    let program = allocator.alloc(&parser_return.program);
+    let semantic_builder_return = SemanticBuilder::new()
+      .with_check_syntax_error(true)
+      .with_cfg(true)
+      .build(program);
+
+    let semantic = semantic_builder_return.semantic;
+    let module_record = Arc::new(oxc_linter::ModuleRecord::new(
+      Path::new(&named_source.file_path),
+      &parser_return.module_record,
+      &semantic,
+    ));
+
+    let context_sub_hosts = ContextSubHost::new(semantic, module_record, 0);
+    let messages = linter.run(
+      Path::new(&named_source.file_path),
+      vec![context_sub_hosts],
+      &allocator,
+    );
+
+    Ok((named_source, messages))
+  }
+
   fn apply_fixes(&self, source_code: &str, messages: &[Message]) -> Option<String> {
     let mut fixes = Vec::new();
 
@@ -70,29 +133,9 @@ impl LintValidator {
 
 impl Validator for LintValidator {
   fn validate(&self) -> Result<Vec<Messages>, ValidatorError> {
-    let mut external_plugin_store = ExternalPluginStore::default();
-
-    let config = ConfigStoreBuilder::from_oxlintrc(
-      true,
-      self.oxlintrc.clone(),
-      None,
-      &mut external_plugin_store,
-    )?
-    .build(&external_plugin_store)?;
-
-    let config_store =
-      oxc_linter::ConfigStore::new(config, FxHashMap::default(), external_plugin_store);
-
-    let lint = Linter::new(
-      oxc_linter::LintOptions {
-        fix: oxc_linter::FixKind::All,
-        framework_hints: oxc_linter::FrameworkFlags::empty(),
-        // report_unused_directive: Some(AllowWarnDeny::Deny),
-        report_unused_directive: Some(oxc_linter::AllowWarnDeny::Allow),
-      },
-      config_store,
-      None,
-    );
+    let linter = self
+      .create_linter(FixKind::None)
+      .map_err(|e| ValidatorError::Unknown(Box::new(e)))?;
 
     let parallel = WalkParallelJs::builder()
       .cwd(self.cwd.clone())
@@ -101,61 +144,54 @@ impl Validator for LintValidator {
 
     let res: Vec<Result<Messages, WalkError>> = parallel
       .walk(|path| -> Result<Messages, WalkError> {
-        let path = path.clone();
-
-        let named_source = named_source::PathWithSource::try_from(path.clone())?;
-
-        let mut messages = Messages::builder()
+        let (named_source, original_messages) = self.process_file(&linter, &path)?;
+        let mut doctor_messages = Messages::builder()
           .diagnostics(vec![])
           .source_code(named_source.source_code.clone())
           .source_path(named_source.file_path.clone())
           .build();
-
-        let source_type =
-          SourceType::from_path(path).map_err(|e| WalkError::Unknown(e.to_string()))?;
-
-        let allocator = Allocator::default();
-
-        let parser = Parser::new(&allocator, &named_source.source_code, source_type);
-
-        let parser_return = parser.parse();
-
-        if !parser_return.panicked {
-          let program = allocator.alloc(&parser_return.program);
-
-          let semantic_builder_return = SemanticBuilder::new()
-            .with_check_syntax_error(true)
-            .with_cfg(true)
-            .build(program);
-
-          let semantic = semantic_builder_return.semantic;
-
-          let module_record = Arc::new(oxc_linter::ModuleRecord::new(
-            Path::new(&named_source.file_path),
-            &parser_return.module_record,
-            &semantic,
-          ));
-
-          let context_sub_hosts = ContextSubHost::new(semantic, module_record, 0);
-
-          let res = lint.run(
-            Path::new(&named_source.file_path),
-            vec![context_sub_hosts],
-            &allocator,
-          );
-
-          for msg in res {
-            let error = msg.error;
-
-            let diagnostic = doctor_core::Diagnostic::from(error);
-
-            messages.push(diagnostic.into());
-          }
-
-          Ok(messages)
-        } else {
-          Ok(messages)
+        for msg in original_messages {
+          let diagnostic = doctor_core::Diagnostic::from(msg.error);
+          doctor_messages.push(diagnostic.into());
         }
+        Ok(doctor_messages)
+      })
+      .map_err(|e| ValidatorError::Unknown(Box::new(e)))?;
+
+    let res = res.into_iter().filter_map(|r| r.ok()).collect::<Vec<_>>();
+
+    Ok(res)
+  }
+
+  fn fix(&self) -> Result<Vec<Messages>, ValidatorError> {
+    let linter = self
+      .create_linter(FixKind::All)
+      .map_err(|e| ValidatorError::Unknown(Box::new(e)))?;
+
+    let parallel = WalkParallelJs::builder()
+      .cwd(self.cwd.clone())
+      .ignore(self.ignore.clone())
+      .build();
+
+    let res = parallel
+      .walk(|path| -> Result<Messages, WalkError> {
+        let (named_source, original_messages) = self.process_file(&linter, &path)?;
+
+        let mut doctor_messages = Messages::builder()
+          .diagnostics(vec![])
+          .source_code(named_source.source_code.clone())
+          .source_path(named_source.file_path.clone())
+          .build();
+        if !original_messages.is_empty() {
+          let fixed_code = self.apply_fixes(&named_source.source_code, &original_messages);
+          fs::write(path, fixed_code.unwrap_or(named_source.source_code.clone()))
+            .map_err(|e| WalkError::Unknown(e.to_string()))?;
+        }
+        for msg in original_messages {
+          let diagnostic = doctor_core::Diagnostic::from(msg.error);
+          doctor_messages.push(diagnostic.into());
+        }
+        Ok(doctor_messages)
       })
       .map_err(|e| ValidatorError::Unknown(Box::new(e)))?;
 
@@ -167,99 +203,28 @@ impl Validator for LintValidator {
 
 impl LintValidator {
   pub fn run(&self) -> Result<Vec<Result<FileDiagnostic, WalkError>>, LintError> {
-    let mut external_plugin_store = ExternalPluginStore::default();
-    let config = ConfigStoreBuilder::from_oxlintrc(
-      true,
-      self.oxlintrc.clone(),
-      None,
-      &mut external_plugin_store,
-    )?
-    .build(&external_plugin_store)?;
-
-    let config_store = ConfigStore::new(config, FxHashMap::default(), external_plugin_store);
-
-    let lint = Linter::new(
-      LintOptions {
-        fix: FixKind::All,
-        framework_hints: FrameworkFlags::empty(),
-        // report_unused_directive: Some(AllowWarnDeny::Deny),
-        report_unused_directive: Some(AllowWarnDeny::Allow),
-      },
-      config_store,
-      None,
-    );
+    let linter = self
+      .create_linter(FixKind::None)
+      .map_err(|e| LintError::Unknown(e.to_string()))?;
 
     let parallel = WalkParallelJs::builder()
       .cwd(self.cwd.clone())
       .ignore(self.ignore.clone())
       .build();
 
-    let res: Vec<Result<FileDiagnostic, WalkError>> = parallel
+    let res = parallel
       .walk(|path| -> Result<FileDiagnostic, WalkError> {
-        let path = path.clone();
-
-        let named_source = named_source::PathWithSource::try_from(path.clone())?;
-
-        let source_type =
-          SourceType::from_path(path).map_err(|e| WalkError::Unknown(e.to_string()))?;
-
-        let allocator = Allocator::default();
-
-        let parser = Parser::new(&allocator, &named_source.source_code, source_type);
-
-        let parser_return = parser.parse();
-
-        if !parser_return.panicked {
-          let program = allocator.alloc(&parser_return.program);
-
-          let semantic_builder_return = SemanticBuilder::new()
-            .with_check_syntax_error(true)
-            .with_cfg(true)
-            .build(program);
-
-          let semantic = semantic_builder_return.semantic;
-
-          let module_record = Arc::new(oxc_linter::ModuleRecord::new(
-            Path::new(&named_source.file_path),
-            &parser_return.module_record,
-            &semantic,
-          ));
-
-          let context_sub_hosts = ContextSubHost::new(semantic, module_record, 0);
-
-          let res = lint.run(
-            Path::new(&named_source.file_path),
-            vec![context_sub_hosts],
-            &allocator,
-          );
-
-          // TODO: 应用修复
-          if !res.is_empty() {
-            let source_code = self.apply_fixes(&named_source.source_code, &res);
-            if let Some(source_code) = source_code {
-              println!("source_code: {}", source_code);
-              fs::write(&named_source.file_path, source_code).unwrap();
-            }
-          }
-
-          let diag = FileDiagnostic {
-            file_path: named_source.file_path.clone(),
-            diagnostics: res.into_iter().map(|msg| msg.error).collect(),
-          };
-
-          if self.with_show_report {
-            self
-              .custom_render_report(&diag, &named_source.source_code)
-              .map_err(|e| WalkError::Unknown(e.to_string()))?;
-          }
-
-          Ok(diag)
-        } else {
-          Ok(FileDiagnostic {
-            file_path: named_source.file_path,
-            diagnostics: vec![],
-          })
+        let (named_source, original_messages) = self.process_file(&linter, &path)?;
+        let diag = FileDiagnostic {
+          file_path: named_source.file_path.clone(),
+          diagnostics: original_messages.into_iter().map(|msg| msg.error).collect(),
+        };
+        if self.with_show_report {
+          self
+            .custom_render_report(&diag, &named_source.source_code)
+            .map_err(|e| WalkError::Unknown(e.to_string()))?;
         }
+        Ok(diag)
       })
       .map_err(|e| LintError::Unknown(e.to_string()))?;
 

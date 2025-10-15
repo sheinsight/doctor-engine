@@ -34,6 +34,14 @@ impl Specifications {
     Specifications { cwd }
   }
 
+  pub fn fix_lint(&self) -> Result<Vec<Messages>, ValidatorError> {
+    let file = self.cwd.join(".sfconfig").join("spec.json");
+    let sfconfig = Sfconfig::parse(file)?;
+    let lint_builder = register::register_lint(self.cwd.clone(), sfconfig);
+    let message = lint_builder.fix()?;
+    Ok(message)
+  }
+
   pub fn validate_npmrc(&self) -> Result<Vec<Messages>, ValidatorError> {
     let file = self.cwd.join(".npmrc");
     let npmrc_builder = register::register_npmrc(file);
