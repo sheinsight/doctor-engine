@@ -5,7 +5,7 @@ use std::time::Instant;
 fn main() -> anyhow::Result<()> {
   let start_time = Instant::now();
 
-  let cwd = "/Users/10015448/Git/drawio_ui";
+  let cwd = "/Users/10015448/Git/metric-front";
 
   eprintln!("1--->>>");
 
@@ -33,7 +33,7 @@ fn main() -> anyhow::Result<()> {
   let linter_runner = LintValidator::builder()
     .cwd(cwd.to_string().into())
     .ignore(ignore)
-    .with_show_report(false)
+    .with_show_report(true)
     .oxlintrc(rc)
     .build();
 

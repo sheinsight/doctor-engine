@@ -1,4 +1,5 @@
 use std::{
+  fs,
   path::{Path, PathBuf},
   sync::Arc,
 };
@@ -14,7 +15,7 @@ use oxc::{
 };
 use oxc_linter::{
   AllowWarnDeny, ConfigStore, ConfigStoreBuilder, ContextSubHost, ExternalPluginStore, FixKind,
-  FrameworkFlags, LintOptions, Linter, Oxlintrc,
+  FrameworkFlags, LintOptions, Linter, Message, Oxlintrc, PossibleFixes,
 };
 use rustc_hash::FxHashMap;
 use typed_builder::TypedBuilder;
@@ -36,6 +37,37 @@ pub struct LintValidator {
   pub ignore: Ignore,
 }
 
+impl LintValidator {
+  fn apply_fixes(&self, source_code: &str, messages: &[Message]) -> Option<String> {
+    let mut fixes = Vec::new();
+
+    // 收集所有修复
+    for msg in messages {
+      match &msg.fixes {
+        PossibleFixes::None => {}
+        PossibleFixes::Single(fix) => fixes.push(fix.clone()),
+        PossibleFixes::Multiple(fs) => fixes.extend(fs.iter().cloned()),
+      }
+    }
+
+    if fixes.is_empty() {
+      return None; // 没有修复
+    }
+
+    // 按 span.start 倒序排序（从后往前应用，避免位置偏移）
+    fixes.sort_by(|a, b| b.span.start.cmp(&a.span.start));
+
+    let mut result = source_code.to_string();
+    for fix in fixes {
+      let start = fix.span.start as usize;
+      let end = fix.span.end as usize;
+      result.replace_range(start..end, &fix.content);
+    }
+
+    Some(result)
+  }
+}
+
 impl Validator for LintValidator {
   fn validate(&self) -> Result<Vec<Messages>, ValidatorError> {
     let mut external_plugin_store = ExternalPluginStore::default();
@@ -53,7 +85,7 @@ impl Validator for LintValidator {
 
     let lint = Linter::new(
       oxc_linter::LintOptions {
-        fix: oxc_linter::FixKind::None,
+        fix: oxc_linter::FixKind::All,
         framework_hints: oxc_linter::FrameworkFlags::empty(),
         // report_unused_directive: Some(AllowWarnDeny::Deny),
         report_unused_directive: Some(oxc_linter::AllowWarnDeny::Allow),
@@ -148,7 +180,7 @@ impl LintValidator {
 
     let lint = Linter::new(
       LintOptions {
-        fix: FixKind::None,
+        fix: FixKind::All,
         framework_hints: FrameworkFlags::empty(),
         // report_unused_directive: Some(AllowWarnDeny::Deny),
         report_unused_directive: Some(AllowWarnDeny::Allow),
@@ -201,6 +233,15 @@ impl LintValidator {
             &allocator,
           );
 
+          // TODO: 应用修复
+          if !res.is_empty() {
+            let source_code = self.apply_fixes(&named_source.source_code, &res);
+            if let Some(source_code) = source_code {
+              println!("source_code: {}", source_code);
+              fs::write(&named_source.file_path, source_code).unwrap();
+            }
+          }
+
           let diag = FileDiagnostic {
             file_path: named_source.file_path.clone(),
             diagnostics: res.into_iter().map(|msg| msg.error).collect(),
@@ -248,40 +289,3 @@ impl LintValidator {
     Ok(())
   }
 }
-
-// #[cfg(test)]
-// mod tests {
-//   use std::error::Error;
-
-//   use crate::{
-//     category::Category,
-//     common::{environments::EnvironmentFlags, lint_mode::LintMode},
-//     config::OxlintrcBuilder,
-//     inner::Category20250601Inner,
-//     linter_runner::LinterRunner,
-//   };
-
-//   #[test]
-//   fn test1() -> Result<(), Box<dyn Error>> {
-//     let cwd = "/Users/10015448/Git/drawio_ui";
-
-//     let category = Category::V20250601Inner(Category20250601Inner::default());
-
-//     let rc = OxlintrcBuilder::default()
-//       .with_category(category)
-//       .with_mode(LintMode::Production)
-//       .with_envs(EnvironmentFlags::default())
-//       .build()
-//       .unwrap();
-
-//     let linter_runner = LinterRunner::builder()
-//       .cwd(cwd.to_string().into())
-//       .with_show_report(true)
-//       .oxlintrc(rc)
-//       .build();
-
-//     let _ = linter_runner.run();
-
-//     Ok(())
-//   }
-// }
