@@ -20,4 +20,5 @@ use crate::{Messages, ValidatorError};
 /// ```
 pub trait Validator {
   fn validate(&self) -> Result<Vec<Messages>, ValidatorError>;
+  fn fix(&self) -> Result<Vec<Messages>, ValidatorError>;
 }

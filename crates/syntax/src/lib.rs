@@ -64,6 +64,10 @@ impl Validator for SyntaxValidator {
 
     Ok(res)
   }
+
+  fn fix(&self) -> Result<Vec<Messages>, doctor_core::ValidatorError> {
+    todo!()
+  }
 }
 
 #[cfg(test)]

@@ -2,6 +2,7 @@
 /* eslint-disable */
 export declare class JsSpecifications {
   static create(cwd: string, opts?: RawSpecificationsRenderOpts | undefined | null): JsSpecifications
+  fixLint(): Promise<Array<JsMessages>>
   validateNpmrc(): Promise<Array<JsMessages>>
   validateNodeVersion(): Promise<Array<JsMessages>>
   validatePackageJson(): Promise<Array<JsMessages>>
