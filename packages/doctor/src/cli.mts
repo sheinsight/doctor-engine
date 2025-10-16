@@ -47,6 +47,7 @@ cli.command('fix','fix lint')
     const cwd = options.cwd || process.cwd();
     const standards = await JsSpecifications.create(cwd);
     const res = await standards.fixLint();
+
     const errorCount = res.reduce((count, msg) =>
       count + msg.diagnostics.filter(d => d.severity === "Error").length, 0
     );
