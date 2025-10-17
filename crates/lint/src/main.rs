@@ -1,17 +1,14 @@
 #![recursion_limit = "256"]
 
 use doctor_core::Ignore;
-use doctor_lint::{
-  Category, EnvironmentFlags, GlobalValue, Globals, LintMode, LintValidator,
-  config::OxlintrcBuilder, inner::Category20250601Inner,
-};
+use doctor_lint::{GlobalValue, Globals, LintValidator, inner::Category20250601Inner};
 use oxc::diagnostics::{
   DiagnosticService, Error, GraphicalReportHandler,
   reporter::{DiagnosticReporter, DiagnosticResult},
 };
 use oxc_linter::{
   AllowWarnDeny, ConfigStore, ConfigStoreBuilder, ExternalPluginStore, FixKind, LintOptions,
-  LintRunner, LintServiceOptions, Linter, Oxlintrc,
+  LintRunner, LintServiceOptions, Linter,
 };
 use rustc_hash::FxHashMap;
 
@@ -59,9 +56,9 @@ impl DiagnosticReporter for MyReporter {
 }
 
 fn h() -> anyhow::Result<()> {
-  let reporter = Box::new(oxc::diagnostics::GraphicalReportHandler::new().with_links(true));
+  let reporter = MyReporter::default();
 
-  let (mut diagnostic_service, tx_error) = DiagnosticService::new(Box::new(MyReporter::default()));
+  let (mut diagnostic_service, tx_error) = DiagnosticService::new(Box::new(reporter));
 
   let cwd = "/Users/10015448/Git/metric-front";
   // 2. 配置并创建 LintRunner
@@ -93,9 +90,11 @@ fn h() -> anyhow::Result<()> {
     .build()
     .map_err(anyhow::Error::msg)?;
 
-  let files = vec![Arc::from(
-    Path::new("/Users/10015448/Git/metric-front/src/index.tsx").as_os_str(),
-  )];
+  let files = vec![
+    Arc::from(Path::new("/Users/10015448/Git/metric-front/src/index.tsx").as_os_str()),
+    Arc::from(Path::new("/Users/10015448/Git/metric-front/src/pages/npm/index.tsx").as_os_str()),
+    Arc::from(Path::new("/Users/10015448/Git/metric-front/src/pages/metric/index.tsx").as_os_str()),
+  ];
 
   // 3. 执行 linting（错误通过 tx_error 异步发送）
 
