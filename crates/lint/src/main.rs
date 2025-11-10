@@ -55,6 +55,7 @@ impl DiagnosticReporter for MyReporter {
   }
 }
 
+#[allow(unused)]
 fn h() -> anyhow::Result<()> {
   let reporter = MyReporter::default();
 
@@ -124,6 +125,7 @@ fn h() -> anyhow::Result<()> {
   Ok(())
 }
 
+#[allow(unused)]
 fn a() -> anyhow::Result<()> {
   let start_time = Instant::now();
 
