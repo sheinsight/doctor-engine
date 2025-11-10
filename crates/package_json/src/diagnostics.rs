@@ -24,8 +24,11 @@ impl DiagnosticFactory {
 
   pub fn at_library_version_not_allowed(span: impl Into<SourceSpan>) -> MietteDiagnostic {
     let code = "shined(package-json:library-version-not-allowed)";
-    let help = "The library version is not allowed";
-    let labels = vec![LabeledSpan::at(span, "Library version is not allowed")];
+    let help = "Please remove the [*, http, https] version from the package.json file";
+    let labels = vec![LabeledSpan::at(
+      span,
+      "The version is not allowed to use [*, http, https]",
+    )];
     diagnostic!(
       severity = miette::Severity::Error,
       code = code,
