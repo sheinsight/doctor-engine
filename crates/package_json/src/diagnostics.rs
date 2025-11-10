@@ -22,6 +22,19 @@ impl DiagnosticFactory {
     )
   }
 
+  pub fn at_library_version_not_allowed(span: impl Into<SourceSpan>) -> MietteDiagnostic {
+    let code = "shined(package-json:library-version-not-allowed)";
+    let help = "The library version is not allowed";
+    let labels = vec![LabeledSpan::at(span, "Library version is not allowed")];
+    diagnostic!(
+      severity = miette::Severity::Error,
+      code = code,
+      help = help,
+      labels = labels,
+      "The library version is not allowed",
+    )
+  }
+
   pub fn at_missing_package_manager(span: impl Into<SourceSpan>) -> MietteDiagnostic {
     let code = "shined(package-json:missing-package-manager)";
     let help = r#"Add packageManager field to your package.json file. 
