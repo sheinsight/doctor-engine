@@ -174,6 +174,44 @@ where
     Ok(diagnostics)
   }
 
+  fn validate_library_version(
+    &self,
+    package_json: &PackageJsonParser,
+  ) -> Result<Vec<MietteDiagnostic>, ValidatorError> {
+    let mut diagnostics = vec![];
+
+    let parse_result = parse_to_ast(
+      package_json
+        .__raw_source
+        .as_ref()
+        .map_or("", |source| source),
+      &CollectOptions::default(),
+      &ParseOptions::default(),
+    )
+    .unwrap();
+
+    if let Some(dependencies) = &package_json.dependencies {
+      for (name, value) in dependencies {
+        if ["*", "http", "https"].iter().any(|v| value.starts_with(v)) {
+          let range = parse_result
+            .value
+            .as_ref()
+            .and_then(|v| v.as_object().cloned())
+            .and_then(|o| o.get("dependencies").cloned())
+            .and_then(|v| v.value.as_object().cloned())
+            .and_then(|v| v.get(name).cloned())
+            .map(|v| v.value.range())
+            .unwrap();
+
+          diagnostics.push(DiagnosticFactory::at_library_version_not_allowed(
+            range.start..range.end,
+          ));
+        }
+      }
+    }
+    Ok(diagnostics)
+  }
+
   fn validate_private(
     &self,
     package_json: &PackageJsonParser,
@@ -312,6 +350,9 @@ where
     let diagnostics = self.validate_package_manager(&package_json)?;
     messages.diagnostics.extend(diagnostics.into_iter());
 
+    let diagnostics = self.validate_library_version(&package_json)?;
+    messages.diagnostics.extend(diagnostics.into_iter());
+
     Ok(vec![messages])
   }
 
@@ -324,6 +365,23 @@ where
 mod tests {
 
   use super::*;
+
+  #[test]
+  fn should_return_library_version_not_allowed_diagnostic() {
+    let result = PackageJsonValidator::builder()
+      .config_path("fixtures/library_version_not_allowed.json")
+      .build()
+      .validate()
+      .unwrap();
+    for msg in result {
+      assert!(msg.has_error());
+      msg.render();
+      assert!(msg.diagnostics.len() == 3);
+      assert!(
+        msg.diagnostics[0].code == Some("shined(package-json:library-version-not-allowed)".into())
+      );
+    }
+  }
 
   #[test]
   fn should_return_missing_name_diagnostic() {
