@@ -4,7 +4,7 @@ use doctor_core::{
 };
 use jsonc_parser::{CollectOptions, ParseOptions, common::Ranged, parse_to_ast};
 use miette::MietteDiagnostic;
-use package_json_parser::PackageJsonParser;
+use package_json_parser::{FxHashMap, PackageJsonParser};
 use std::{fs::read_to_string, path::Path};
 use typed_builder::TypedBuilder;
 
@@ -190,42 +190,37 @@ where
     )
     .unwrap();
 
-    if let Some(dependencies) = &package_json.dependencies {
-      for (name, value) in dependencies {
+    let root_object = parse_result
+      .value
+      .as_ref()
+      .and_then(|v| v.as_object().cloned());
+
+    // 辅助闭包：验证特定的依赖项字段
+    let mut validate_deps = |field_name: &str, deps: &FxHashMap<String, String>| {
+      for (name, value) in deps {
         if ["*", "http", "https"].iter().any(|v| value.starts_with(v)) {
-          let range = parse_result
-            .value
+          let range = root_object
             .as_ref()
-            .and_then(|v| v.as_object().cloned())
-            .and_then(|o| o.get("dependencies").cloned())
+            .and_then(|o| o.get(field_name).cloned())
             .and_then(|v| v.value.as_object().cloned())
             .and_then(|v| v.get(name).cloned())
             .map(|v| v.value.range())
             .unwrap();
+
           diagnostics.push(DiagnosticFactory::at_library_version_not_allowed(
             range.start..range.end,
           ));
         }
       }
+    };
+
+    // 统一处理各种依赖项
+    if let Some(dependencies) = &package_json.dependencies {
+      validate_deps("dependencies", dependencies);
     }
 
     if let Some(dev_dependencies) = &package_json.dev_dependencies {
-      for (name, value) in dev_dependencies {
-        if ["*", "http", "https"].iter().any(|v| value.starts_with(v)) {
-          let range = parse_result
-            .value
-            .as_ref()
-            .and_then(|v| v.as_object().cloned())
-            .and_then(|o| o.get("devDependencies").cloned())
-            .and_then(|v| v.value.as_object().cloned())
-            .and_then(|v| v.get(name).cloned())
-            .map(|v| v.value.range())
-            .unwrap();
-          diagnostics.push(DiagnosticFactory::at_library_version_not_allowed(
-            range.start..range.end,
-          ));
-        }
-      }
+      validate_deps("devDependencies", dev_dependencies);
     }
 
     Ok(diagnostics)
