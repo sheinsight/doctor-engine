@@ -15,7 +15,10 @@ use crate::{Messages, ValidatorError};
 ///         // Validation logic here
 ///         Ok(vec![])
 ///     }
-///
+///     fn fix(&self) -> Result<Vec<Messages>, ValidatorError> {
+///         // Fix logic here
+///         Ok(vec![])
+///     }
 /// }
 /// ```
 pub trait Validator {
