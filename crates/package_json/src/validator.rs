@@ -202,13 +202,32 @@ where
             .and_then(|v| v.get(name).cloned())
             .map(|v| v.value.range())
             .unwrap();
-
           diagnostics.push(DiagnosticFactory::at_library_version_not_allowed(
             range.start..range.end,
           ));
         }
       }
     }
+
+    if let Some(dev_dependencies) = &package_json.dev_dependencies {
+      for (name, value) in dev_dependencies {
+        if ["*", "http", "https"].iter().any(|v| value.starts_with(v)) {
+          let range = parse_result
+            .value
+            .as_ref()
+            .and_then(|v| v.as_object().cloned())
+            .and_then(|o| o.get("devDependencies").cloned())
+            .and_then(|v| v.value.as_object().cloned())
+            .and_then(|v| v.get(name).cloned())
+            .map(|v| v.value.range())
+            .unwrap();
+          diagnostics.push(DiagnosticFactory::at_library_version_not_allowed(
+            range.start..range.end,
+          ));
+        }
+      }
+    }
+
     Ok(diagnostics)
   }
 
