@@ -223,6 +223,10 @@ where
       validate_deps("devDependencies", dev_dependencies);
     }
 
+    if let Some(peer_dependencies) = &package_json.peer_dependencies {
+      validate_deps("peerDependencies", peer_dependencies);
+    }
+
     Ok(diagnostics)
   }
 
