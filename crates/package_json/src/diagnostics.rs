@@ -22,6 +22,25 @@ impl DiagnosticFactory {
     )
   }
 
+  pub fn at_wrong_shineout_version(
+    span: impl Into<SourceSpan>,
+    migration: &str,
+  ) -> MietteDiagnostic {
+    let code = "shined(package-json:library-version-not-allowed)";
+    let help = "Please remove the [*, http, https] version from the package.json file";
+    let labels = vec![LabeledSpan::at(
+      span,
+      format!(r##"Please migration to "{migration}", Critical faults in the current version. "##),
+    )];
+    diagnostic!(
+      severity = miette::Severity::Error,
+      code = code,
+      help = help,
+      labels = labels,
+      "The library version is not allowed",
+    )
+  }
+
   pub fn at_library_version_not_allowed(span: impl Into<SourceSpan>) -> MietteDiagnostic {
     let code = "shined(package-json:library-version-not-allowed)";
     let help = "Please remove the [*, http, https] version from the package.json file";

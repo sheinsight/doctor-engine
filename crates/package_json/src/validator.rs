@@ -1,14 +1,14 @@
+use crate::diagnostics::DiagnosticFactory;
 use doctor_core::{
   Messages, ValidatorError,
   traits::{PathExt, Validator},
 };
 use jsonc_parser::{CollectOptions, ParseOptions, common::Ranged, parse_to_ast};
 use miette::MietteDiagnostic;
+use node_semver::Range;
 use package_json_parser::{FxHashMap, PackageJsonParser};
 use std::{fs::read_to_string, path::Path};
 use typed_builder::TypedBuilder;
-
-use crate::diagnostics::DiagnosticFactory;
 
 #[derive(Debug)]
 pub enum ValidateName {
@@ -211,6 +211,27 @@ where
             range.start..range.end,
           ));
         }
+
+        // if name == "shineout" {
+        //   let range = Range::parse("3").unwrap();
+        //   let current_range = Range::parse(value).unwrap();
+
+        //   let allow = range.allows_all(&current_range);
+
+        //   if allow && !value.contains("fix.1") {
+        //     let range = root_object
+        //       .as_ref()
+        //       .and_then(|o| o.get(field_name).cloned())
+        //       .and_then(|v| v.value.as_object().cloned())
+        //       .and_then(|v| v.get(name).cloned())
+        //       .map(|v| v.value.range())
+        //       .unwrap();
+        //     diagnostics.push(DiagnosticFactory::at_wrong_shineout_version(
+        //       range.start..range.end,
+        //       &format!(r##"{value}-fix.1"##),
+        //     ));
+        //   }
+        // }
       }
     };
 
@@ -475,6 +496,23 @@ mod tests {
   fn test_validate_private_str() {
     let result = PackageJsonValidator::builder()
       .config_path("fixtures/str_private.json")
+      .with_validate_private(ValidatePrivate::True)
+      .build()
+      .validate()
+      .unwrap();
+
+    for msg in result {
+      assert!(msg.has_error());
+      msg.render();
+      assert!(msg.diagnostics.len() == 1);
+      assert!(msg.diagnostics[0].code == Some("shined(package-json:private-type-error)".into()));
+    }
+  }
+
+  #[test]
+  fn test_validate_private_str1() {
+    let result = PackageJsonValidator::builder()
+      .config_path("fixtures/shineout_3_fix.json")
       .with_validate_private(ValidatePrivate::True)
       .build()
       .validate()

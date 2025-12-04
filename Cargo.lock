@@ -710,6 +710,7 @@ dependencies = [
  "doctor_core",
  "jsonc-parser",
  "miette",
+ "node-semver",
  "package_json_parser",
  "serde",
  "serde_json",

@@ -15,9 +15,9 @@ rust-version.workspace = true
 version                = "0.1.0"
 
 [dependencies]
-
 jsonc-parser        = { workspace = true }
 miette              = { workspace = true }
+node-semver         = { workspace = true }
 package_json_parser = { workspace = true }
 serde               = { workspace = true, features = ["derive"] }
 serde_json          = { workspace = true }
