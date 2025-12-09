@@ -213,7 +213,7 @@ where
         }
 
         if name == "shineout" {
-          let range = Range::parse("3").unwrap();
+          let range = Range::parse("3.9.0").unwrap();
           let current_range = Range::parse(value).unwrap();
 
           let allow = range.allows_all(&current_range);
