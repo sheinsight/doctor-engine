@@ -1,6 +1,6 @@
 {
 	"name": "@shined/doctor-registry",
-	"version": "0.2.0-canary.3",
+	"version": "0.2.0-canary.4",
 	"private": true,
 	"packageManager": "pnpm@10.11.0",
 	"scripts": {
@@ -27,5 +27,5 @@
 		"write-package": "^7.1.0"
 	},
 	"readme": "ERROR: No README data found!",
-	"_id": "0.2.0-canary.3"
+	"_id": "0.2.0-canary.4"
 }
