@@ -127,6 +127,9 @@ where
 
   #[builder(default = None, setter(strip_option))]
   with_validate_package_manager: Option<ValidatePackageManager>,
+
+  #[builder(default = None, setter(strip_option))]
+  with_validate_shineout_version: Option<bool>,
 }
 
 impl<P> PackageJsonValidator<P>
@@ -212,24 +215,28 @@ where
           ));
         }
 
-        if name == "shineout" {
-          let range = Range::parse("3.9.0").unwrap();
-          let current_range = Range::parse(value).unwrap();
+        if let Some(_validate_shineout_version) = &self.with_validate_shineout_version {
+          if name == "shineout" {
+            let range = Range::parse("^3.9.0").unwrap();
+            let current_range = Range::parse(value).unwrap();
 
-          let allow = range.allows_all(&current_range);
+            let allow = range.allows_all(&current_range);
 
-          if allow && !value.contains("fix.1") {
-            let range = root_object
-              .as_ref()
-              .and_then(|o| o.get(field_name).cloned())
-              .and_then(|v| v.value.as_object().cloned())
-              .and_then(|v| v.get(name).cloned())
-              .map(|v| v.value.range())
-              .unwrap();
-            diagnostics.push(DiagnosticFactory::at_wrong_shineout_version(
-              range.start..range.end,
-              &format!(r##"{value}-fix.1"##),
-            ));
+            println!("value: {}", allow);
+
+            if !allow && !value.contains("fix.1") {
+              let range = root_object
+                .as_ref()
+                .and_then(|o| o.get(field_name).cloned())
+                .and_then(|v| v.value.as_object().cloned())
+                .and_then(|v| v.get(name).cloned())
+                .map(|v| v.value.range())
+                .unwrap();
+              diagnostics.push(DiagnosticFactory::at_wrong_shineout_version(
+                range.start..range.end,
+                &format!(r##"{value}-fix.1"##),
+              ));
+            }
           }
         }
       }
@@ -510,19 +517,22 @@ mod tests {
   }
 
   #[test]
-  fn test_validate_private_str1() {
+  fn test_validate_shineout_version_fix() {
     let result = PackageJsonValidator::builder()
       .config_path("fixtures/shineout_3_fix.json")
-      .with_validate_private(ValidatePrivate::True)
+      .with_validate_shineout_version(true)
       .build()
       .validate()
       .unwrap();
 
     for msg in result {
+      println!("{:#?}", msg.diagnostics);
       assert!(msg.has_error());
       msg.render();
       assert!(msg.diagnostics.len() == 1);
-      assert!(msg.diagnostics[0].code == Some("shined(package-json:private-type-error)".into()));
+      assert!(
+        msg.diagnostics[0].code == Some("shined(package-json:library-version-not-allowed)".into())
+      );
     }
   }
 }
