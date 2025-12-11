@@ -222,8 +222,6 @@ where
 
             let allow = range.allows_all(&current_range);
 
-            println!("value: {}", allow);
-
             if !allow && !value.contains("fix.1") {
               let range = root_object
                 .as_ref()
