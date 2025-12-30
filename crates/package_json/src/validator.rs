@@ -217,12 +217,19 @@ where
 
         if let Some(_validate_shineout_version) = &self.with_validate_shineout_version {
           if name == "shineout" {
-            let range = Range::parse("^3.9.0").unwrap();
+            let target_range = Range::parse(">=3.0.0 <3.9.0").unwrap();
+
+            // let Ok(target_range) = Range::parse(">=3.0.0 <3.9.0") else {
+            //   return Err(ValidatorError::Unknown(
+            //     "Failed to parse target range".into(),
+            //   ));
+            // };
+
             let current_range = Range::parse(value).unwrap();
 
-            let allow = range.allows_all(&current_range);
+            let intersect = target_range.intersect(&current_range);
 
-            if !allow && !value.contains("fix.1") {
+            if intersect.is_some() && !value.contains("fix.1") {
               let range = root_object
                 .as_ref()
                 .and_then(|o| o.get(field_name).cloned())
