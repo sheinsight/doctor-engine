@@ -199,65 +199,61 @@ where
       .and_then(|v| v.as_object().cloned());
 
     // 辅助闭包：验证特定的依赖项字段
-    let mut validate_deps = |field_name: &str, deps: &FxHashMap<String, String>| {
-      for (name, value) in deps {
-        if ["*", "http", "https"].iter().any(|v| value.starts_with(v)) {
-          let range = root_object
-            .as_ref()
-            .and_then(|o| o.get(field_name).cloned())
-            .and_then(|v| v.value.as_object().cloned())
-            .and_then(|v| v.get(name).cloned())
-            .map(|v| v.value.range())
-            .unwrap();
+    let mut validate_deps =
+      |field_name: &str, deps: &FxHashMap<String, String>| -> Result<(), ValidatorError> {
+        for (name, value) in deps {
+          if ["*", "http", "https"].iter().any(|v| value.starts_with(v)) {
+            let range = root_object
+              .as_ref()
+              .and_then(|o| o.get(field_name).cloned())
+              .and_then(|v| v.value.as_object().cloned())
+              .and_then(|v| v.get(name).cloned())
+              .map(|v| v.value.range())
+              .unwrap();
 
-          diagnostics.push(DiagnosticFactory::at_library_version_not_allowed(
-            range.start..range.end,
-          ));
-        }
+            diagnostics.push(DiagnosticFactory::at_library_version_not_allowed(
+              range.start..range.end,
+            ));
+          }
 
-        if let Some(_validate_shineout_version) = &self.with_validate_shineout_version {
-          if name == "shineout" {
-            let target_range = Range::parse(">=3.0.0 <3.9.0").unwrap();
+          if let Some(_validate_shineout_version) = &self.with_validate_shineout_version {
+            if name == "shineout" {
+              let target_range = Range::parse(">=3.0.0 <3.9.0")?;
 
-            // let Ok(target_range) = Range::parse(">=3.0.0 <3.9.0") else {
-            //   return Err(ValidatorError::Unknown(
-            //     "Failed to parse target range".into(),
-            //   ));
-            // };
+              let current_range = Range::parse(value)?;
 
-            let current_range = Range::parse(value).unwrap();
+              let intersect = target_range.intersect(&current_range);
 
-            let intersect = target_range.intersect(&current_range);
-
-            if intersect.is_some() && !value.contains("fix.1") {
-              let range = root_object
-                .as_ref()
-                .and_then(|o| o.get(field_name).cloned())
-                .and_then(|v| v.value.as_object().cloned())
-                .and_then(|v| v.get(name).cloned())
-                .map(|v| v.value.range())
-                .unwrap();
-              diagnostics.push(DiagnosticFactory::at_wrong_shineout_version(
-                range.start..range.end,
-                &format!(r##"{value}-fix.1"##),
-              ));
+              if intersect.is_some() && !value.contains("fix.1") && value != "3.9.0" {
+                let range = root_object
+                  .as_ref()
+                  .and_then(|o| o.get(field_name).cloned())
+                  .and_then(|v| v.value.as_object().cloned())
+                  .and_then(|v| v.get(name).cloned())
+                  .map(|v| v.value.range())
+                  .unwrap();
+                diagnostics.push(DiagnosticFactory::at_wrong_shineout_version(
+                  range.start..range.end,
+                  &format!(r##"{value}-fix.1"##),
+                ));
+              }
             }
           }
         }
-      }
-    };
+        Ok(())
+      };
 
     // 统一处理各种依赖项
     if let Some(dependencies) = &package_json.dependencies {
-      validate_deps("dependencies", dependencies);
+      validate_deps("dependencies", dependencies)?;
     }
 
     if let Some(dev_dependencies) = &package_json.dev_dependencies {
-      validate_deps("devDependencies", dev_dependencies);
+      validate_deps("devDependencies", dev_dependencies)?;
     }
 
     if let Some(peer_dependencies) = &package_json.peer_dependencies {
-      validate_deps("peerDependencies", peer_dependencies);
+      validate_deps("peerDependencies", peer_dependencies)?;
     }
 
     Ok(diagnostics)
@@ -550,16 +546,24 @@ mod tests {
       .validate()
       .unwrap();
 
-    // assert!(result.len() == 0);
-
     for msg in result {
-      // println!("{:#?}", msg);
       assert!(!msg.has_error());
       msg.render();
-      // assert!(msg.diagnostics.len() == 1);
-      // assert!(
-      //   msg.diagnostics[0].code == Some("shined(package-json:library-version-not-allowed)".into())
-      // );
+    }
+  }
+
+  #[test]
+  fn test_validate_shineout_version_3_9_ne_fix() {
+    let result = PackageJsonValidator::builder()
+      .config_path("fixtures/shineout_3_9_ne_fix.json")
+      .with_validate_shineout_version(true)
+      .build()
+      .validate()
+      .unwrap();
+
+    for msg in result {
+      assert!(!msg.has_error());
+      msg.render();
     }
   }
 }
