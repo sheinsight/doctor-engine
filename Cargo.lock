@@ -709,6 +709,7 @@ version = "0.1.0"
 dependencies = [
  "doctor_core",
  "jsonc-parser",
+ "lazy-regex",
  "miette",
  "node-semver",
  "package_json_parser",

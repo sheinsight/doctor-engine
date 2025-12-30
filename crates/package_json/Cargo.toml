@@ -16,6 +16,7 @@ version                = "0.1.0"
 
 [dependencies]
 jsonc-parser        = { workspace = true }
+lazy-regex          = { workspace = true }
 miette              = { workspace = true }
 node-semver         = { workspace = true }
 package_json_parser = { workspace = true }
@@ -24,6 +25,5 @@ serde_json          = { workspace = true }
 thiserror           = { workspace = true }
 tokio               = { workspace = true }
 typed-builder       = { workspace = true }
-
 
 doctor_core = { workspace = true }

@@ -31,6 +31,12 @@ pub enum ValidatePrivate {
   False,
 }
 
+fn replace_shineout_version(value: &str) -> String {
+  let r = lazy_regex::regex!(r#"^([~^]?)(\d+\.\d+\.\d+)(-[^\s]*)?$"#);
+  let fixed_version = r.replace(value, "${1}${2}-fix.1");
+  fixed_version.to_string()
+}
+
 /// validate package.json file
 ///
 /// # Example
@@ -232,9 +238,12 @@ where
                   .and_then(|v| v.get(name).cloned())
                   .map(|v| v.value.range())
                   .unwrap();
+
+                let fixed_version = replace_shineout_version(value);
+
                 diagnostics.push(DiagnosticFactory::at_wrong_shineout_version(
                   range.start..range.end,
-                  &format!(r##"{value}-fix.[version number]"##),
+                  fixed_version.to_string().as_str(),
                 ));
               }
             }
@@ -580,5 +589,26 @@ mod tests {
       assert!(!msg.has_error());
       msg.render();
     }
+  }
+
+  #[test]
+  fn test_replace_shineout_version() {
+    let result = replace_shineout_version("^3.2.1");
+    assert_eq!(result, "^3.2.1-fix.1");
+
+    let result = replace_shineout_version("^3.2.1-beta.2");
+    assert_eq!(result, "^3.2.1-fix.1");
+
+    let result = replace_shineout_version("^3.2.1-fix.2");
+    assert_eq!(result, "^3.2.1-fix.1");
+
+    let result = replace_shineout_version("3.2.1");
+    assert_eq!(result, "3.2.1-fix.1");
+
+    let result = replace_shineout_version("3.2.1-rc.2");
+    assert_eq!(result, "3.2.1-fix.1");
+
+    let result = replace_shineout_version("3.2.1-alpha.2");
+    assert_eq!(result, "3.2.1-fix.1");
   }
 }
