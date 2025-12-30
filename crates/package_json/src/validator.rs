@@ -224,7 +224,7 @@ where
 
               let intersect = target_range.intersect(&current_range);
 
-              if intersect.is_some() && !value.contains("fix.1") && value != "3.9.0" {
+              if intersect.is_some() && !value.contains("fix.") && value != "3.9.0" {
                 let range = root_object
                   .as_ref()
                   .and_then(|o| o.get(field_name).cloned())
@@ -234,7 +234,7 @@ where
                   .unwrap();
                 diagnostics.push(DiagnosticFactory::at_wrong_shineout_version(
                   range.start..range.end,
-                  &format!(r##"{value}-fix.1"##),
+                  &format!(r##"{value}-fix.[version number]"##),
                 ));
               }
             }
