@@ -540,4 +540,26 @@ mod tests {
       );
     }
   }
+
+  #[test]
+  fn test_validate_shineout_version_ne_fix() {
+    let result = PackageJsonValidator::builder()
+      .config_path("fixtures/shineout_2_ne_fix.json")
+      .with_validate_shineout_version(true)
+      .build()
+      .validate()
+      .unwrap();
+
+    // assert!(result.len() == 0);
+
+    for msg in result {
+      // println!("{:#?}", msg);
+      assert!(!msg.has_error());
+      msg.render();
+      // assert!(msg.diagnostics.len() == 1);
+      // assert!(
+      //   msg.diagnostics[0].code == Some("shined(package-json:library-version-not-allowed)".into())
+      // );
+    }
+  }
 }
