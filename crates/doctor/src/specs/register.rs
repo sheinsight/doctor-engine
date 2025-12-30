@@ -70,6 +70,7 @@ pub fn register_package_json(cwd: impl AsRef<Path>) -> Box<dyn Validator> {
     .with_validate_name(ValidateName::Exist)
     .with_validate_private(ValidatePrivate::True)
     .with_validate_package_manager(ValidatePackageManager::Exist)
+    .with_validate_shineout_version(true)
     .build();
 
   Box::new(validator)
