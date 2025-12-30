@@ -566,4 +566,19 @@ mod tests {
       msg.render();
     }
   }
+
+  #[test]
+  fn test_validate_shineout_version_3_fix_2() {
+    let result = PackageJsonValidator::builder()
+      .config_path("fixtures/shineout_3_fix_2.json")
+      .with_validate_shineout_version(true)
+      .build()
+      .validate()
+      .unwrap();
+
+    for msg in result {
+      assert!(!msg.has_error());
+      msg.render();
+    }
+  }
 }
