@@ -28,7 +28,7 @@ base64        = { version = "^0.22.1" }
 bitflags      = { version = "^2.9.4" }
 config        = { version = "^0.15.17" }
 env_logger    = { version = "^0.11.8" }
-hashbrown     = { version = "^0.16.0" }
+hashbrown     = { version = "=0.16.1", default-features = false }
 ignore        = { version = "^0.4.23" }
 insta         = { version = "^1.43.2" }
 jsonc-parser  = { version = "^0.26.3" }
@@ -61,8 +61,8 @@ strum        = { version = "^0.27.2" }
 strum_macros = { version = "^0.27.2" }
 
 # lint
-oxc        = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v1.26.0", package = "oxc" }
-oxc_linter = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v1.26.0", package = "oxc_linter" }
+oxc        = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v1.38.0", package = "oxc" }
+oxc_linter = { git = "https://github.com/oxc-project/oxc.git", tag = "oxlint_v1.38.0", package = "oxc_linter" }
 
 
 # glob

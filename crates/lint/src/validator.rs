@@ -46,7 +46,7 @@ impl LintValidator {
       None,
       &mut external_plugin_store,
     )?
-    .build(&external_plugin_store)?;
+    .build(&mut external_plugin_store)?;
     let config_store = ConfigStore::new(config, FxHashMap::default(), external_plugin_store);
 
     let linter = Linter::new(

@@ -72,7 +72,7 @@ fn h() -> anyhow::Result<()> {
 
   let config =
     ConfigStoreBuilder::from_oxlintrc(true, category.into(), None, &mut external_plugin_store)?
-      .build(&external_plugin_store)?;
+      .build(&mut external_plugin_store)?;
 
   // 3. 创建 ConfigStore
   let config_store = ConfigStore::new(config, FxHashMap::default(), external_plugin_store);
