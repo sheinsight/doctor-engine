@@ -20,6 +20,7 @@
 	"scripts": {
 		"create-npm-dirs": "napi create-npm-dirs",
 		"artifacts": "napi artifacts ",
+		"patch-npm-dirs": "node scripts/patch-npm-dirs.mjs",
 		"build:js": "napi build --platform --js index.js --dts index.d.ts",
 		"build": "napi build --platform --release",
 		"build:debug": "napi build --platform",

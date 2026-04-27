@@ -91,6 +91,9 @@ jobs:
           cd ${{ inputs.binding_dir }}
           pnpm run artifacts
 
+      - name: Patch npm dirs with publishConfig
+        run: pnpm --filter ${{ inputs.npm_package_name }} patch-npm-dirs
+
       - name: Show npm dirs with artifacts
         shell: bash
         run: |
@@ -104,7 +107,7 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           draft: true
-          prerelease: false
+          prerelease: ${{ contains(github.ref_name, 'canary') || contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
 
       - name: Publish napi
         run: |
@@ -116,6 +119,11 @@ jobs:
 
       - name: Update Release
         if: startsWith(github.ref, 'refs/tags/')
-        run: | 
+        run: |
           echo "Updating release..."
-          gh release edit ${{ github.ref_name }} --draft=false --latest
+          IS_PRERELEASE=${{ contains(github.ref_name, 'canary') || contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
+          if [ "$IS_PRERELEASE" = "true" ]; then
+            gh release edit ${{ github.ref_name }} --draft=false
+          else
+            gh release edit ${{ github.ref_name }} --draft=false --latest
+          fi
