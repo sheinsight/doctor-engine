@@ -124,4 +124,3 @@ jobs:
     with:
       binding_dir: crates/binding
       npm_package_name: '@shined/doctor'
-     
