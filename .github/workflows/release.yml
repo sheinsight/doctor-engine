@@ -116,8 +116,6 @@ jobs:
     with:
       binding_dir: crates/binding
       npm_package_name: '@shined/doctor-binding'
-    secrets:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
 
   npm-publish:
@@ -126,6 +124,4 @@ jobs:
     with:
       binding_dir: crates/binding
       npm_package_name: '@shined/doctor'
-    secrets:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
      

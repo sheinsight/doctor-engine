@@ -8,10 +8,7 @@ on:
         type: string
       npm_package_name:
         required: true
-        type: string 
-    secrets:
-      NPM_TOKEN:
-        required: true 
+        type: string
 
 env:
   DEBUG: napi:*
@@ -66,6 +63,7 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
           cache-dependency-path: '**/pnpm-lock.yaml'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: List packages
         shell: bash
@@ -110,11 +108,8 @@ jobs:
           prerelease: ${{ contains(github.ref_name, 'canary') || contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
 
       - name: Publish napi
-        run: |
-          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-          pnpm --filter ${{ inputs.npm_package_name }} publish --no-git-checks --force
+        run: pnpm --filter ${{ inputs.npm_package_name }} publish --no-git-checks --force --provenance
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           RELEASE_ID: ${{ steps.create_release.outputs.id }}
 
       - name: Update Release
