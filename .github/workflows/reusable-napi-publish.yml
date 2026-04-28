@@ -110,6 +110,7 @@ jobs:
       - name: Publish napi
         run: pnpm --filter ${{ inputs.npm_package_name }} publish --no-git-checks --force --provenance
         env:
+          NPM_CONFIG_PROVENANCE: "true"
           RELEASE_ID: ${{ steps.create_release.outputs.id }}
 
       - name: Update Release
