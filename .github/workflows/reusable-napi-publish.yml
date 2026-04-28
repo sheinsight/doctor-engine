@@ -63,7 +63,6 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
           cache-dependency-path: '**/pnpm-lock.yaml'
-          registry-url: 'https://registry.npmjs.org'
 
       - name: List packages
         shell: bash
